@@ -32,7 +32,7 @@ function apiRequest(httpMethod: string, path: string, input: UnknownDictionary<a
     };
 
     if (process.env.PRICESTF_API_KEY) {
-        options.headers.Authorization = `Token ${process.env.PRICESTF_API_KEY}`;
+        options.headers.Authorization = `Token ${process.env.PRICESTF_API_TOKEN}`;
     }
 
     options[httpMethod === 'GET' ? 'qs' : 'body'] = input;
