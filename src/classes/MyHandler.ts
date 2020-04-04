@@ -497,7 +497,11 @@ export = class MyHandler extends Handler {
 
                 if (escrow) {
                     offer.log('info', 'would be held if accepted, declining...');
-                    return resolve({ action: 'decline', reason: 'ESCROW' });
+                    if (process.env.ALLOW_ESCROW === 'true') {
+                        return resolve({ action: manualReviewEnabled ? 'skip' : 'decline', reason: 'ESCROW' });
+                    } else {
+                        return resolve({ action: 'decline', reason: 'ESCROW' });
+                    }
                 }
 
                 offer.log('info', 'checking bans...');
