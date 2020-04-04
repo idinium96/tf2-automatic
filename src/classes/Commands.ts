@@ -1114,7 +1114,7 @@ export = class Commands {
             item.craftable = false;
         }
 
-        const assetids = this.bot.inventoryManager.getInventory().findBySKU(SKU.fromObject(item));
+        const assetids = this.bot.inventoryManager.getInventory().findBySKU(SKU.fromObject(item), false);
 
         const name = this.bot.schema.getName(item);
 
@@ -1456,7 +1456,7 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
-            this.bot.trades.applyActionToOffer('accept', 'MANUAL', offer).asCallback(err => {
+            this.bot.trades.applyActionToOffer('accept', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
@@ -1503,7 +1503,7 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Declining offer...');
 
-            this.bot.trades.applyActionToOffer('decline', 'MANUAL', offer).asCallback(err => {
+            this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
