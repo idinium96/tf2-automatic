@@ -480,7 +480,7 @@ export = class MyHandler extends Handler {
                     'is not offering enough, ' + (manualReviewEnabled ? 'skipping' : 'declining') + '...'
                 );
                 return resolve({ action: manualReviewEnabled ? 'skip' : 'decline', reason: 'INVALID_VALUE' });
-            } else if (exchange.our.value < exchange.their.value && process.env.ACCEPT_OVERPAY === 'false') {
+            } else if (exchange.our.value < exchange.their.value && process.env.ALLOW_OVERPAY === 'false') {
                 offer.log('info', 'is offering more than needed, declining...');
                 return resolve({ action: 'decline', reason: 'OVERPAY' });
             }
