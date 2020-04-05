@@ -24,11 +24,11 @@ class UserCart extends Cart {
         ]);
 
         if (banned) {
-            return Promise.reject('you are banned in one or more trading communities');
+            return Promise.reject('⛔you are banned in one or more trading communities');
         }
 
         if (escrow) {
-            return Promise.reject('trade would be held');
+            return Promise.reject('⚠trade would be held');
         }
     }
 
@@ -388,7 +388,7 @@ class UserCart extends Cart {
 
             theirInventory.fetch().asCallback(err => {
                 if (err) {
-                    return reject('Failed to load inventories (Steam might be down)');
+                    return reject('❌Failed to load inventories (Steam might be down)');
                 }
 
                 // Add their items
