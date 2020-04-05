@@ -539,11 +539,18 @@ export = class MyHandler extends Handler {
         if (handledByUs && offer.data('switchedState') !== offer.state) {
             if (notify) {
                 if (offer.state === TradeOfferManager.ETradeOfferState.Accepted) {
-                    this.bot.sendMessage(offer.partner, '✅Success! The offer went through successfully.');
+                    this.bot.sendMessage(
+                        offer.partner,
+                        process.env.CUSTOM_SUCCESS_MESSAGE
+                            ? process.env.CUSTOM_SUCCESS_MESSAGE
+                            : '✅Success! The offer went through successfully.'
+                    );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
+                        process.env.CUSTOM_DECLINED_MESSAGE
+                            ? process.env.CUSTOM_DECLINED_MESSAGE
+                            : '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Canceled) {
                     let reason: string;
@@ -563,7 +570,9 @@ export = class MyHandler extends Handler {
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.InvalidItems) {
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
+                        process.env.CUSTOM_TRADED_AWAY_MESSAGE
+                            ? process.env.CUSTOM_TRADED_AWAY_MESSAGE
+                            : '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
                     );
                 }
             }
@@ -626,18 +635,32 @@ export = class MyHandler extends Handler {
                     reason +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema) +
-                    '\n\nNote:\n❌INVALID_VALUE - Ignored. You might choose the wrong item (Ex: Non-Craftable item has different value - https://prntscr.com/rpc3gn)' +
-                    '\n⭕INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for my boss to verify it.' +
-                    "\n⭕OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait until my boss verify it." +
-                    "\n⭕ESCROW - You're currently has a trade restriction. My boss will accept it if you offer the correct value. Please wait. In the future, please use Steam Guard Mobile Authenticator." +
-                    '\n\n⚡Usually takes about 1-2 minutes for my boss to review it.' +
-                    '\n\nMy boss active hours: 🕖0700H - 🕐0100H 🇲🇾Malaysia Time (GMT +8) - https://www.timeanddate.com/worldclock/malaysia/kuala-lumpur' +
-                    '\n\nIf you need any help, please contact my boss via Discord Server: https://discord.gg/AXTGF4g' +
-                    '\n🍬I appreciate any sweets from you. Thank you.'
+                    '\n\nNote:\n❌INVALID_VALUE - ' +
+                    process.env.INVALID_VALUE_NOTE
+                    ? process.env.INVALID_VALUE_NOTE
+                    : 'Your offer will be ignored. Please cancel it and make another offer with correct value.' +
+                      '\n⭕INVALID_ITEMS - ' +
+                      process.env.INVALID_ITEMS_NOTE
+                    ? process.env.INVALID_ITEMS_NOTE
+                    : 'Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.' +
+                      '\n⭕OVERSTOCKED - ' +
+                      process.env.OVERSTOCKED_NOTE
+                    ? process.env.OVERSTOCKED_NOTE
+                    : "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait." +
+                      '\n⭕ESCROW - ' +
+                      process.env.ESCROW_NOTE
+                    ? process.env.ESCROW_NOTE
+                    : "You're currently has a trade restriction. My boss will accept it if you offer the correct value. Please wait. In the future, please use Steam Guard Mobile Authenticator." +
+                      '\n\n✅Owner active hours: ' +
+                      process.env.ACTIVE_HOURS_START +
+                      ' - ' +
+                      process.env.ACTIVE_HOURS_END +
+                      ' ' +
+                      process.env.TIMEZONE
             );
             this.bot.messageAdmins(
                 'review',
-                'Offer #' +
+                '/code Offer #' +
                     offer.id +
                     ' is waiting for review, reason: ' +
                     reason +
@@ -780,9 +803,11 @@ export = class MyHandler extends Handler {
 
                     this.bot.sendMessage(
                         steamID,
-                        '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
-                            (isAdmin ? 'help' : 'how2trade') +
-                            '" 🤗'
+                        process.env.CUSTOM_WELCOME_MESSAGE
+                            ? process.env.CUSTOM_WELCOME_MESSAGE
+                            : '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
+                                  (isAdmin ? 'help' : 'how2trade') +
+                                  '" 🤗'
                     );
                     return;
                 }
@@ -800,11 +825,13 @@ export = class MyHandler extends Handler {
 
             this.bot.sendMessage(
                 steamID,
-                '🙋🏻‍♀️Hi ' +
-                    friend.player_name +
-                    '! If you don\'t know how things work, please type "!' +
-                    (isAdmin ? 'help' : 'how2trade') +
-                    '" 🤗'
+                process.env.CUSTOM_WELCOME_MESSAGE
+                    ? process.env.CUSTOM_WELCOME_MESSAGE
+                    : '🙋🏻‍♀️Hi ' +
+                          friend.player_name +
+                          '! If you don\'t know how things work, please type "!' +
+                          (isAdmin ? 'help' : 'how2trade') +
+                          '" 🤗'
             );
         });
     }
@@ -853,7 +880,9 @@ export = class MyHandler extends Handler {
             friendsToRemove.forEach(element => {
                 this.bot.sendMessage(
                     element.steamID,
-                    'I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
+                    process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
+                        ? process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
+                        : 'I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗'
                 );
                 this.bot.client.removeFriend(element.steamID);
             });

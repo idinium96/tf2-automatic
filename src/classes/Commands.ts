@@ -41,24 +41,24 @@ const COMMANDS: string[] = [
 ];
 
 const ADMIN_COMMANDS: string[] = [
-    '!deposit - Used to deposit items',
-    '!withdraw - Used to withdraw items',
-    '!get - Get raw information about a pricelist entry',
-    '!add - Add a pricelist entry',
-    '!remove - Remove a pricelist entry',
-    '!update - Update a pricelist entry',
-    '!pricecheck - Requests an item to be priced by PricesTF',
-    '!expand - Uses Backpack Expanders to increase the inventory limit',
-    '!stop - Stop the bot',
-    '!restart - Restart the bot',
-    '!version - Get version that the bot is running',
-    '!avatar - Change avatar',
-    '!name - Change name',
-    '!stats - Get statistics for accepted trades',
-    '!trades - Get a list of offers pending for manual review',
-    '!trade - Get info about a trade',
-    '!accepttrade - Manually accept an active offer',
-    '!declinetrade - Manually decline an active offer'
+    '!deposit <name=>&<amount=> - Used to deposit items⬅',
+    '!withdraw <name=>&<amount=> - Used to withdraw items➡',
+    '!add - Add a pricelist entry📝',
+    '!update - Update a pricelist entry🔆',
+    '!remove <sku=> OR <item=> - Remove a pricelist entry✂',
+    '!get <sku=> OR <item=> - Get raw information about a pricelist entry🗃',
+    '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF♻',
+    '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit🎒',
+    '!stop - Stop the bot🛑',
+    '!restart - Restart the bot🔁',
+    '!version - Get version that the bot is running🌐',
+    '!avatar <image_URL> - Change avatar🛃',
+    '!name <new_name>- Change name🆕',
+    '!stats - Get statistics for accepted trades🔢',
+    '!trades - Get a list of offers pending for manual review🧾💱',
+    '!trade <offerID> - Get info about a trade🧐💱',
+    '!accepttrade <offerID> - Manually accept an active offer✅💱',
+    '!declinetrade <offerID> - Manually decline an active offer❌💱'
 ];
 
 export = class Commands {
@@ -142,7 +142,12 @@ export = class Commands {
         } else if (command === 'declinetrade' && isAdmin) {
             this.declinetradeCommand(steamID, message);
         } else {
-            this.bot.sendMessage(steamID, '❌I don\'t know what you mean, please type "!help" for all my commands!');
+            this.bot.sendMessage(
+                steamID,
+                process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
+                    ? process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
+                    : '❌I don\'t know what you mean, please type "!help" for all my commands!'
+            );
         }
     }
 
@@ -159,8 +164,10 @@ export = class Commands {
     private howToTradeCommand(steamID: SteamID): void {
         this.bot.sendMessage(
             steamID,
-            '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
-                '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
+            process.env.CUSTOM_HOW2TRADE_MESSAGE
+                ? process.env.CUSTOM_HOW2TRADE_MESSAGE
+                : '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
+                      '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
 
