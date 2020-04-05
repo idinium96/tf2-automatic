@@ -94,10 +94,10 @@ class CartQueue {
             .then(alteredMessage => {
                 log.debug('Constructed offer');
                 if (alteredMessage) {
-                    cart.sendNotification('Your offer has been altered. Reason: ' + alteredMessage + '.');
+                    cart.sendNotification('🔃Your offer has been altered. Reason: ' + alteredMessage + '.');
                 }
 
-                cart.sendNotification('Please wait while I process your offer! ' + cart.summarize() + '.');
+                cart.sendNotification('⚠Please wait while I process your offer! ' + cart.summarize() + '.');
 
                 log.debug('Sending offer...');
                 return cart.sendOffer();
@@ -106,7 +106,7 @@ class CartQueue {
                 log.debug('Sent offer');
                 if (status === 'pending') {
                     cart.sendNotification(
-                        'Your offer has been made! Please wait while I accept the mobile confirmation.'
+                        '✅Your offer has been made! Please wait while I accept the mobile confirmation.'
                     );
 
                     log.debug('Accepting mobile confirmation...');
@@ -117,12 +117,12 @@ class CartQueue {
             })
             .catch(err => {
                 if (!(err instanceof Error)) {
-                    cart.sendNotification('I failed to make the offer! Reason: ' + err + '.');
+                    cart.sendNotification('❌I failed to make the offer! Reason: ' + err + '.');
                 } else {
                     log.warn('Failed to make offer');
                     log.error(require('util').inspect(err));
 
-                    cart.sendNotification('Something went wrong while trying to make the offer, try again later!');
+                    cart.sendNotification('❌Something went wrong while trying to make the offer, try again later!');
                 }
             })
             .finally(() => {
