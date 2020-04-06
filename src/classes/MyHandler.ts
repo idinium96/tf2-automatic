@@ -626,7 +626,7 @@ export = class MyHandler extends Handler {
                     reason +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema) +
-                    '\n\nNote:\n❌INVALID_VALUE - Ignored. You might choose the wrong item (Ex: Non-Craftable item has different value - https://prntscr.com/rpc3gn)' +
+                    '\n\nNote:\n❌INVALID_VALUE - Ignored/Declined. You might choose the wrong item (Ex: Non-Craftable item has different value - https://prntscr.com/rpc3gn)' +
                     '\n⭕INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for my boss to verify it.' +
                     "\n⭕OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait until my boss verify it." +
                     "\n⭕ESCROW - You're currently has a trade restriction. My boss will accept it if you offer the correct value. Please wait. In the future, please use Steam Guard Mobile Authenticator." +
