@@ -639,9 +639,11 @@ export = class MyHandler extends Handler {
                 'review',
                 'Offer #' +
                     offer.id +
+                    ' from ' +
+                    offer.partner +
                     ' is waiting for review, reason: ' +
                     reason +
-                    '\nSummary:\n' +
+                    '\nOffer Summary:\n' +
                     offer.summarize(this.bot.schema)
             );
         }
