@@ -660,8 +660,10 @@ export = class MyHandler extends Handler {
             );
             this.bot.messageAdmins(
                 'review',
-                '/code Offer #' +
+                'Offer #' +
                     offer.id +
+                    ' from ' +
+                    offer.partner +
                     ' is waiting for review, reason: ' +
                     reason +
                     '\nOffer Summary:\n' +
