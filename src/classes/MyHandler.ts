@@ -539,7 +539,10 @@ export = class MyHandler extends Handler {
         if (handledByUs && offer.data('switchedState') !== offer.state) {
             if (notify) {
                 if (offer.state === TradeOfferManager.ETradeOfferState.Accepted) {
-                    this.bot.sendMessage(offer.partner, '✅Success! The offer went through successfully.');
+                    this.bot.sendMessage(
+                        offer.partner,
+                        '✅Success! The offer went through successfully. \n\nFeel free to join our Discord server for support and full tips to setup tf2-automatic and tf2-autocord using VPS and other stuffs: https://discord.gg/AXTGF4g'
+                    );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
