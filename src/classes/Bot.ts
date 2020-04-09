@@ -248,7 +248,7 @@ export = class Bot {
             request(
                 {
                     method: 'GET',
-                    url: 'https://raw.githubusercontent.com/Nicklason/tf2-automatic/master/package.json',
+                    url: 'https://raw.githubusercontent.com/idinium96/tf2-automatic/FuminoBot/package.json',
                     json: true
                 },
                 function(err, response, body) {
