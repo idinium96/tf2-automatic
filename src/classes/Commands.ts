@@ -29,6 +29,7 @@ const COMMANDS: string[] = [
     '!price [amount] <name> - Get the price and stock of an item💱',
     '!stock - Get a list of items that the bot has📊',
     '!rate - Get current key prices🗝📈',
+    '!message <Your Messages> - Send a message to the owner of the bot💬',
     '!buy [amount] <name> - Instantly buy an item➡',
     '!sell [amount] <name> - Instantly sell an item⬅',
     '!buycart [amount] <name> - Adds an item you want to buy to the cart➡🛒',
@@ -55,6 +56,7 @@ const ADMIN_COMMANDS: string[] = [
     '!avatar - Change avatar',
     '!name - Change name',
     '!stats - Get statistics for accepted trades',
+    '!message <SteamID64> <Your Messages> - Send a message to a user',
     '!trades - Get a list of offers pending for manual review',
     '!trade - Get info about a trade',
     '!accepttrade - Manually accept an active offer',
@@ -85,6 +87,8 @@ export = class Commands {
             this.priceCommand(steamID, message);
         } else if (command === 'stock') {
             this.stockCommand(steamID);
+        } else if (command === 'message') {
+            this.messageCommand(steamID, message);
         } else if (command === 'rate') {
             this.rateCommand(steamID);
         } else if (command === 'cart') {
@@ -333,6 +337,81 @@ export = class Commands {
                 keyPrice +
                 ' is the same as one key.'
         );
+    }
+
+    private messageCommand(steamID: SteamID, message: string): void {
+        const isAdmin = this.bot.isAdmin(steamID);
+        const parts = message.split(' ');
+
+        if (process.env.DISABLE_MESSAGES === 'true') {
+            if (isAdmin) {
+                this.bot.sendMessage(
+                    steamID,
+                    'The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
+                );
+            } else {
+                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+            }
+            return;
+        }
+
+        const adminDetails = this.bot.friends.getFriend(steamID);
+
+        if (isAdmin) {
+            if (parts.length < 3) {
+                this.bot.sendMessage(
+                    steamID,
+                    'Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
+                );
+                return;
+            }
+
+            const recipient = parts[1];
+
+            const recipientSteamID = new SteamID(recipient);
+
+            if (!recipientSteamID.isValid()) {
+                this.bot.sendMessage(steamID, '"' + recipient + '" is not a valid steamid.');
+                return;
+            } else if (!this.bot.friends.isFriend(recipientSteamID)) {
+                this.bot.sendMessage(steamID, 'I am not friends with the user.');
+                return;
+            }
+
+            const reply = message.substr(message.toLowerCase().indexOf(recipient) + 18);
+
+            // Send message to recipient
+            this.bot.sendMessage(
+                recipient,
+                'Message from ' + (adminDetails ? adminDetails.player_name : 'owner') + ': ' + reply
+            );
+
+            // Send confirmation message to admin
+            this.bot.sendMessage(steamID, 'Your message has been sent.');
+
+            // Send message to all other wadmins that an admin replied
+            this.bot.messageAdmins(
+                'Other admins - ' + steamID + ' sent a message to ' + recipientSteamID + ' with "' + reply + '".',
+                [steamID]
+            );
+            return;
+        } else {
+            const admins = this.bot.getAdmins();
+            if (!admins || admins.length === 0) {
+                // Just default to same message as if it was disabled
+                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                return;
+            }
+
+            const msg = message.substr(message.toLowerCase().indexOf('message') + 8);
+            if (!msg) {
+                this.bot.sendMessage(steamID, 'Please include a message. Here\'s an example: "!message Hi"');
+                return;
+            }
+
+            this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+            this.bot.sendMessage(steamID, 'Your message has been sent.');
+        }
     }
 
     private cartCommand(steamID: SteamID): void {
