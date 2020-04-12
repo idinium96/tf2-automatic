@@ -9,13 +9,13 @@
                 "icon_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg"
             },
             "footer": {
-                "text": "• %currentTime%"
+                "text": "Item's SKU: %sku% • %currentTime%"
             },
             "thumbnail": {
                 "url": "%itemImageURL%"
             },
-            "title": "New Price Update!",
-            "description": " **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n [Send trade offer to ※Fumino⚡ now!](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW)",
+            "title": "",
+            "description": "__%name%__\n\n **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n\n [Send trade offer to ※Fumino⚡ now!](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW)",
             "color": "9171753"
         }
     ]
