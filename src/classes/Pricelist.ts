@@ -438,6 +438,7 @@ export default class Pricelist extends EventEmitter {
             const name = this.schema.getName(SKU.fromString(match.sku), false);
 
             this.priceChanged(match.sku, match);
+
             if (process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false') {
                 this.sendWebHookPriceUpdate(name, match.buy.toString(), match.sell.toString(), data.sku);
             }
@@ -454,11 +455,33 @@ export default class Pricelist extends EventEmitter {
         request.open('POST', process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL);
         request.setRequestHeader('Content-type', 'application/json');
 
+        const parts = sku.split(';');
+        const newSku = parts[0] + ';6';
+        const item = SKU.fromString(newSku);
+        const newName = this.schema.getName(item);
+
+        let newNamePrint;
+        if (newName.startsWith('The')) {
+            newNamePrint = newName.replace('The ', '');
+        } else {
+            newNamePrint = newName;
+        }
+
+        const itemImageUrl = this.schema.getItemByItemName(newNamePrint);
+
+        let itemImageUrlPrint;
+        if (!itemImageUrl) {
+            itemImageUrlPrint = 'https://jberlife.com/wp-content/uploads/2019/07/sorry-image-not-available.jpg';
+        } else {
+            itemImageUrlPrint = itemImageUrl.image_url_large;
+        }
+
         const stringified = JSON.stringify(discordEmbed)
             .replace(/%name%/g, name)
             .replace(/%sku%/g, sku)
             .replace(/%buyPrice%/g, buyPrice)
             .replace(/%sellPrice%/g, sellPrice)
+            .replace(/%itemImageURL%/g, itemImageUrlPrint)
             .replace(/%currentTime%/g, moment().format());
 
         const jsonObject = JSON.parse(stringified);
