@@ -7,6 +7,9 @@ import Currencies from 'tf2-currencies';
 import SKU from 'tf2-sku';
 import SchemaManager from 'tf2-schema';
 
+import { XMLHttpRequest } from 'xmlhttprequest-ts';
+import * as discordEmbed from '../discordWebhookPriceUpdateEmbed.json';
+
 import log from '../lib/logger';
 import { getPricelist, getPrice } from '../lib/ptf-api';
 import validator from '../lib/validator';
@@ -431,13 +434,37 @@ export default class Pricelist extends EventEmitter {
             match.buy = new Currencies(data.buy);
             match.sell = new Currencies(data.sell);
             match.time = data.time;
+
+            const name = this.schema.getName(SKU.fromString(match.sku), false);
+
             this.priceChanged(match.sku, match);
+            if (process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false') {
+                this.sendWebHookPriceUpdate(name, match.buy.toString(), match.sell.toString(), data.sku);
+            }
         }
     }
 
     private priceChanged(sku: string, entry: Entry): void {
         this.emit('price', sku, entry);
         this.emit('pricelist', this.prices);
+    }
+
+    private sendWebHookPriceUpdate(name: string, buyPrice: string, sellPrice: string, sku: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const stringified = JSON.stringify(discordEmbed)
+            .replace(/%name%/g, name)
+            .replace(/%sku%/g, sku)
+            .replace(/%buyPrice%/g, buyPrice)
+            .replace(/%sellPrice%/g, sellPrice)
+            .replace(/%currentTime%/g, moment().format());
+
+        const jsonObject = JSON.parse(stringified);
+
+        request.send(JSON.stringify(jsonObject));
+        log.debug('Price change sent to webhook');
     }
 
     private getOld(): Entry[] {
