@@ -15,7 +15,7 @@
                 "url": "%itemImageURL%"
             },
             "title": "",
-            "description": "__%name%__\n\n **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n\n [Send trade offer to ※Fumino⚡ now!](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW)",
+            "description": " **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n\n [Send trade offer to ※Fumino⚡ now!](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW)",
             "color": "9171753"
         }
     ]
