@@ -1,0 +1,19 @@
+{
+    "username": "※Fumino⚡ Pricelist Price Update",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/1e/1ee3cd7aa2e7fbde262a8207fd1ac9dc3696a7ea_full.jpg",
+    "embeds": [
+        {
+            "author": {
+                "name": "%name%",
+                "url": "https://www.prices.tf/items/%sku%",
+                "icon_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg"
+            },
+            "footer": {
+                "text": "• %currentTime%"
+            },
+            "title": "New Price Update!",
+            "description": " **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n [Send trade offer to ※Fumino⚡ now!](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW)",
+            "color": "15137062"
+        }
+    ]
+}
