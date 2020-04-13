@@ -1,0 +1,23 @@
+{
+    "username": "※Mai⚡",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/57/576b4c1571d06974f4c256fe7d2ece9f18925787_full.jpg",
+    "content": "<@!%ownerDiscordId%>, check this!",
+    "embeds": [
+        {
+            "author": {
+                "name": "Offer Review",
+                "url": "https://steamcommunity.com/profiles/%partnerId%",
+                "icon_url": "%partnerAvatar%"
+            },
+            "footer": {
+                "text": "Offer #%offerId% • %currentTime%"
+            },
+            "thumbnail": {
+                "url": ""
+            },
+            "title": "",
+            "description": "An offer (#%offerId%) sent by %partnerId% is waiting for review, reason: %reason%\n \nOffer Summary:\n %tradeSummary%",
+            "color": "15794337"
+        }
+    ]
+}

@@ -12,6 +12,11 @@ import pluralize from 'pluralize';
 import SteamID from 'steamid';
 import Currencies from 'tf2-currencies';
 
+import * as discordTradeSummary from '../discordWebhookAcceptedTradesSummary.json';
+import * as discordReviewOfferSummary from '../discordWebhookReviewOfferSummary.json';
+import { XMLHttpRequest } from 'xmlhttprequest-ts';
+import moment from 'moment';
+
 import log from '../lib/logger';
 import * as files from '../lib/files';
 import paths from '../resources/paths';
@@ -316,7 +321,11 @@ export = class MyHandler extends Handler {
 
             // Check if the offer is from an admin
             if (this.bot.isAdmin(offer.partner)) {
-                offer.log('trade', 'is from an admin, accepting. Summary:\n' + offer.summarize(this.bot.schema));
+                offer.log(
+                    'trade',
+                    'is from an admin, accepting. Summary:\n' +
+                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
+                );
                 return resolve({ action: 'accept', reason: 'ADMIN' });
             }
 
@@ -329,7 +338,11 @@ export = class MyHandler extends Handler {
             const itemsDiff = offer.getDiff();
 
             if (offer.itemsToGive.length === 0 && ['donate', 'gift'].includes(offer.message.toLowerCase())) {
-                offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
+                offer.log(
+                    'trade',
+                    'is from an admin, accepting. Summary:\n' +
+                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
+                );
                 return resolve({ action: 'accept', reason: 'GIFT' });
             } else if (offer.itemsToReceive.length === 0 || offer.itemsToGive.length === 0) {
                 offer.log('info', 'is a gift offer, declining...');
@@ -517,7 +530,11 @@ export = class MyHandler extends Handler {
                         return resolve({ action: 'decline', reason: 'BANNED' });
                     }
 
-                    offer.log('trade', 'accepting. Summary:\n' + offer.summarize(this.bot.schema));
+                    offer.log(
+                        'trade',
+                        'is from an admin, accepting. Summary:\n' +
+                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
+                    );
 
                     return resolve({ action: 'accept', reason: 'VALID' });
                 });
@@ -576,18 +593,23 @@ export = class MyHandler extends Handler {
 
                 offer.data('isAccepted', true);
 
-                offer.log('trade', 'has been accepted.');
-
-                this.bot.messageAdmins(
-                    'trade',
-                    'Trade #' +
-                        offer.id +
-                        ' with ' +
-                        offer.partner.getSteamID64() +
-                        ' is accepted. Summary:\n' +
-                        offer.summarize(this.bot.schema),
-                    []
-                );
+                if (
+                    process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
+                    process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL
+                ) {
+                    this.sendWebHookTradeSummary(offer);
+                } else {
+                    this.bot.messageAdmins(
+                        'trade',
+                        'Trade #' +
+                            offer.id +
+                            ' with ' +
+                            offer.partner.getSteamID64() +
+                            ' is accepted. Summary:\n' +
+                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:'),
+                        []
+                    );
+                }
             }
         }
 
@@ -629,7 +651,7 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     reason +
                     '\n\nYour offer summary:\n' +
-                    offer.summarize(this.bot.schema) +
+                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
                     '\n\nNote:\n❌INVALID_VALUE - Ignored/Declined. Check the value above. \nNote for weapons: \n⚠I am BUYING 2:1 scrap OR 2:1 weapons (any 2 of YOUR weapons for 1 scrap OR any 1 of MY weapon) and;\n⚠I am SELLING 1:1 scrap OR 1:2 weapons (any 1 of MY weapon for 1 scrap OR any 2 of YOUR weapons)\n(except for other weapons that are priced differently).' +
                     '\n\n⭕INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for my boss to verify it.' +
                     "\n⭕OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait until my boss verify it." +
@@ -638,18 +660,25 @@ export = class MyHandler extends Handler {
                     '\n\nIf you need any help, please contact my boss via Discord Server: https://discord.gg/AXTGF4g' +
                     '\nThank you.'
             );
-            this.bot.messageAdmins(
-                'review',
-                'Offer #' +
-                    offer.id +
-                    ' from ' +
-                    offer.partner +
-                    ' is waiting for review, reason: ' +
-                    reason +
-                    '\nOffer Summary:\n' +
-                    offer.summarize(this.bot.schema),
-                []
-            );
+            if (
+                process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
+                process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL
+            ) {
+                this.sendWebHookReviewOfferSummary(offer, reason);
+            } else {
+                this.bot.messageAdmins(
+                    'review',
+                    'Offer #' +
+                        offer.id +
+                        ' from ' +
+                        offer.partner +
+                        ' is waiting for review, reason: ' +
+                        reason +
+                        '\nOffer Summary:\n' +
+                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:'),
+                    []
+                );
+            }
         }
     }
 
@@ -864,6 +893,69 @@ export = class MyHandler extends Handler {
                 this.bot.client.removeFriend(element.steamID);
             });
         }
+    }
+
+    private sendWebHookReviewOfferSummary(offer: TradeOfferManager.TradeOffer, reason: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const partnerSteamID = offer.partner.toString();
+        const partnerAvatar =
+            'https://as1.ftcdn.net/jpg/02/36/88/56/500_F_236885683_BnVPOwiSE8t0vP77YrkfcCv4wVt1aSgb.jpg';
+
+        const stringified = JSON.stringify(discordReviewOfferSummary)
+            .replace(/%partnerId%/g, partnerSteamID)
+            .replace(/%partnerName%/g, '//Coming Soon//')
+            .replace(/%partnerAvatar%/g, partnerAvatar)
+            .replace(/%offerId%/g, offer.id)
+            .replace(/%reason%/g, reason)
+            .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
+            .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
+            .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+
+        const jsonObject = JSON.parse(stringified);
+
+        request.send(JSON.stringify(jsonObject));
+        log.debug('Review offer summary sent to webhook');
+    }
+
+    private sendWebHookTradeSummary(offer: TradeOfferManager.TradeOffer): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const partnerSteamID = offer.partner.toString();
+        const partnerAvatar = 'https://www.pngitem.com/pimgs/m/23-230510_ok-check-todo-agenda-icon-symbol-tick-to.png';
+
+        let tradesTotal = 0;
+        const offerData = this.bot.manager.pollData.offerData;
+        for (const offerID in offerData) {
+            if (!Object.prototype.hasOwnProperty.call(offerData, offerID)) {
+                continue;
+            }
+
+            if (offerData[offerID].handledByUs === true && offerData[offerID].isAccepted === true) {
+                // Sucessful trades handled by the bot
+                tradesTotal++;
+            }
+        }
+        const tradesMade =
+            tradesTotal + process.env.TRADES_MADE_STARTER_VALUE ? +process.env.TRADES_MADE_STARTER_VALUE : 0;
+
+        const stringified = JSON.stringify(discordTradeSummary)
+            .replace(/%partnerId%/g, partnerSteamID)
+            .replace(/%partnerName%/g, 'Coming Soon')
+            .replace(/%tradeNum%/g, tradesMade.toString())
+            .replace(/%partnerAvatar%/g, partnerAvatar)
+            .replace(/%offerId%/g, offer.id)
+            .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
+            .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+
+        const jsonObject = JSON.parse(stringified);
+
+        request.send(JSON.stringify(jsonObject));
+        log.debug('Accepted trade summmary sent to webhook');
     }
 
     private checkGroupInvites(): void {
