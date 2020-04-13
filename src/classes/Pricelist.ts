@@ -458,16 +458,9 @@ export default class Pricelist extends EventEmitter {
         const parts = sku.split(';');
         const newSku = parts[0] + ';6';
         const item = SKU.fromString(newSku);
-        const newName = this.schema.getName(item);
+        const newName = this.schema.getName(item, false);
 
-        let newNamePrint;
-        if (newName.startsWith('The')) {
-            newNamePrint = newName.replace('The ', '');
-        } else {
-            newNamePrint = newName;
-        }
-
-        const itemImageUrl = this.schema.getItemByItemName(newNamePrint);
+        const itemImageUrl = this.schema.getItemByItemName(newName);
 
         let itemImageUrlPrint;
         if (!itemImageUrl) {
