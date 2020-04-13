@@ -653,12 +653,10 @@ export = class MyHandler extends Handler {
                     reason +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
-                    '\n\nNote:\n❌INVALID_VALUE - Ignored/Declined. Check the value above OR you might choose the wrong item (Ex: Non-Craftable item has different value - https://prntscr.com/rpc3gn)' +
-                    '\n⭕INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for my boss to verify it.' +
-                    "\n⭕OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait until my boss verify it." +
-                    "\n⭕ESCROW - You're currently has a trade restriction. My boss will accept it if you offer the correct or overpay value. Please wait. In the future, please use Steam Guard Mobile Authenticator." +
-                    '\n\nMy boss active hours: 🕖0700H - 🕐0100H Malaysia Time (GMT +8) - https://www.timeanddate.com/worldclock/malaysia/kuala-lumpur' +
-                    '\n\nIf you need any help, please contact my boss via Discord Server: https://discord.gg/AXTGF4g' +
+                    '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined]' +
+                    '\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
+                    '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
+                    '\n\nIf you need any help, add me and send "!message <your message>" to directly send your help to my boss.' +
                     '\nThank you.'
             );
             if (
