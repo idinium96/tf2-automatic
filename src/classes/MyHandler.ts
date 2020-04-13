@@ -900,27 +900,12 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const partnerAvatar = 'https://www.pngitem.com/pimgs/m/23-230510_ok-check-todo-agenda-icon-symbol-tick-to.png';
-
-        let tradesTotal = 0;
-        const offerData = this.bot.manager.pollData.offerData;
-        for (const offerID in offerData) {
-            if (!Object.prototype.hasOwnProperty.call(offerData, offerID)) {
-                continue;
-            }
-
-            if (offerData[offerID].handledByUs === true && offerData[offerID].isAccepted === true) {
-                // Sucessful trades handled by the bot
-                tradesTotal++;
-            }
-        }
-        const tradesMade =
-            tradesTotal + process.env.TRADES_MADE_STARTER_VALUE ? +process.env.TRADES_MADE_STARTER_VALUE : 0;
+        const partnerAvatar =
+            'https://as1.ftcdn.net/jpg/02/36/88/56/500_F_236885683_BnVPOwiSE8t0vP77YrkfcCv4wVt1aSgb.jpg';
 
         const stringified = JSON.stringify(discordReviewOfferSummary)
             .replace(/%partnerId%/g, partnerSteamID)
             .replace(/%partnerName%/g, '//Coming Soon//')
-            .replace(/%tradeNum%/g, tradesMade.toString())
             .replace(/%partnerAvatar%/g, partnerAvatar)
             .replace(/%offerId%/g, offer.id)
             .replace(/%reason%/g, reason)
@@ -942,9 +927,25 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const partnerAvatar = 'https://www.pngitem.com/pimgs/m/23-230510_ok-check-todo-agenda-icon-symbol-tick-to.png';
 
+        let tradesTotal = 0;
+        const offerData = this.bot.manager.pollData.offerData;
+        for (const offerID in offerData) {
+            if (!Object.prototype.hasOwnProperty.call(offerData, offerID)) {
+                continue;
+            }
+
+            if (offerData[offerID].handledByUs === true && offerData[offerID].isAccepted === true) {
+                // Sucessful trades handled by the bot
+                tradesTotal++;
+            }
+        }
+        const tradesMade =
+            tradesTotal + process.env.TRADES_MADE_STARTER_VALUE ? +process.env.TRADES_MADE_STARTER_VALUE : 0;
+
         const stringified = JSON.stringify(discordTradeSummary)
             .replace(/%partnerId%/g, partnerSteamID)
-            .replace(/%partnerName%/g, '◣Name is coming Soon - Click here◢')
+            .replace(/%partnerName%/g, 'Coming Soon')
+            .replace(/%tradeNum%/g, tradesMade.toString())
             .replace(/%partnerAvatar%/g, partnerAvatar)
             .replace(/%offerId%/g, offer.id)
             .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
