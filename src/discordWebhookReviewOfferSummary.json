@@ -1,0 +1,23 @@
+{
+    "username": "※Fumino⚡",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/1e/1ee3cd7aa2e7fbde262a8207fd1ac9dc3696a7ea_full.jpg",
+    "content": "<@!%ownerDiscordId%>, check this!",
+    "embeds": [
+        {
+            "author": {
+                "name": "Trade from: %partnerName%",
+                "url": "https://steamcommunity.com/profiles/%partnerId%",
+                "icon_url": "%partnerAvatar%"
+            },
+            "footer": {
+                "text": "Offer #%offerId% • %currentTime%"
+            },
+            "thumbnail": {
+                "url": ""
+            },
+            "title": "",
+            "description": "An offer (#%offerId%) sent by %partnerId% is waiting for review, reason: %reason%\n \nOffer Summary:\n %tradeSummary%",
+            "color": "9171753"
+        }
+    ]
+}
