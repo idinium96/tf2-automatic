@@ -939,8 +939,9 @@ export = class MyHandler extends Handler {
                 tradesTotal++;
             }
         }
-        const tradesMade =
-            tradesTotal + process.env.TRADES_MADE_STARTER_VALUE ? +process.env.TRADES_MADE_STARTER_VALUE : 0;
+        const tradesMade = process.env.TRADES_MADE_STARTER_VALUE
+            ? +process.env.TRADES_MADE_STARTER_VALUE + tradesTotal
+            : 0 + tradesTotal;
 
         const stringified = JSON.stringify(discordTradeSummary)
             .replace(/%partnerId%/g, partnerSteamID)
