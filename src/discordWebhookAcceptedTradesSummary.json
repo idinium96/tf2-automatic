@@ -1,0 +1,22 @@
+{
+    "username": "※Nezuko⚡",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/61/617f217886c7c64f8a4f04e19fb0b3a13feebd2b_full.jpg",
+    "embeds": [
+        {
+            "author": {
+                "name": "Successful trade #%tradeNum%",
+                "url": "https://steamcommunity.com/profiles/%partnerId%",
+                "icon_url": "%partnerAvatar%"
+            },
+            "footer": {
+                "text": "Offer #%offerId% • %currentTime%"
+            },
+            "thumbnail": {
+                "url": ""
+            },
+            "title": "",
+            "description": "A trade with %partnerId% has been marked as accepted. \nSummary:\n%tradeSummary%",
+            "color": "10551537"
+        }
+    ]
+}
