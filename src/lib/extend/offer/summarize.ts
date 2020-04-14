@@ -18,14 +18,14 @@ export = function(schema: SchemaManager.Schema): string {
     } = self.data('dict') || { our: null, their: null };
 
     if (!value) {
-        return 'Asked: ' + summarizeItems(items.our, schema) + '\nOffered: ' + summarizeItems(items.their, schema);
+        return 'Asked: ' + summarizeItems(items.our, schema) + 'Offered: ' + summarizeItems(items.their, schema);
     } else {
         return (
             'Asked: ' +
             new Currencies(value.our).toString() +
             ' (' +
             summarizeItems(items.our, schema) +
-            ')\nOffered: ' +
+            ')Offered: ' +
             new Currencies(value.their).toString() +
             ' (' +
             summarizeItems(items.their, schema) +
