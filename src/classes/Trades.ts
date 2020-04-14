@@ -262,7 +262,7 @@ export = class Trades {
 
         offer.data('handleTimestamp', start);
 
-        this.bot.handler.onNewTradeOffer(offer).asCallback((err, response) => {
+        Promise.resolve(this.bot.handler.onNewTradeOffer(offer)).asCallback((err, response) => {
             if (err) {
                 log.debug('Error occurred while handler was processing offer: ', err);
                 throw err;
@@ -280,8 +280,7 @@ export = class Trades {
             });
 
             if (!response) {
-                this.finishProcessingOffer(offer.id);
-                return;
+                return this.finishProcessingOffer(offer.id);
             }
 
             this.applyActionToOffer(response.action, response.reason, response.meta || {}, offer).finally(() => {
@@ -296,7 +295,7 @@ export = class Trades {
         meta: UnknownDictionary<any>,
         offer: TradeOfferManager.TradeOffer
     ): Promise<void> {
-        this.bot.handler.onOfferAction(offer, action, reason);
+        this.bot.handler.onOfferAction(offer, action, reason, meta);
 
         let actionFunc: () => Promise<any>;
 

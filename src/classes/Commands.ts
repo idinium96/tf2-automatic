@@ -29,6 +29,7 @@ const COMMANDS: string[] = [
     '!price [amount] <name> - Get the price and stock of an item💱',
     '!stock - Get a list of items that the bot has📊',
     '!rate - Get current key prices🗝📈',
+    '!message <your message> - Send a message to the owner of the bot💬',
     '!buy [amount] <name> - Instantly buy an item➡',
     '!sell [amount] <name> - Instantly sell an item⬅',
     '!buycart [amount] <name> - Adds an item you want to buy to the cart➡🛒',
@@ -58,7 +59,8 @@ const ADMIN_COMMANDS: string[] = [
     '!trades - Get a list of offers pending for manual review🧾💱',
     '!trade <offerID> - Get info about a trade🧐💱',
     '!accepttrade <offerID> - Manually accept an active offer✅💱',
-    '!declinetrade <offerID> - Manually decline an active offer❌💱'
+    '!declinetrade <offerID> - Manually decline an active offer❌💱',
+    '!message <steamid> <your message> - Send a message to a user💬'
 ];
 
 export = class Commands {
@@ -87,6 +89,8 @@ export = class Commands {
             this.stockCommand(steamID);
         } else if (command === 'rate') {
             this.rateCommand(steamID);
+        } else if (command === 'message') {
+            this.messageCommand(steamID, message);
         } else if (command === 'cart') {
             this.cartCommand(steamID);
         } else if (command === 'clearcart') {
@@ -340,6 +344,94 @@ export = class Commands {
                 keyPrice +
                 ' is the same as one key.'
         );
+    }
+
+    private messageCommand(steamID: SteamID, message: string): void {
+        const isAdmin = this.bot.isAdmin(steamID);
+        const parts = message.split(' ');
+
+        if (process.env.DISABLE_MESSAGES === 'true') {
+            if (isAdmin) {
+                this.bot.sendMessage(
+                    steamID,
+                    'The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
+                );
+            } else {
+                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+            }
+            return;
+        }
+
+        const adminDetails = this.bot.friends.getFriend(steamID);
+
+        if (isAdmin) {
+            if (parts.length < 3) {
+                this.bot.sendMessage(
+                    steamID,
+                    'Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
+                );
+                return;
+            }
+
+            const recipient = parts[1];
+
+            const recipientSteamID = new SteamID(recipient);
+
+            if (!recipientSteamID.isValid()) {
+                this.bot.sendMessage(steamID, '"' + recipient + '" is not a valid steamid.');
+                return;
+            } else if (!this.bot.friends.isFriend(recipientSteamID)) {
+                this.bot.sendMessage(steamID, 'I am not friends with the user.');
+                return;
+            }
+
+            const recipentDetails = this.bot.friends.getFriend(recipientSteamID);
+
+            const reply = message.substr(message.toLowerCase().indexOf(recipient) + 18);
+
+            // Send message to recipient
+            this.bot.sendMessage(
+                recipient,
+                'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+            );
+
+            // Send confirmation message to admin
+            this.bot.sendMessage(steamID, 'Your message has been sent.');
+
+            // Send message to all other wadmins that an admin replied
+            this.bot.messageAdmins(
+                (adminDetails ? adminDetails.player_name + ' (' + steamID + ')' : steamID) +
+                    ' sent a message to ' +
+                    (recipentDetails ? recipentDetails.player_name + ' (' + recipientSteamID + ')' : recipientSteamID) +
+                    ' with "' +
+                    reply +
+                    '".',
+                [steamID]
+            );
+            return;
+        } else {
+            const admins = this.bot.getAdmins();
+            if (!admins || admins.length === 0) {
+                // Just default to same message as if it was disabled
+                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                return;
+            }
+
+            const msg = message.substr(message.toLowerCase().indexOf('message') + 8);
+            if (!msg) {
+                this.bot.sendMessage(steamID, 'Please include a message. Here\'s an example: "!message Hi"');
+                return;
+            }
+
+            this.bot.messageAdmins(
+                'Message from ' +
+                    (adminDetails ? adminDetails.player_name + ' (' + steamID + ')' : steamID) +
+                    ': ' +
+                    msg,
+                []
+            );
+            this.bot.sendMessage(steamID, 'Your message has been sent.');
+        }
     }
 
     private cartCommand(steamID: SteamID): void {
@@ -1316,14 +1408,6 @@ export = class Commands {
     }
 
     private tradesCommand(steamID: SteamID): void {
-        if (process.env.ENABLE_MANUAL_REVIEW === 'false') {
-            this.bot.sendMessage(
-                steamID,
-                '❌Manual review is disabled, enable it by setting `ENABLE_MANUAL_REVIEW` to true'
-            );
-            return;
-        }
-
         // Go through polldata and find active offers
 
         const pollData = this.bot.manager.pollData;
@@ -1343,7 +1427,7 @@ export = class Commands {
 
             if (data === null) {
                 continue;
-            } else if (data?.action.action !== 'skip') {
+            } else if (data?.action?.action !== 'skip') {
                 continue;
             }
 
@@ -1369,7 +1453,7 @@ export = class Commands {
                 ' from ' +
                 offer.data.partner +
                 ' (reason: ' +
-                offer.data.action.reason +
+                offer.data.action.meta.uniqueReason.join(', ') +
                 ')';
         }
 
@@ -1379,7 +1463,7 @@ export = class Commands {
     private tradeCommand(steamID: SteamID, message: string): void {
         const offerId = CommandParser.removeCommand(message).trim();
 
-        if (!offerId) {
+        if (offerId === '') {
             this.bot.sendMessage(steamID, 'Missing offer id. Example: "!trade 1234"❌');
             return;
         }
@@ -1399,7 +1483,7 @@ export = class Commands {
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
-        if (offerData?.action.action !== 'skip') {
+        if (offerData?.action?.action !== 'skip') {
             this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
             return;
         }
@@ -1414,7 +1498,7 @@ export = class Commands {
             ' from ' +
             offerData.partner +
             ' is pending for review (reason: ' +
-            offerData.action.reason +
+            offerData.action.meta.uniqueReason.join(', ') +
             '). Summary:\n';
 
         const value: { our: Currency; their: Currency } = offerData.value;
@@ -1476,7 +1560,10 @@ export = class Commands {
 
         this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
             if (err) {
-                this.bot.sendMessage(steamID, '❌Ohh nooooes! Something went wrong while trying to accept the offer.');
+                this.bot.sendMessage(
+                    steamID,
+                    '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                );
                 return;
             }
 
@@ -1486,7 +1573,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to accept the offer.'
+                        '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                     );
                 }
             });
@@ -1523,7 +1610,10 @@ export = class Commands {
 
         this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
             if (err) {
-                this.bot.sendMessage(steamID, '❌Ohh nooooes! Something went wrong while trying to decline the offer.');
+                this.bot.sendMessage(
+                    steamID,
+                    '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                );
                 return;
             }
 
@@ -1533,7 +1623,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to decline the offer.'
+                        '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                     );
                 }
             });

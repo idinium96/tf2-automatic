@@ -12,8 +12,9 @@
         "strictNullChecks": false,
         "typeRoots": ["./types/modules", "./node_modules/@types"],
         "esModuleInterop": true,
+        "resolveJsonModule": true,
         "forceConsistentCasingInFileNames": true
     },
-    "exclude": ["./node_modules"],
+    "exclude": ["./node_modules", "./src/template.discordWebhookPriceUpdate.json", "./src/template.discordWebhookOfferReview.json", "./src/template.discordWebhookAcceptedTrade.json"],
     "include": ["./src"]
 }
