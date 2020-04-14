@@ -1408,14 +1408,6 @@ export = class Commands {
     }
 
     private tradesCommand(steamID: SteamID): void {
-        if (process.env.ENABLE_MANUAL_REVIEW === 'false') {
-            this.bot.sendMessage(
-                steamID,
-                '❌Manual review is disabled, enable it by setting `ENABLE_MANUAL_REVIEW` to true'
-            );
-            return;
-        }
-
         // Go through polldata and find active offers
 
         const pollData = this.bot.manager.pollData;
@@ -1471,7 +1463,7 @@ export = class Commands {
     private tradeCommand(steamID: SteamID, message: string): void {
         const offerId = CommandParser.removeCommand(message).trim();
 
-        if (!offerId) {
+        if (offerId === '') {
             this.bot.sendMessage(steamID, 'Missing offer id. Example: "!trade 1234"❌');
             return;
         }
@@ -1491,7 +1483,7 @@ export = class Commands {
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
-        if (offerData?.action.action !== 'skip') {
+        if (offerData?.action?.action !== 'skip') {
             this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
             return;
         }
