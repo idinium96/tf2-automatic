@@ -279,11 +279,6 @@ export = class Trades {
                 response: response
             });
 
-            if (!response) {
-                this.finishProcessingOffer(offer.id);
-                return;
-            }
-
             this.applyActionToOffer(response.action, response.reason, response.meta || {}, offer).finally(() => {
                 this.finishProcessingOffer(offer.id);
             });
@@ -296,7 +291,7 @@ export = class Trades {
         meta: UnknownDictionary<any>,
         offer: TradeOfferManager.TradeOffer
     ): Promise<void> {
-        this.bot.handler.onOfferAction(offer, action, reason);
+        this.bot.handler.onOfferAction(offer, action, reason, meta);
 
         let actionFunc: () => Promise<any>;
 
