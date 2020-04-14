@@ -29,6 +29,7 @@
 
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
+                "DISABLE_MESSAGES": false,
 
                 "SKIP_BPTF_TRADEOFFERURL": false,
                 "SKIP_ACCOUNT_LIMITATIONS": true,
@@ -41,7 +42,7 @@
 
                 "ADMINS": ["<your steamid 64>"],
                 "KEEP": ["<steamid of person to keep in friendslist>"],
-                "GROUPS": ["103582791462300957"],
+                "GROUPS": ["103582791464047777", "103582791462300957"],
                 "ALERTS": ["trade"],
 
                 "DEBUG": true,

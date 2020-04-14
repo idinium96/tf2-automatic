@@ -591,7 +591,8 @@ export = class MyHandler extends Handler {
                         ' with ' +
                         offer.partner.getSteamID64() +
                         ' is accepted. Summary:\n' +
-                        offer.summarize(this.bot.schema)
+                        offer.summarize(this.bot.schema),
+                    []
                 );
             }
         }
@@ -667,7 +668,8 @@ export = class MyHandler extends Handler {
                     ' is waiting for review, reason: ' +
                     reason +
                     '\nOffer Summary:\n' +
-                    offer.summarize(this.bot.schema)
+                    offer.summarize(this.bot.schema),
+                []
             );
         }
     }
