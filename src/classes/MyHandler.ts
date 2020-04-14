@@ -735,28 +735,22 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema) +
-                    '\n\nNote:\n❌INVALID_VALUE - ' +
+                    '\n\nNote:\nINVALID_VALUE - ' +
                     process.env.INVALID_VALUE_NOTE
                     ? process.env.INVALID_VALUE_NOTE
                     : 'Your offer will be ignored. Please cancel it and make another offer with correct value.' +
-                      '\n⭕INVALID_ITEMS - ' +
+                      '\nINVALID_ITEMS - ' +
                       process.env.INVALID_ITEMS_NOTE
                     ? process.env.INVALID_ITEMS_NOTE
                     : 'Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.' +
-                      '\n⭕OVERSTOCKED - ' +
+                      '\nOVERSTOCKED - ' +
                       process.env.OVERSTOCKED_NOTE
                     ? process.env.OVERSTOCKED_NOTE
                     : "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait." +
-                      '\n⭕ESCROW - ' +
-                      process.env.ESCROW_NOTE
-                    ? process.env.ESCROW_NOTE
-                    : "You're currently has a trade restriction. My boss will accept it if you offer the correct value. Please wait. In the future, please use Steam Guard Mobile Authenticator." +
-                      '\n\n✅Owner active hours: ' +
-                      process.env.ACTIVE_HOURS_START +
-                      ' - ' +
-                      process.env.ACTIVE_HOURS_END +
-                      ' ' +
-                      process.env.TIMEZONE
+                      '\n\n' +
+                      process.env.ADDITIONAL_NOTE
+                    ? process.env.ADDITIONAL_NOTE
+                    : ''
             );
             this.bot.messageAdmins(
                 'Offer #' +
