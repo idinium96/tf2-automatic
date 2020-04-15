@@ -340,7 +340,7 @@ export = class MyHandler extends Handler {
             if (offer.itemsToGive.length === 0 && ['donate', 'gift'].includes(offer.message.toLowerCase())) {
                 offer.log(
                     'trade',
-                    'is from an admin, accepting. Summary:\n' +
+                    'is a gift offer, accepting. Summary:\n' +
                         offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
                 );
                 return resolve({ action: 'accept', reason: 'GIFT' });
@@ -356,6 +356,28 @@ export = class MyHandler extends Handler {
             const keyPrice = this.bot.pricelist.getKeyPrice();
 
             let hasOverstock = false;
+
+            // A list of things that is wrong about the offer and other information
+            const wrongAboutOffer: (
+                | {
+                      reason: 'OVERSTOCKED';
+                      sku: string;
+                      buying: boolean;
+                      diff: number;
+                      amountCanTrade: number;
+                  }
+                | {
+                      reason: 'INVALID_ITEMS';
+                      sku: string;
+                      buying: boolean;
+                      amount: number;
+                  }
+                | {
+                      reason: 'INVALID_VALUE';
+                      our: number;
+                      their: number;
+                  }
+            )[] = [];
 
             for (let i = 0; i < states.length; i++) {
                 const buying = states[i];
@@ -402,9 +424,20 @@ export = class MyHandler extends Handler {
                             // Check stock limits (not for keys)
                             const diff = itemsDiff[sku];
 
-                            if (diff !== 0 && this.bot.inventoryManager.amountCanTrade(sku, diff > 0) < diff) {
+                            const buyingOverstockCheck = diff > 0;
+                            const amountCanTrade = this.bot.inventoryManager.amountCanTrade(sku, buyingOverstockCheck);
+
+                            if (diff !== 0 && amountCanTrade < diff) {
                                 // User is taking too many / offering too many
                                 hasOverstock = true;
+
+                                wrongAboutOffer.push({
+                                    reason: 'OVERSTOCKED',
+                                    sku: sku,
+                                    buying: buyingOverstockCheck,
+                                    diff: diff,
+                                    amountCanTrade: amountCanTrade
+                                });
                             }
                         } else if (sku === '5021;6' && exchange.contains.items) {
                             // Offer contains keys and we are not trading keys, add key value
@@ -413,6 +446,13 @@ export = class MyHandler extends Handler {
                         } else if (match === null || match.intent === (buying ? 1 : 0)) {
                             // Offer contains an item that we are not trading
                             hasInvalidItems = true;
+
+                            wrongAboutOffer.push({
+                                reason: 'INVALID_ITEMS',
+                                sku: sku,
+                                buying: buying,
+                                amount: amount
+                            });
                         }
                     }
                 }
@@ -458,42 +498,79 @@ export = class MyHandler extends Handler {
                     const diff = itemsDiff['5021;6'];
                     // If the diff is greater than 0 then we are buying, less than is selling
 
-                    if (diff !== 0 && this.bot.inventoryManager.amountCanTrade('5021;6', diff > 0) < diff) {
+                    const buying = diff > 0;
+                    const amountCanTrade = this.bot.inventoryManager.amountCanTrade('5021;6', buying);
+
+                    if (diff !== 0 && amountCanTrade < diff) {
                         // User is taking too many / offering too many
                         hasOverstock = true;
+
+                        wrongAboutOffer.push({
+                            reason: 'OVERSTOCKED',
+                            sku: '5021;6',
+                            buying: buying,
+                            diff: diff,
+                            amountCanTrade: amountCanTrade
+                        });
                     }
                 }
             }
 
-            if (hasOverstock) {
-                offer.log(
-                    'info',
-                    'is taking / offering too many, ' + (manualReviewEnabled ? 'skipping' : 'declining') + '...'
-                );
-                return resolve({
-                    action: manualReviewEnabled ? 'skip' : 'decline',
-                    reason: 'OVERSTOCKED'
-                });
-            } else if (hasInvalidItems) {
-                offer.log(
-                    'info',
-                    'contains items we are not trading, ' + (manualReviewEnabled ? 'skipping' : 'declining') + '...'
-                );
-                return resolve({
-                    action: manualReviewEnabled ? 'skip' : 'decline',
-                    reason: 'INVALID_ITEMS'
+            let hasInvalidValue = false;
+
+            if (exchange.our.value > exchange.their.value) {
+                // Check if the values are correct
+                hasInvalidValue = true;
+                wrongAboutOffer.push({
+                    reason: 'INVALID_VALUE',
+                    our: exchange.our.value,
+                    their: exchange.their.value
                 });
             }
 
-            // Check if the values are correct
-            if (exchange.our.value > exchange.their.value) {
-                // We are offering more than them, decline the offer
-                offer.log(
-                    'info',
-                    'is not offering enough, ' + (manualReviewEnabled ? 'skipping' : 'declining') + '...'
-                );
-                return resolve({ action: manualReviewEnabled ? 'skip' : 'decline', reason: 'INVALID_VALUE' });
-            } else if (exchange.our.value < exchange.their.value && process.env.ALLOW_OVERPAY === 'false') {
+            const reasons = wrongAboutOffer.map(wrong => wrong.reason);
+            const uniqueReasons = reasons.filter(reason => reasons.includes(reason));
+
+            if (!manualReviewEnabled) {
+                if (hasOverstock) {
+                    offer.log('info', 'is taking / offering too many, declining...');
+                    return resolve({
+                        action: 'decline',
+                        reason: 'OVERSTOCKED',
+                        meta: {
+                            uniqueReasons: uniqueReasons,
+                            reasons: wrongAboutOffer
+                        }
+                    });
+                }
+
+                if (hasInvalidItems) {
+                    offer.log('info', 'contains items we are not trading, declining...');
+                    return resolve({
+                        action: 'decline',
+                        reason: 'INVALID_ITEMS',
+                        meta: {
+                            uniqueReasons: uniqueReasons,
+                            reasons: wrongAboutOffer
+                        }
+                    });
+                }
+
+                if (hasInvalidValue) {
+                    // We are offering more than them, decline the offer
+                    offer.log('info', 'is not offering enough, declining...');
+                    return resolve({
+                        action: 'decline',
+                        reason: 'INVALID_VALUE',
+                        meta: {
+                            uniqueReasons: uniqueReasons,
+                            reasons: wrongAboutOffer
+                        }
+                    });
+                }
+            }
+
+            if (exchange.our.value < exchange.their.value && process.env.ACCEPT_OVERPAY === 'false') {
                 offer.log('info', 'is offering more than needed, declining...');
                 return resolve({ action: 'decline', reason: 'OVERPAY' });
             }
@@ -530,10 +607,21 @@ export = class MyHandler extends Handler {
                         return resolve({ action: 'decline', reason: 'BANNED' });
                     }
 
+                    if (wrongAboutOffer.length !== 0) {
+                        offer.log('info', 'offer needs review (' + uniqueReasons.join(', ') + '), skipping...');
+                        return resolve({
+                            action: 'skip',
+                            reason: 'REVIEW',
+                            meta: {
+                                uniqueReasons: uniqueReasons,
+                                reasons: wrongAboutOffer
+                            }
+                        });
+                    }
+
                     offer.log(
                         'trade',
-                        'is from an admin, accepting. Summary:\n' +
-                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
+                        'accepting. Summary:\n' + offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
                     );
 
                     return resolve({ action: 'accept', reason: 'VALID' });
@@ -593,6 +681,8 @@ export = class MyHandler extends Handler {
 
                 offer.data('isAccepted', true);
 
+                offer.log('trade', 'has been accepted.');
+
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
                     process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL
@@ -637,7 +727,12 @@ export = class MyHandler extends Handler {
         }
     }
 
-    onOfferAction(offer: TradeOffer, action: 'accept' | 'decline' | 'skip', reason: string): void {
+    onOfferAction(
+        offer: TradeOffer,
+        action: 'accept' | 'decline' | 'skip',
+        reason: string,
+        meta: UnknownDictionary<any>
+    ): void {
         const notify = offer.data('notify') === true;
 
         if (!notify) {
@@ -649,7 +744,7 @@ export = class MyHandler extends Handler {
             this.bot.sendMessage(
                 offer.partner,
                 'Your offer is waiting for review, reason: ' +
-                    reason +
+                    meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
                     '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined]\nNote for weapons: \n⚠I am BUYING 2:1 scrap OR 2:1 weapons (any 2 of YOUR weapons for 1 scrap OR any 1 of MY weapon) and;\n⚠I am SELLING 1:1 scrap OR 1:2 weapons (any 1 of MY weapon for 1 scrap OR any 2 of YOUR weapons)\n(except for other weapons that are priced differently).' +
@@ -671,7 +766,7 @@ export = class MyHandler extends Handler {
                         ' from ' +
                         offer.partner +
                         ' is waiting for review, reason: ' +
-                        reason +
+                        meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:'),
                     []
