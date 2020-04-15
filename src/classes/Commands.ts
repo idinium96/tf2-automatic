@@ -1415,7 +1415,7 @@ export = class Commands {
 
             if (data === null) {
                 continue;
-            } else if (data?.action.action !== 'skip') {
+            } else if (data?.action?.action !== 'skip') {
                 continue;
             }
 
@@ -1441,7 +1441,7 @@ export = class Commands {
                 ' from ' +
                 offer.data.partner +
                 ' (reason: ' +
-                offer.data.action.reason +
+                offer.data.action.meta.uniqueReasons.join(', ') +
                 ')';
         }
 
@@ -1486,7 +1486,7 @@ export = class Commands {
             ' from ' +
             offerData.partner +
             ' is pending for review (reason: ' +
-            offerData.action.reason +
+            offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
         const value: { our: Currency; their: Currency } = offerData.value;
@@ -1548,7 +1548,10 @@ export = class Commands {
 
         this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
             if (err) {
-                this.bot.sendMessage(steamID, '❌Ohh nooooes! Something went wrong while trying to accept the offer.');
+                this.bot.sendMessage(
+                    steamID,
+                    '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                );
                 return;
             }
 
@@ -1558,7 +1561,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to accept the offer.'
+                        '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                     );
                 }
             });
@@ -1595,7 +1598,10 @@ export = class Commands {
 
         this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
             if (err) {
-                this.bot.sendMessage(steamID, '❌Ohh nooooes! Something went wrong while trying to decline the offer.');
+                this.bot.sendMessage(
+                    steamID,
+                    '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                );
                 return;
             }
 
@@ -1605,7 +1611,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to decline the offer.'
+                        '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                     );
                 }
             });
