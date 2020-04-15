@@ -747,7 +747,7 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
-                    '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined]' +
+                    '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]' +
                     '\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
                     '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
                     '\n\nIf you need any help, add me and send "!message <your message>" to directly send your help to my boss.' +
