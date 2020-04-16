@@ -22,6 +22,30 @@ import * as files from '../lib/files';
 import paths from '../resources/paths';
 import { parseJSON, exponentialBackoff } from '../lib/helpers';
 
+function getPartnerAvatar(offer: TradeOfferManager.TradeOffer): any {
+    offer.getUserDetails(function(err, me, them) {
+        if (err) {
+            log.debug('Error getting partner Avatar, returning ? avatar');
+            return 'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+        } else {
+            log.debug('Successfully obtained partner Avatar');
+            return them.avatarFull;
+        }
+    });
+}
+
+function getPartnerName(offer: TradeOfferManager.TradeOffer): any {
+    offer.getUserDetails(function(err, me, them) {
+        if (err) {
+            log.debug('Error getting partner Name, returning as unknown.');
+            return 'unknown';
+        } else {
+            log.debug('Successfully obtained partner Name');
+            return them.personaName;
+        }
+    });
+}
+
 export = class MyHandler extends Handler {
     private readonly commands: Commands;
 
@@ -757,7 +781,7 @@ export = class MyHandler extends Handler {
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
                 process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL
             ) {
-                this.sendWebHookReviewOfferSummary(offer, reason);
+                this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
                     'review',
@@ -994,12 +1018,31 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const partnerAvatar =
-            'https://as1.ftcdn.net/jpg/02/36/88/56/500_F_236885683_BnVPOwiSE8t0vP77YrkfcCv4wVt1aSgb.jpg';
+        const partnerAvatar = offer.getUserDetails(function(err, me, them) {
+            if (err) {
+                log.debug('Error getting partner Avatar, returning ? avatar');
+                return 'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+            } else {
+                log.debug('Successfully obtained partner Avatar');
+                return them.avatarFull;
+            }
+        });
+        log.debug(partnerAvatar);
+
+        const partnerName = offer.getUserDetails(function(err, me, them) {
+            if (err) {
+                log.debug('Error getting partner Name, returning as unknown.');
+                return 'unknown';
+            } else {
+                log.debug('Successfully obtained partner Name');
+                return them.personaName;
+            }
+        });
+        log.debug(partnerName);
 
         const stringified = JSON.stringify(discordReviewOfferSummary)
             .replace(/%partnerId%/g, partnerSteamID)
-            .replace(/%partnerName%/g, '//Coming Soon//')
+            .replace(/%partnerName%/g, partnerName)
             .replace(/%partnerAvatar%/g, partnerAvatar)
             .replace(/%offerId%/g, offer.id)
             .replace(/%reason%/g, reason)
@@ -1019,7 +1062,10 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const partnerAvatar = 'https://www.pngitem.com/pimgs/m/23-230510_ok-check-todo-agenda-icon-symbol-tick-to.png';
+        const partnerAvatar = getPartnerAvatar(offer).toString();
+        log.debug(partnerAvatar);
+        const partnerName = getPartnerName(offer).toString();
+        log.debug(partnerName);
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1039,7 +1085,7 @@ export = class MyHandler extends Handler {
 
         const stringified = JSON.stringify(discordTradeSummary)
             .replace(/%partnerId%/g, partnerSteamID)
-            .replace(/%partnerName%/g, 'Coming Soon')
+            .replace(/%partnerName%/g, partnerName)
             .replace(/%tradeNum%/g, tradesMade.toString())
             .replace(/%partnerAvatar%/g, partnerAvatar)
             .replace(/%offerId%/g, offer.id)
