@@ -483,7 +483,6 @@ export default class Pricelist extends EventEmitter {
         const jsonObject = JSON.parse(stringified);
 
         request.send(JSON.stringify(jsonObject));
-        log.debug('Price change sent to webhook');
     }
 
     private getOld(): Entry[] {
