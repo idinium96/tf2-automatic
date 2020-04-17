@@ -5,7 +5,7 @@
     "embeds": [
         {
             "author": {
-                "name": "Review offer from: %partnerName%",
+                "name": "Review offer",
                 "url": "https://steamcommunity.com/profiles/%partnerId%",
                 "icon_url": "%partnerAvatar%"
             },
