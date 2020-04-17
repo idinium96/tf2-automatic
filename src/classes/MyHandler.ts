@@ -117,7 +117,7 @@ export = class MyHandler extends Handler {
                 ')'
         );
 
-        this.bot.client.gamesPlayed('tf2-automatic');
+        this.bot.client.gamesPlayed(['tf2-automatic', 440]);
         this.bot.client.setPersona(SteamUser.EPersonaState.Online);
 
         // Smelt / combine metal if needed
@@ -156,7 +156,7 @@ export = class MyHandler extends Handler {
     onLoggedOn(): void {
         if (this.bot.isReady()) {
             this.bot.client.setPersona(SteamUser.EPersonaState.Online);
-            this.bot.client.gamesPlayed('tf2-automatic');
+            this.bot.client.gamesPlayed(['tf2-automatic', 440]);
         }
     }
 
@@ -1124,6 +1124,6 @@ export = class MyHandler extends Handler {
 
     onTF2QueueCompleted(): void {
         log.debug('Queue finished');
-        this.bot.client.gamesPlayed('tf2-automatic');
+        this.bot.client.gamesPlayed(['tf2-automatic', 440]);
     }
 };
