@@ -82,3 +82,4 @@ dist/
 src/discordWebhookAcceptedTrade.json
 src/discordWebhookPriceUpdate.json
 src/discordWebhookReviewOffer.json
+src/discordWebhookPartnerMessage.json
