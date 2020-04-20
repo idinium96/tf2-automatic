@@ -62,6 +62,8 @@ declare module 'steamcommunity' {
 
         getTradeURL(callback: (err?: Error, url?: string, token?: string) => void): void;
 
+        getSteamUser(id: SteamID | string, callback: (err?: Error, user?: SteamCommunity.User) => void): void;
+
         acceptConfirmationForObject(identitySecret: string, objectID: string, callback: (err?: Error) => void): void;
     }
 
@@ -79,6 +81,21 @@ declare module 'steamcommunity' {
             membersOnline: number;
 
             join: (callback?: (err?: Error) => void) => void;
+        }
+        interface User {
+            steamID: SteamID;
+            name: string;
+            onlineState: string;
+            stateMessage: string;
+            privacyState: string;
+            visibilityState: string;
+            avatarHash: string;
+            vacBanned: string;
+            tradeBanState: string;
+            isLimitedAccount: string;
+            customURL: string;
+            groups: null;
+            primaryGroup: null;
         }
     }
 
