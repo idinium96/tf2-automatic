@@ -1,0 +1,20 @@
+{
+    "username": "※Mai⚡",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/57/576b4c1571d06974f4c256fe7d2ece9f18925787_full.jpg",
+    "content": "<@!%ownerDiscordId%>, New message!",
+    "embeds": [
+        {
+            "author": {
+                "name": "%partnerName%",
+                "url": "https://steamcommunity.com/profiles/%partnerSteamID%",
+                "icon_url": "%partnerAvatarURL%"
+            },
+            "footer": {
+                "text": "Partner SteamID: %partnerSteamID% • %currentTime%"
+            },
+            "title": "",
+            "description": "💬 %partnerMsg%",
+            "color": "15794337"
+        }
+    ]
+}
