@@ -5,18 +5,18 @@
     "embeds": [
         {
             "author": {
-                "name": "Offer Review",
+                "name": "Offer from: %partnerName%",
                 "url": "https://steamcommunity.com/profiles/%partnerId%",
                 "icon_url": "%partnerAvatar%"
             },
             "footer": {
-                "text": "Offer #%offerId% • %currentTime%"
+                "text": "Offer #%offerId% • SteamID: %partnerId% • %currentTime%"
             },
             "thumbnail": {
                 "url": ""
             },
             "title": "",
-            "description": "An offer (#%offerId%) sent by %partnerId% is waiting for review, reason: %reason%\n \nOffer Summary:\n %tradeSummary%",
+            "description": "An offer sent by %partnerName% is waiting for review, reason: %reason%\n \nOffer Summary:\n%tradeSummary%",
             "color": "15794337"
         }
     ]
