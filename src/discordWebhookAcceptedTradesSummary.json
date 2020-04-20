@@ -4,18 +4,18 @@
     "embeds": [
         {
             "author": {
-                "name": "Successful trade #%tradeNum%",
+                "name": "Trade from: %partnerName% #%tradeNum%",
                 "url": "https://steamcommunity.com/profiles/%partnerId%",
                 "icon_url": "%partnerAvatar%"
             },
             "footer": {
-                "text": "Offer #%offerId% • %currentTime%"
+                "text": "Offer #%offerId% • SteamID: %partnerId% • %currentTime%"
             },
             "thumbnail": {
                 "url": ""
             },
             "title": "",
-            "description": "A trade with %partnerId% has been marked as accepted. \nSummary:\n%tradeSummary%",
+            "description": "A trade with %partnerName% has been marked as accepted. \nSummary:\n%tradeSummary%",
             "color": "9171753"
         }
     ]

@@ -1084,23 +1084,38 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const partnerAvatar =
-            'https://as1.ftcdn.net/jpg/02/36/88/56/500_F_236885683_BnVPOwiSE8t0vP77YrkfcCv4wVt1aSgb.jpg';
+        const tradeSummary = offer.summarize(this.bot.schema);
 
-        const stringified = JSON.stringify(discordReviewOfferSummary)
-            .replace(/%partnerId%/g, partnerSteamID)
-            .replace(/%partnerName%/g, '/Coming Soon/')
-            .replace(/%partnerAvatar%/g, partnerAvatar)
-            .replace(/%offerId%/g, offer.id)
-            .replace(/%reason%/g, reason)
-            .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
-            .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-            .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+        let partnerAvatar: string;
+        let partnerName: string;
+        log.debug('getting partner Avatar and Name...');
+        offer.getUserDetails(function(err, me, them) {
+            if (err) {
+                log.debug('Error retrieving partner Avatar and Name: ', err);
+                partnerAvatar =
+                    'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+                partnerName = 'unknown';
+            } else {
+                log.debug('partner Avatar and Name retrieved. Applying...');
+                partnerAvatar = them.avatarFull;
+                log.debug(partnerAvatar);
+                partnerName = them.personaName;
+                log.debug(partnerName);
+            }
+            const stringified = JSON.stringify(discordReviewOfferSummary)
+                .replace(/%partnerId%/g, partnerSteamID)
+                .replace(/%partnerName%/g, partnerName)
+                .replace(/%partnerAvatar%/g, partnerAvatar)
+                .replace(/%offerId%/g, offer.id)
+                .replace(/%reason%/g, reason)
+                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
+                .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
-        const jsonObject = JSON.parse(stringified);
-
-        request.send(JSON.stringify(jsonObject));
-        log.debug('Review offer summary sent to webhook');
+            const jsonObject = JSON.parse(stringified);
+            request.send(JSON.stringify(jsonObject));
+            log.debug('Review offer summary sent to webhook');
+        });
     }
 
     private sendWebHookTradeSummary(offer: TradeOfferManager.TradeOffer): void {
@@ -1109,7 +1124,7 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const partnerAvatar = 'https://www.pngitem.com/pimgs/m/23-230510_ok-check-todo-agenda-icon-symbol-tick-to.png';
+        const tradeSummary = offer.summarize(this.bot.schema);
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1127,19 +1142,68 @@ export = class MyHandler extends Handler {
             ? +process.env.TRADES_MADE_STARTER_VALUE + tradesTotal
             : 0 + tradesTotal;
 
-        const stringified = JSON.stringify(discordTradeSummary)
-            .replace(/%partnerId%/g, partnerSteamID)
-            .replace(/%partnerName%/g, '/Coming Soon/')
-            .replace(/%tradeNum%/g, tradesMade.toString())
-            .replace(/%partnerAvatar%/g, partnerAvatar)
-            .replace(/%offerId%/g, offer.id)
-            .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
-            .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+        let personaName: string;
+        let avatarFull: string;
+        let avatarFullPrint: string;
+        log.debug('getting partner Avatar and Name...');
+        this.getPartnerDetails(offer, function(err, details) {
+            if (err) {
+                log.debug('Error retrieving partner Avatar and Name: ', err);
+                personaName = 'unknown';
+                avatarFullPrint =
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
+            } else {
+                log.debug('partner Avatar and Name retrieved. Applying...');
+                personaName = details.personaName;
+                log.debug(personaName);
+                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252'; //if something wrong, it'll use the default "?"" image
+                log.debug(avatarFull);
+                avatarFullPrint =
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' +
+                    avatarFull.substring(0, 2) +
+                    '/' +
+                    avatarFull +
+                    '_full.jpg';
+                log.debug(avatarFullPrint);
+            }
+            const stringified = JSON.stringify(discordTradeSummary)
+                .replace(/%partnerId%/g, partnerSteamID)
+                .replace(/%partnerName%/g, personaName)
+                .replace(/%partnerAvatar%/g, avatarFullPrint)
+                .replace(/%offerId%/g, offer.id)
+                .replace(/%tradeNum%/g, tradesMade.toString())
+                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
-        const jsonObject = JSON.parse(stringified);
+            const jsonObject = JSON.parse(stringified);
 
-        request.send(JSON.stringify(jsonObject));
-        log.debug('Accepted trade summmary sent to webhook');
+            request.send(JSON.stringify(jsonObject));
+            log.debug('Accepted trade summmary sent to webhook');
+        });
+    }
+
+    private getPartnerDetails(offer: TradeOfferManager.TradeOffer, callback: (err: any, details: any) => void): any {
+        // check state of the offer
+        if (offer.state === TradeOfferManager.ETradeOfferState.active) {
+            offer.getUserDetails(function(err, me, them) {
+                if (err) {
+                    callback(err, {});
+                } else {
+                    callback(null, them);
+                }
+            });
+        } else {
+            this.bot.community.getSteamUser(offer.partner, (err, user) => {
+                if (err) {
+                    callback(err, {});
+                } else {
+                    callback(null, {
+                        personaName: user.name,
+                        avatarFull: user.avatarHash
+                    });
+                }
+            });
+        }
     }
 
     private checkGroupInvites(): void {
