@@ -1108,10 +1108,7 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, partnerAvatar)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%reason%/g, reason)
-                .replace(
-                    /%tradeSummary%/g,
-                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
-                )
+                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
@@ -1175,10 +1172,7 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, avatarFullPrint)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
-                .replace(
-                    /%tradeSummary%/g,
-                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
-                )
+                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
             const jsonObject = JSON.parse(stringified);
