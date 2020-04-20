@@ -23,6 +23,9 @@ import validator from '../lib/validator';
 import log from '../lib/logger';
 import SchemaManager from 'tf2-schema';
 
+import { XMLHttpRequest } from 'xmlhttprequest-ts';
+import * as partnerMsgWebhook from '../discordWebhookPartnerMessage.json';
+
 const COMMANDS: string[] = [
     '!help - Get list of commands📜',
     '!how2trade - Guide on how to use and trade with the bot📋',
@@ -409,9 +412,45 @@ export = class Commands {
                 return;
             }
 
-            this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+            if (
+                (process.env.DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER =
+                    'false' && process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL)
+            ) {
+                this.sendWebhookPartnerMessage(
+                    steamID.toString(),
+                    msg,
+                    adminDetails.player_name,
+                    adminDetails.avatar_url_full
+                );
+            } else {
+                this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+            }
             this.bot.sendMessage(steamID, 'Your message has been sent.');
         }
+    }
+
+    private sendWebhookPartnerMessage(steamID: string, msg: string, theirName: string, theirAvatar: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const partnerSteamID = steamID;
+        const partnerMsg = msg;
+        const partnerName = theirName;
+        const partnerAvatar = theirAvatar;
+
+        const stringified = JSON.stringify(partnerMsgWebhook)
+            .replace(/%partnerName%/g, partnerName)
+            .replace(/%partnerAvatarURL%/g, partnerAvatar)
+            .replace(/%partnerSteamID%/g, partnerSteamID)
+            .replace(/%partnerMsg%/g, partnerMsg)
+            .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
+            .replace(/%currentTime%/g, moment().format());
+
+        const jsonObject = JSON.parse(stringified);
+
+        request.send(JSON.stringify(jsonObject));
+        log.debug('Sent partner message to webhook');
     }
 
     private cartCommand(steamID: SteamID): void {
