@@ -1156,7 +1156,7 @@ export = class MyHandler extends Handler {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
                 log.debug(personaName);
-                avatarFull = details.avatarFull;
+                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252';
                 log.debug(avatarFull);
                 avatarFullPrint =
                     'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' +
