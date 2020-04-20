@@ -1101,7 +1101,7 @@ export = class MyHandler extends Handler {
         }
     }
 
-    private sendWebHookReviewOfferSummary(offer: TradeOfferManager.TradeOffer, reason: string): void {
+    private sendWebHookReviewOfferSummary(offer: TradeOfferManager.TradeOffer, reasons: string): void {
         const request = new XMLHttpRequest();
         request.open('POST', process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL);
         request.setRequestHeader('Content-type', 'application/json');
@@ -1115,7 +1115,7 @@ export = class MyHandler extends Handler {
             .replace(/%partnerName%/g, '//Coming Soon//')
             .replace(/%partnerAvatar%/g, partnerAvatar)
             .replace(/%offerId%/g, offer.id)
-            .replace(/%reason%/g, reason)
+            .replace(/%reason%/g, reasons)
             .replace(/%tradeSummary%/g, offer.summarize(this.bot.schema).replace('Offered:', '\\n Offered:'))
             .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
             .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
