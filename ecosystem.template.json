@@ -43,6 +43,7 @@
 
                 "TRADES_MADE_STARTER_VALUE": 0,
 
+                "ENABLE_SHOW_ONLY_METAL": false,
                 "ENABLE_DUPE_CHECK": true,
                 "DECLINE_DUPES": false,
                 "MINIMUM_KEYS_DUPE_CHECK": 10,
