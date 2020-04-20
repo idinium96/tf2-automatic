@@ -1490,7 +1490,7 @@ export = class Commands {
     private tradeCommand(steamID: SteamID, message: string): void {
         const offerId = CommandParser.removeCommand(message).trim();
 
-        if (!offerId) {
+        if (offerId === '') {
             this.bot.sendMessage(steamID, 'Missing offer id. Example: "!trade 1234"❌');
             return;
         }
@@ -1510,7 +1510,7 @@ export = class Commands {
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
-        if (offerData?.action.action !== 'skip') {
+        if (offerData?.action?.action !== 'skip') {
             this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
             return;
         }
