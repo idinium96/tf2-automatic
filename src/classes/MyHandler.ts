@@ -1086,8 +1086,8 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
 
-        let partnerAvatar;
-        let partnerName;
+        let partnerAvatar: string;
+        let partnerName: string;
         log.debug('getting partner Avatar and Name...');
         offer.getUserDetails(function(err, me, them) {
             if (err) {
@@ -1108,7 +1108,10 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, partnerAvatar)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%reason%/g, reason)
-                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\n Offered:'))
+                .replace(
+                    /%tradeSummary%/g,
+                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
+                )
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
@@ -1142,21 +1145,21 @@ export = class MyHandler extends Handler {
             ? +process.env.TRADES_MADE_STARTER_VALUE + tradesTotal
             : 0 + tradesTotal;
 
-        let personaName;
-        let avatarFull;
-        let avatarFullPrint;
+        let personaName: string;
+        let avatarFull: string;
+        let avatarFullPrint: string;
         log.debug('getting partner Avatar and Name...');
         this.getPartnerDetails(offer, function(err, details) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 personaName = 'unknown';
-                avatarFull =
-                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg';
+                avatarFullPrint =
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
                 log.debug(personaName);
-                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252';
+                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252'; //if something wrong, it'll use the default "?"" image
                 log.debug(avatarFull);
                 avatarFullPrint =
                     'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' +
@@ -1172,7 +1175,10 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, avatarFullPrint)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
-                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\n Offered:'))
+                .replace(
+                    /%tradeSummary%/g,
+                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
+                )
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
 
             const jsonObject = JSON.parse(stringified);

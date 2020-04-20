@@ -16,7 +16,7 @@
                 "url": ""
             },
             "title": "",
-            "description": "An offer (#%offerId%) sent by %partnerId% is waiting for review, reason: %reason%\n \nOffer Summary:\n %tradeSummary%",
+            "description": "An offer (#%offerId%) sent by %partnerId% is waiting for review, reason: %reason%\n \nOffer Summary:\n%tradeSummary%",
             "color": "9171753"
         }
     ]
