@@ -96,6 +96,7 @@ declare module 'steamcommunity' {
             customURL: string;
             groups: null;
             primaryGroup: null;
+            getAvatarURL: (size: string) => void;
         }
     }
 
