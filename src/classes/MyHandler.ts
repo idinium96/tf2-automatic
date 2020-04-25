@@ -1127,6 +1127,7 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1146,36 +1147,28 @@ export = class MyHandler extends Handler {
 
         let personaName: string;
         let avatarFull: string;
-        let avatarFullPrint: string;
         log.debug('getting partner Avatar and Name...');
         this.getPartnerDetails(offer, function(err, details) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 personaName = 'unknown';
-                avatarFullPrint =
+                avatarFull =
                     'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
                 log.debug(personaName);
-                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252'; //if something wrong, it'll use the default "?"" image
+                avatarFull = details.avatarFull;
                 log.debug(avatarFull);
-                avatarFullPrint =
-                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' +
-                    avatarFull.substring(0, 2) +
-                    '/' +
-                    avatarFull +
-                    '_full.jpg';
-                log.debug(avatarFullPrint);
             }
             const stringified = JSON.stringify(discordTradeSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
                 .replace(/%partnerName%/g, personaName)
-                .replace(/%partnerAvatar%/g, avatarFullPrint)
+                .replace(/%partnerAvatar%/g, avatarFull)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
                 .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
 
@@ -1201,7 +1194,7 @@ export = class MyHandler extends Handler {
                 } else {
                     callback(null, {
                         personaName: user.name,
-                        avatarFull: user.avatarHash
+                        avatarFull: user.getAvatarURL('full')
                     });
                 }
             });
