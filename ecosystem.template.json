@@ -49,6 +49,7 @@
                 "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
                 "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
                 "OWNER_DISCORD_ID": "",
+                "TIMEZONE": "",
 
                 "TRADES_MADE_STARTER_VALUE": "",
 

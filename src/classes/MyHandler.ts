@@ -1087,6 +1087,7 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
         let partnerAvatar: string;
         let partnerName: string;
@@ -1112,7 +1113,7 @@ export = class MyHandler extends Handler {
                 .replace(/%reason%/g, reason)
                 .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
             request.send(JSON.stringify(jsonObject));
