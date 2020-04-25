@@ -478,7 +478,7 @@ export default class Pricelist extends EventEmitter {
             .replace(/%buyPrice%/g, buyPrice)
             .replace(/%sellPrice%/g, sellPrice)
             .replace(/%itemImageURL%/g, itemImageUrlPrint)
-            .replace(/%currentTime%/g, moment().format());
+            .replace(/%currentTime%/g, moment.utc().format());
 
         const jsonObject = JSON.parse(stringified);
 
