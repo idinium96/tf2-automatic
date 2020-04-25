@@ -1096,14 +1096,12 @@ export = class MyHandler extends Handler {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 partnerAvatar =
-                    'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
                 partnerName = 'unknown';
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 partnerAvatar = them.avatarFull;
-                log.debug(partnerAvatar);
                 partnerName = them.personaName;
-                log.debug(partnerName);
             }
             const stringified = JSON.stringify(discordReviewOfferSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
@@ -1117,7 +1115,6 @@ export = class MyHandler extends Handler {
 
             const jsonObject = JSON.parse(stringified);
             request.send(JSON.stringify(jsonObject));
-            log.debug('Review offer summary sent to webhook');
         });
     }
 
@@ -1158,9 +1155,7 @@ export = class MyHandler extends Handler {
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
-                log.debug(personaName);
                 avatarFull = details.avatarFull;
-                log.debug(avatarFull);
             }
             const stringified = JSON.stringify(discordTradeSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
@@ -1174,7 +1169,6 @@ export = class MyHandler extends Handler {
             const jsonObject = JSON.parse(stringified);
 
             request.send(JSON.stringify(jsonObject));
-            log.debug('Accepted trade summmary sent to webhook');
         });
     }
 
