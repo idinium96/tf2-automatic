@@ -141,7 +141,7 @@ export = class MyHandler extends Handler {
                 ')'
         );
 
-        this.bot.client.gamesPlayed('tf2-automatic');
+        this.bot.client.gamesPlayed(['tf2-automatic', 440]);
         this.bot.client.setPersona(SteamUser.EPersonaState.Online);
 
         // Smelt / combine metal if needed
@@ -180,7 +180,7 @@ export = class MyHandler extends Handler {
     onLoggedOn(): void {
         if (this.bot.isReady()) {
             this.bot.client.setPersona(SteamUser.EPersonaState.Online);
-            this.bot.client.gamesPlayed('tf2-automatic');
+            this.bot.client.gamesPlayed(['tf2-automatic', 440]);
         }
     }
 
@@ -1087,6 +1087,7 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
         let partnerAvatar: string;
         let partnerName: string;
@@ -1095,14 +1096,12 @@ export = class MyHandler extends Handler {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 partnerAvatar =
-                    'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
                 partnerName = 'unknown';
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 partnerAvatar = them.avatarFull;
-                log.debug(partnerAvatar);
                 partnerName = them.personaName;
-                log.debug(partnerName);
             }
             const stringified = JSON.stringify(discordReviewOfferSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
@@ -1112,11 +1111,10 @@ export = class MyHandler extends Handler {
                 .replace(/%reason%/g, reason)
                 .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
             request.send(JSON.stringify(jsonObject));
-            log.debug('Review offer summary sent to webhook');
         });
     }
 
@@ -1127,6 +1125,7 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1146,41 +1145,30 @@ export = class MyHandler extends Handler {
 
         let personaName: string;
         let avatarFull: string;
-        let avatarFullPrint: string;
         log.debug('getting partner Avatar and Name...');
         this.getPartnerDetails(offer, function(err, details) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 personaName = 'unknown';
-                avatarFullPrint =
+                avatarFull =
                     'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
-                log.debug(personaName);
-                avatarFull = details.avatarFull ? details.avatarFull : '72f78b4c8cc1f62323f8a33f6d53e27db57c2252'; //if something wrong, it'll use the default "?"" image
-                log.debug(avatarFull);
-                avatarFullPrint =
-                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/' +
-                    avatarFull.substring(0, 2) +
-                    '/' +
-                    avatarFull +
-                    '_full.jpg';
-                log.debug(avatarFullPrint);
+                avatarFull = details.avatarFull;
             }
             const stringified = JSON.stringify(discordTradeSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
                 .replace(/%partnerName%/g, personaName)
-                .replace(/%partnerAvatar%/g, avatarFullPrint)
+                .replace(/%partnerAvatar%/g, avatarFull)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
                 .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
 
             request.send(JSON.stringify(jsonObject));
-            log.debug('Accepted trade summmary sent to webhook');
         });
     }
 
@@ -1201,7 +1189,7 @@ export = class MyHandler extends Handler {
                 } else {
                     callback(null, {
                         personaName: user.name,
-                        avatarFull: user.avatarHash
+                        avatarFull: user.getAvatarURL('full')
                     });
                 }
             });
@@ -1280,6 +1268,6 @@ export = class MyHandler extends Handler {
 
     onTF2QueueCompleted(): void {
         log.debug('Queue finished');
-        this.bot.client.gamesPlayed('tf2-automatic');
+        this.bot.client.gamesPlayed(['tf2-automatic', 440]);
     }
 };
