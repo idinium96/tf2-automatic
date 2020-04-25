@@ -1101,9 +1101,7 @@ export = class MyHandler extends Handler {
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 partnerAvatar = them.avatarFull;
-                log.debug(partnerAvatar);
                 partnerName = them.personaName;
-                log.debug(partnerName);
             }
             const stringified = JSON.stringify(discordReviewOfferSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
@@ -1117,7 +1115,6 @@ export = class MyHandler extends Handler {
 
             const jsonObject = JSON.parse(stringified);
             request.send(JSON.stringify(jsonObject));
-            log.debug('Review offer summary sent to webhook');
         });
     }
 
@@ -1158,9 +1155,7 @@ export = class MyHandler extends Handler {
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
                 personaName = details.personaName;
-                log.debug(personaName);
                 avatarFull = details.avatarFull;
-                log.debug(avatarFull);
             }
             const stringified = JSON.stringify(discordTradeSummary)
                 .replace(/%partnerId%/g, partnerSteamID)
@@ -1174,7 +1169,6 @@ export = class MyHandler extends Handler {
             const jsonObject = JSON.parse(stringified);
 
             request.send(JSON.stringify(jsonObject));
-            log.debug('Accepted trade summmary sent to webhook');
         });
     }
 
