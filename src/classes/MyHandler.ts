@@ -1087,6 +1087,7 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
         let partnerAvatar: string;
         let partnerName: string;
@@ -1095,7 +1096,7 @@ export = class MyHandler extends Handler {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 partnerAvatar =
-                    'https://p7.hiclipart.com/preview/313/980/1020/question-mark-icon-question-mark-png.jpg';
+                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
                 partnerName = 'unknown';
             } else {
                 log.debug('partner Avatar and Name retrieved. Applying...');
@@ -1112,7 +1113,7 @@ export = class MyHandler extends Handler {
                 .replace(/%reason%/g, reason)
                 .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss') + ' UTC');
+                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
             request.send(JSON.stringify(jsonObject));
