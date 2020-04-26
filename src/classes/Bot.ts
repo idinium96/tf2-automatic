@@ -249,7 +249,8 @@ export = class Bot {
 
                 this.messageAdmins(
                     'version',
-                    `Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`,
+                    `Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nPlease run [git checkout Public && git pull && npm run build] and then restart your bot.` +
+                        '\n Contact IdiNium if you have any other problem. Thank you.',
                     []
                 );
             }
@@ -263,7 +264,7 @@ export = class Bot {
             request(
                 {
                     method: 'GET',
-                    url: 'https://raw.githubusercontent.com/Nicklason/tf2-automatic/master/package.json',
+                    url: 'https://raw.githubusercontent.com/idinium96/tf2-automatic/Public/package.json',
                     json: true
                 },
                 function(err, response, body) {
