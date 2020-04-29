@@ -82,6 +82,8 @@ export = class Commands {
 
         const isAdmin = this.bot.isAdmin(steamID);
 
+        message = removeLinkProtocol(message);
+
         if (command === 'help') {
             this.helpCommand(steamID);
         } else if (command === 'how2trade') {
@@ -2017,6 +2019,10 @@ export = class Commands {
         return fixItem(item, this.bot.schema);
     }
 };
+
+function removeLinkProtocol(message: string): string {
+    return message.replace(/(\w+:|^)\/\//g, '');
+}
 
 function summarizeItems(dict: UnknownDictionary<number>, schema: SchemaManager.Schema): string {
     if (dict === null) {
