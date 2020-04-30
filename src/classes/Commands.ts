@@ -61,8 +61,8 @@ const ADMIN_COMMANDS: string[] = [
     '!stats - Get statistics for accepted trades🔢',
     '!trades - Get a list of offers pending for manual review🧾💱',
     '!trade <offerID> - Get info about a trade🧐💱',
-    '!accepttrade <offerID> - Manually accept an active offer✅💱',
-    '!declinetrade <offerID> - Manually decline an active offer❌💱',
+    '!accepttrade <offerID> [Your Message] - Manually accept an active offer✅💱',
+    '!declinetrade <offerID> [Your Message] - Manually decline an active offer❌💱',
     '!message <steamid> <your message> - Send a message to a user💬'
 ];
 
@@ -1566,10 +1566,11 @@ export = class Commands {
     }
 
     private accepttradeCommand(steamID: SteamID, message: string): void {
-        const offerId = CommandParser.removeCommand(message).trim();
+        const parts = message.split(' ');
+        const offerId = parts[1];
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 1234"❌');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"❌');
             return;
         }
 
@@ -1604,11 +1605,23 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
+            const reply = message.substr(message.toLowerCase().indexOf(offerId) + 11);
+            const adminDetails = this.bot.friends.getFriend(steamID);
+
             this.bot.trades.applyActionToOffer('accept', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
                         '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                    );
+                    return;
+                }
+                // Send message to recipient if includes some messages
+                if (!err && reply) {
+                    this.bot.sendMessage(
+                        partnerId,
+                        'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1616,10 +1629,11 @@ export = class Commands {
     }
 
     private declinetradeCommand(steamID: SteamID, message: string): void {
-        const offerId = CommandParser.removeCommand(message).trim();
+        const parts = message.split(' ');
+        const offerId = parts[1];
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 1234❌"');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"❌');
             return;
         }
 
@@ -1654,11 +1668,23 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Declining offer...');
 
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
+            const reply = message.substr(message.toLowerCase().indexOf(offerId) + 11);
+            const adminDetails = this.bot.friends.getFriend(steamID);
+
             this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
                         '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                    );
+                    return;
+                }
+                // Send message to recipient if includes some messages
+                if (!err && reply) {
+                    this.bot.sendMessage(
+                        partnerId,
+                        'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
