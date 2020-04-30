@@ -1,5 +1,5 @@
 // TODO: Update version for each release
-process.env.BOT_VERSION = '3.5.3i';
+process.env.BOT_VERSION = '3.5.4i';
 
 import fs from 'fs';
 import path from 'path';
