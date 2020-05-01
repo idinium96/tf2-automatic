@@ -15,7 +15,7 @@
                 "url": ""
             },
             "title": "",
-            "description": "A trade with %partnerName% has been marked as accepted. \nSummary:\n%tradeSummary%",
+            "description": "A trade with %partnerName% has been marked as accepted.\n__Summary__:\n%tradeSummary%\nKey rate: %keyPrice% ref",
             "color": "15794337"
         }
     ]
