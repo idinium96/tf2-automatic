@@ -781,6 +781,7 @@ export = class MyHandler extends Handler {
                 offer.data('isAccepted', true);
 
                 offer.log('trade', 'has been accepted.');
+                const keyPrice = this.bot.pricelist.getKeyPrices();
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
@@ -795,7 +796,12 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:'),
+                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                            '\nKey rate: ' +
+                            keyPrice.buy.metal.toString() +
+                            '/' +
+                            keyPrice.sell.metal.toString() +
+                            ' ref',
                         []
                     );
                 }
@@ -833,6 +839,7 @@ export = class MyHandler extends Handler {
         meta: UnknownDictionary<any>
     ): void {
         const notify = offer.data('notify') === true;
+        const keyPrice = this.bot.pricelist.getKeyPrices();
 
         if (!notify) {
             return;
@@ -877,7 +884,12 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:'),
+                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                        '\nKey rate: ' +
+                        keyPrice.buy.metal.toString() +
+                        '/' +
+                        keyPrice.sell.metal.toString() +
+                        ' ref',
                     []
                 );
             }
@@ -1111,6 +1123,7 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const keyPrice = this.bot.pricelist.getKeyPrices();
 
         let partnerAvatar: string;
         let partnerName: string;
@@ -1132,7 +1145,11 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, partnerAvatar)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%reason%/g, reason)
-                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
+                .replace(
+                    /%offerSummary%/g,
+                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
+                )
+                .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
                 .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
@@ -1149,6 +1166,7 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarize(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const keyPrice = this.bot.pricelist.getKeyPrices();
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1186,7 +1204,11 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, avatarFull)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
-                .replace(/%tradeSummary%/g, tradeSummary.replace('Offered:', '\\nOffered:'))
+                .replace(
+                    /%tradeSummary%/g,
+                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
+                )
+                .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
