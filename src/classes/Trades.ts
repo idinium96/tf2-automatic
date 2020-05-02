@@ -91,7 +91,7 @@ export = class Trades {
 
         this.pollCount++;
 
-        received.concat(sent).forEach(offer => {
+        received.concat(sent).forEach((offer) => {
             if (offer.state !== TradeOfferManager.ETradeOfferState.Active) {
                 const ourItems = offer.data('_ourItems');
                 if (ourItems !== undefined) {
@@ -101,7 +101,7 @@ export = class Trades {
             }
         });
 
-        const activeReceived = received.filter(offer => offer.state === TradeOfferManager.ETradeOfferState.Active);
+        const activeReceived = received.filter((offer) => offer.state === TradeOfferManager.ETradeOfferState.Active);
 
         if (
             filter === TradeOfferManager.EOfferFilter.ActiveOnly &&
@@ -109,11 +109,13 @@ export = class Trades {
         ) {
             this.pollCount = 0;
 
-            const activeSent = sent.filter(offer => offer.state === TradeOfferManager.ETradeOfferState.Active);
+            const activeSent = sent.filter((offer) => offer.state === TradeOfferManager.ETradeOfferState.Active);
 
-            const receivedOnHold = received.filter(offer => offer.state === TradeOfferManager.ETradeOfferState.InEscrow)
+            const receivedOnHold = received.filter(
+                (offer) => offer.state === TradeOfferManager.ETradeOfferState.InEscrow
+            ).length;
+            const sentOnHold = sent.filter((offer) => offer.state === TradeOfferManager.ETradeOfferState.InEscrow)
                 .length;
-            const sentOnHold = sent.filter(offer => offer.state === TradeOfferManager.ETradeOfferState.InEscrow).length;
 
             log.verbose(
                 activeReceived.length +
@@ -131,11 +133,13 @@ export = class Trades {
             );
         }
 
-        activeReceived.filter(offer => offer.data('handledByUs') !== true).forEach(offer => this.enqueueOffer(offer));
+        activeReceived
+            .filter((offer) => offer.data('handledByUs') !== true)
+            .forEach((offer) => this.enqueueOffer(offer));
     }
 
     isInTrade(assetid: string): boolean {
-        return this.itemsInTrade.some(v => assetid === v);
+        return this.itemsInTrade.some((v) => assetid === v);
     }
 
     getActiveOffer(steamID: SteamID): string | null {
@@ -172,7 +176,7 @@ export = class Trades {
     getTradesWithPeople(steamIDs: SteamID[] | string[]): UnknownDictionary<number> {
         const tradesBySteamID = {};
 
-        steamIDs.forEach(function(steamID) {
+        steamIDs.forEach(function (steamID) {
             tradesBySteamID[steamID.toString()] = 0;
         });
 
@@ -218,7 +222,7 @@ export = class Trades {
         isSent: boolean
     ): Promise<TradeOfferManager.TradeOffer | null> {
         return this.getOffers().then(({ sent, received }) => {
-            const match = (isSent ? sent : received).find(v => Trades.offerEquals(offer, v));
+            const match = (isSent ? sent : received).find((v) => Trades.offerEquals(offer, v));
 
             return match === undefined ? null : match;
         });
@@ -226,7 +230,7 @@ export = class Trades {
 
     private enqueueOffer(offer: TradeOfferManager.TradeOffer): void {
         if (!this.receivedOffers.includes(offer.id)) {
-            offer.itemsToGive.forEach(item => this.setItemInTrade(item.assetid));
+            offer.itemsToGive.forEach((item) => this.setItemInTrade(item.assetid));
 
             offer.data('partner', offer.partner.getSteamID64());
 
@@ -280,8 +284,7 @@ export = class Trades {
             });
 
             if (!response) {
-                this.finishProcessingOffer(offer.id);
-                return;
+                return this.finishProcessingOffer(offer.id);
             }
 
             this.applyActionToOffer(response.action, response.reason, response.meta || {}, offer).finally(() => {
@@ -317,7 +320,7 @@ export = class Trades {
         }
 
         return actionFunc()
-            .catch(err => {
+            .catch((err) => {
                 log.warn('Failed to ' + action + ' the offer: ', err);
             })
             .finally(() => {
@@ -392,7 +395,7 @@ export = class Trades {
                         return;
                     }
 
-                    this.bot.getWebSession(true).asCallback(err => {
+                    this.bot.getWebSession(true).asCallback((err) => {
                         // If there is no error when waiting for web session, then attempt to fetch the offer right away
                         Promise.delay(err !== null ? 0 : exponentialBackoff(attempts)).then(() => {
                             resolve(this.getOffer(offerId, attempts));
@@ -449,7 +452,7 @@ export = class Trades {
             offer.data('actedOnConfirmation', true);
             offer.data('actedOnConfirmationTimestamp', start);
 
-            this.bot.community.acceptConfirmationForObject(process.env.STEAM_IDENTITY_SECRET, offer.id, err => {
+            this.bot.community.acceptConfirmationForObject(process.env.STEAM_IDENTITY_SECRET, offer.id, (err) => {
                 const confirmationTime = moment().valueOf() - start;
                 offer.data('confirmationTime', confirmationTime);
 
@@ -482,7 +485,7 @@ export = class Trades {
                         return;
                     }
 
-                    this.bot.getWebSession(true).asCallback(err => {
+                    this.bot.getWebSession(true).asCallback((err) => {
                         // If there is no error when waiting for web session, then attempt to fetch the offer right away
                         Promise.delay(err !== null ? 0 : exponentialBackoff(attempts)).then(() => {
                             resolve(this.acceptOfferRetry(offer, attempts));
@@ -501,7 +504,7 @@ export = class Trades {
             const start = moment().valueOf();
             offer.data('actionTimestamp', start);
 
-            offer.decline(err => {
+            offer.decline((err) => {
                 const actionTime = moment().valueOf() - start;
                 offer.data('actionTime', actionTime);
 
@@ -520,7 +523,7 @@ export = class Trades {
 
             const ourItems: TradeOfferManager.TradeOfferItem[] = [];
 
-            offer.itemsToGive.forEach(item => {
+            offer.itemsToGive.forEach((item) => {
                 this.setItemInTrade(item.assetid);
                 ourItems.push(Trades.mapItem(item));
             });
@@ -539,7 +542,7 @@ export = class Trades {
                 offer.data('actionTime', actionTime);
 
                 if (err) {
-                    offer.itemsToGive.forEach(item => this.unsetItemInTrade(item.assetid));
+                    offer.itemsToGive.forEach((item) => this.unsetItemInTrade(item.assetid));
                     return reject(err);
                 }
 
@@ -640,7 +643,7 @@ export = class Trades {
                         return;
                     }
 
-                    this.bot.getWebSession(true).asCallback(err => {
+                    this.bot.getWebSession(true).asCallback((err) => {
                         // If there is no error when waiting for web session, then attempt to fetch the offer right away
                         Promise.delay(err !== null ? 0 : exponentialBackoff(attempts)).then(() => {
                             resolve(this.sendOfferRetry(offer, attempts));
@@ -688,7 +691,7 @@ export = class Trades {
                     operation.reset();
 
                     // Wait for bot to sign in to retry
-                    this.bot.getWebSession(true).asCallback(function() {
+                    this.bot.getWebSession(true).asCallback(function () {
                         // Callback was called, ignore error from callback and retry
                         operation.retry(err);
                     });
@@ -719,18 +722,18 @@ export = class Trades {
             // Offer is active
 
             // Mark items as in trade
-            offer.itemsToGive.forEach(item => this.setItemInTrade(item.id));
+            offer.itemsToGive.forEach((item) => this.setItemInTrade(item.id));
 
             if (offer.isOurOffer && offer.data('_ourItems') === undefined) {
                 // Items are not saved for sent offer, save them
                 offer.data(
                     '_ourItems',
-                    offer.itemsToGive.map(item => Trades.mapItem(item))
+                    offer.itemsToGive.map((item) => Trades.mapItem(item))
                 );
             }
         } else {
             // Offer is not active and the items are no longer in trade
-            offer.itemsToGive.forEach(item => this.unsetItemInTrade(item.assetid));
+            offer.itemsToGive.forEach((item) => this.unsetItemInTrade(item.assetid));
 
             // Unset items
             offer.data('_ourItems', undefined);
@@ -759,7 +762,7 @@ export = class Trades {
 
         offer.data('isAccepted', true);
 
-        offer.itemsToGive.forEach(item => this.bot.inventoryManager.getInventory().removeItem(item.assetid));
+        offer.itemsToGive.forEach((item) => this.bot.inventoryManager.getInventory().removeItem(item.assetid));
 
         this.bot.inventoryManager
             .getInventory()
@@ -814,7 +817,7 @@ export = class Trades {
 
         for (let i = 0; i < a.length; i++) {
             // Find index of matching item
-            const index = copy.findIndex(item => Trades.itemEquals(item, a[i]));
+            const index = copy.findIndex((item) => Trades.itemEquals(item, a[i]));
 
             if (index === -1) {
                 // Item was not found, offers don't match
