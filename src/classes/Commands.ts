@@ -82,8 +82,6 @@ export = class Commands {
 
         const isAdmin = this.bot.isAdmin(steamID);
 
-        message = removeLinkProtocol(message);
-
         if (command === 'help') {
             this.helpCommand(steamID);
         } else if (command === 'how2trade') {
@@ -628,6 +626,7 @@ export = class Commands {
             return;
         }
 
+        message = removeLinkProtocol(message);
         const paramStr = CommandParser.removeCommand(message);
 
         const params = CommandParser.parseParams(paramStr);
@@ -672,6 +671,7 @@ export = class Commands {
             return;
         }
 
+        message = removeLinkProtocol(message);
         const paramStr = CommandParser.removeCommand(message);
 
         const params = CommandParser.parseParams(paramStr);
@@ -916,6 +916,7 @@ export = class Commands {
     }
 
     private getCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.item !== undefined) {
@@ -975,6 +976,7 @@ export = class Commands {
     }
 
     private addCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message)) as any;
 
         if (params.enabled === undefined) {
@@ -1037,6 +1039,7 @@ export = class Commands {
     }
 
     private updateCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (typeof params.intent === 'string') {
@@ -1225,6 +1228,7 @@ export = class Commands {
     }
 
     private pricecheckCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.sku === undefined) {
@@ -1692,6 +1696,7 @@ export = class Commands {
     }
 
     private removeCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.all === true) {
@@ -1777,6 +1782,7 @@ export = class Commands {
     }
 
     private getItemAndAmount(steamID: SteamID, message: string): { match: Entry; amount: number } | null {
+        message = removeLinkProtocol(message);
         let name = message;
         let amount = 1;
 
