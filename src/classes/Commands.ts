@@ -1390,7 +1390,9 @@ export = class Commands {
 
         const pollData = this.bot.manager.pollData;
         const oldestId = pollData.offerData === undefined ? undefined : Object.keys(pollData.offerData)[0];
-        const timeSince = pollData.timestamps[oldestId];
+        const timeSince = process.env.TRADING_STARTING_TIME_UNIX
+            ? +process.env.TRADING_STARTING_TIME_UNIX
+            : pollData.timestamps[oldestId];
         const totalDays = !timeSince ? 0 : now.diff(moment.unix(timeSince), 'days');
 
         const offerData = this.bot.manager.pollData.offerData;
@@ -1420,7 +1422,7 @@ export = class Commands {
             'All trades are recorded from ' +
                 pluralize('day', totalDays, true) +
                 ' ago✅\n\n Total: ' +
-                tradesTotal +
+                (process.env.LAST_TOTAL_TRADES ? +process.env.LAST_TOTAL_TRADES + tradesTotal : tradesTotal) +
                 ' \n Last 24 hours: ' +
                 trades24Hours +
                 ' \n Since beginning of today: ' +
