@@ -1492,7 +1492,7 @@ export = class Commands {
                 ' from ' +
                 offer.data.partner +
                 ' (reason: ' +
-                offer.data.action.meta.uniqueReason.join(', ') +
+                offer.data.action.meta.uniqueReasons.join(', ') +
                 ')';
         }
 
@@ -1537,7 +1537,7 @@ export = class Commands {
             ' from ' +
             offerData.partner +
             ' is pending for review (reason: ' +
-            offerData.action.meta.uniqueReason.join(', ') +
+            offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
         const value: { our: Currency; their: Currency } = offerData.value;
