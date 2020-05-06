@@ -522,18 +522,18 @@ export default class Pricelist extends EventEmitter {
         const qualityItem = parts[1];
         const qualityColor = {
             color: {
-                '0': '11711154',
-                '1': '5076053',
-                '3': '4678289',
-                '5': '8802476',
-                '6': '16766720',
-                '7': '7385162',
-                '8': '10817401',
-                '9': '7385162',
-                '11': '13593138',
-                '13': '3732395',
-                '14': '11141120',
-                '15': '16777215'
+                '0': '11711154', // Normal - #B2B2B2
+                '1': '5076053', // Genuine - #4D7455
+                '3': '4678289', // Vintage - #476291
+                '5': '8802476', // Unusual - #8650AC
+                '6': '16766720', // Unique - #FFD700
+                '7': '7385162', // Community - #70B04A
+                '8': '10817401', // Valve - #A50F79
+                '9': '7385162', //Self-Made - #70B04A
+                '11': '13593138', //Strange - #CF6A32
+                '13': '3732395', //Haunted - #38F3AB
+                '14': '11141120', //Collector's - #AA0000
+                '15': '16777215' // Decorated Weapon
             }
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
