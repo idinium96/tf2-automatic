@@ -483,7 +483,7 @@ export default class Pricelist extends EventEmitter {
         }
 
         const qualityItem = parts[1];
-        const qualityColorToJSON = JSON.stringify({
+        const qualityColor = {
             color: {
                 '0': '11711154',
                 '1': '5076053',
@@ -498,8 +498,8 @@ export default class Pricelist extends EventEmitter {
                 '14': '11141120',
                 '15': '16777215'
             }
-        });
-        const qualityColorPrint = Object.keys(JSON.parse(qualityColorToJSON).color[qualityItem]).toString();
+        };
+        const qualityColorPrint = qualityColor.color[qualityItem].toString();
         log.debug(qualityColorPrint);
 
         const stringified = JSON.stringify(discordEmbed)
