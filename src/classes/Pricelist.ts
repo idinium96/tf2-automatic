@@ -470,12 +470,22 @@ export default class Pricelist extends EventEmitter {
             itemImageUrlPrint = itemImageUrl.image_url_large;
         }
 
+        const effectsId = parts[2].replace('u', '');
+
+        let effectURL: string;
+        if (!effectsId) {
+            effectURL = '';
+        } else {
+            effectURL = 'https://backpack.tf/images/440/particles/' + effectsId + '_94x94.png';
+        }
+
         const stringified = JSON.stringify(discordEmbed)
             .replace(/%name%/g, name)
             .replace(/%sku%/g, sku)
             .replace(/%buyPrice%/g, buyPrice)
             .replace(/%sellPrice%/g, sellPrice)
             .replace(/%itemImageURL%/g, itemImageUrlPrint)
+            .replace(/%effectURL%/g, effectURL)
             .replace(/%currentTime%/g, moment.utc().format());
 
         const jsonObject = JSON.parse(stringified);
