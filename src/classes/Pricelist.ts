@@ -505,7 +505,6 @@ export default class Pricelist extends EventEmitter {
         } else {
             itemImageUrlPrint = itemImageUrl.image_url_large;
         }
-        log.debug(itemImageUrlPrint);
 
         let effectsId: string;
         if (parts[2]) {
@@ -537,7 +536,6 @@ export default class Pricelist extends EventEmitter {
             }
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
-        log.debug(qualityColorPrint);
 
         const stringified = JSON.stringify(discordEmbed)
             .replace(/%name%/g, name)
