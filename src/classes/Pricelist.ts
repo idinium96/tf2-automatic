@@ -539,7 +539,6 @@ export default class Pricelist extends EventEmitter {
             }
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
-        log.debug(qualityColorPrint);
 
         const stringified = JSON.stringify(discordEmbed)
             .replace(/%itemName%/g, itemName)
