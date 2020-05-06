@@ -1572,31 +1572,31 @@ export = class Commands {
     }
 
     private accepttradeCommand(steamID: SteamID, message: string): void {
-        const parts = message.split(' ');
-        const offerId = parts[1];
+        const offerIdAndMessage = CommandParser.removeCommand(message);
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"❌');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
+            this.bot.sendMessage(steamID, 'Offer does not exist.');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.❌');
+            this.bot.sendMessage(steamID, 'Offer is not active.');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed.");
             return;
         }
 
@@ -1604,7 +1604,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                    'Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                 );
                 return;
             }
@@ -1612,19 +1612,19 @@ export = class Commands {
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
             const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = message.substr(message.toLowerCase().indexOf(offerId) + 11);
+            const reply = offerIdAndMessage.substr(offerId.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('accept', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                        'Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                     );
                     return;
                 }
                 // Send message to recipient if includes some messages
-                if (!err && reply) {
+                if (reply) {
                     this.bot.sendMessage(
                         partnerId,
                         'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
@@ -1635,31 +1635,31 @@ export = class Commands {
     }
 
     private declinetradeCommand(steamID: SteamID, message: string): void {
-        const parts = message.split(' ');
-        const offerId = parts[1];
+        const offerIdAndMessage = CommandParser.removeCommand(message);
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"❌');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
+            this.bot.sendMessage(steamID, 'Offer does not exist.');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.❌');
+            this.bot.sendMessage(steamID, 'Offer is not active.');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed.");
             return;
         }
 
@@ -1667,7 +1667,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                    'Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                 );
                 return;
             }
@@ -1675,19 +1675,19 @@ export = class Commands {
             this.bot.sendMessage(steamID, 'Declining offer...');
 
             const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = message.substr(message.toLowerCase().indexOf(offerId) + 11);
+            const reply = offerIdAndMessage.substr(offerId.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                        'Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                     );
                     return;
                 }
                 // Send message to recipient if includes some messages
-                if (!err && reply) {
+                if (reply) {
                     this.bot.sendMessage(
                         partnerId,
                         'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
