@@ -470,7 +470,10 @@ export default class Pricelist extends EventEmitter {
             itemImageUrlPrint = itemImageUrl.image_url_large;
         }
 
-        const effectsId = parts[2].replace('u', '');
+        let effectsId: string;
+        if (parts[2]) {
+            effectsId = parts[2].replace('u', '');
+        }
 
         let effectURL: string;
         if (!effectsId) {
