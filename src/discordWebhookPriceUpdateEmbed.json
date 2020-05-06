@@ -19,7 +19,7 @@
             },
             "title": "",
             "description": " **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n[※Fumino⚡](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [※Nezuko⚡](https://steamcommunity.com/tradeoffer/new/?partner=74079494&token=Fjv0LdTs) | [※Mai⚡](https://steamcommunity.com/tradeoffer/new/?partner=116786328&token=PM828_uF)",
-            "color": "581362"
+            "color": "%qualityColor%"
         }
     ]
 }

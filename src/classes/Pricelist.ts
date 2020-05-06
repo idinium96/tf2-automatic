@@ -482,6 +482,25 @@ export default class Pricelist extends EventEmitter {
             effectURL = 'https://backpack.tf/images/440/particles/' + effectsId + '_94x94.png';
         }
 
+        const qualityItem = parts[1];
+        const qualityColor = {
+            color: {
+                '0': '11711154',
+                '1': '5076053',
+                '3': '4678289',
+                '5': '8802476',
+                '6': '16766720',
+                '7': '7385162',
+                '8': '10817401',
+                '9': '7385162',
+                '11': '13593138',
+                '13': '3732395',
+                '14': '11141120',
+                '15': '16777215'
+            }
+        };
+        const qualityColorPrint = Object.keys(qualityColor.color[qualityItem]).toString();
+
         const stringified = JSON.stringify(discordEmbed)
             .replace(/%name%/g, name)
             .replace(/%sku%/g, sku)
@@ -489,6 +508,7 @@ export default class Pricelist extends EventEmitter {
             .replace(/%sellPrice%/g, sellPrice)
             .replace(/%itemImageURL%/g, itemImageUrlPrint)
             .replace(/%effectURL%/g, effectURL)
+            .replace(/%qualityColor%/g, qualityColorPrint)
             .replace(/%currentTime%/g, moment.utc().format());
 
         const jsonObject = JSON.parse(stringified);
