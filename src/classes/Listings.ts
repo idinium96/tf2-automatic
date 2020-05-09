@@ -182,6 +182,7 @@ export = class Listings {
                 listing.remove();
             } else {
                 const newDetails = this.getDetails(listing.intent, match, pureStock);
+                const newPureStock = this.pureStock();
 
                 if (listing.details !== newDetails) {
                     // Listing details don't match, update listing with new details and price
@@ -190,7 +191,8 @@ export = class Listings {
                     listing.update({
                         time: match.time || moment().unix(),
                         details: newDetails,
-                        currencies: currencies
+                        currencies: currencies,
+                        pure: newPureStock
                     });
                 }
             }
@@ -208,6 +210,7 @@ export = class Listings {
                     sku: sku,
                     intent: 0,
                     details: this.getDetails(0, match, pureStock),
+                    pure: pureStock,
                     currencies: match.buy
                 });
             }
@@ -219,6 +222,7 @@ export = class Listings {
                     id: assetids[assetids.length - 1],
                     intent: 1,
                     details: this.getDetails(1, match, pureStock),
+                    pure: pureStock,
                     currencies: match.sell
                 });
             }
