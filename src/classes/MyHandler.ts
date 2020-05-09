@@ -1181,6 +1181,7 @@ export = class MyHandler extends Handler {
                 .replace(/%partnerAvatar%/g, avatarFull)
                 .replace(/%offerId%/g, offer.id)
                 .replace(/%tradeNum%/g, tradesMade.toString())
+                .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
                 .replace(
                     /%tradeSummary%/g,
                     tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
