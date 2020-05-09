@@ -401,6 +401,21 @@ export = class Listings {
     private getDetails(intent: 0 | 1, entry: Entry): string {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
+        const keyPrice = this.bot.pricelist.getKeyPrice().toString();
+        const pureStock: string[] = [];
+        const pure = [
+            {
+                name: 'Key',
+                amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
+            },
+            {
+                name: 'Ref',
+                amount: this.bot.inventoryManager.getInventory().getAmount('5002;6')
+            }
+        ];
+        for (let i = 0; i < pure.length; i++) {
+            pureStock.push(pure[i].name + ': ' + pure[i].amount);
+        }
 
         const details = this.templates[key]
             .replace(/%price%/g, entry[key].toString())
@@ -413,7 +428,9 @@ export = class Listings {
                     .getAmount(entry.sku)
                     .toString()
             )
-            .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString());
+            .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
+            .replace(/%pureStock%/g, 'Current pure stock: ' + pureStock + '.')
+            .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + ' ref.');
 
         return details;
     }
