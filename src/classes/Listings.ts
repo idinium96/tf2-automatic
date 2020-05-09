@@ -429,7 +429,7 @@ export = class Listings {
                     .toString()
             )
             .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-            .replace(/%pureStock%/g, 'Current pure stock: ' + pureStock + '.')
+            .replace(/%pureStock%/g, 'Current pure stock: ' + pureStock.join(', ') + '.')
             .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + ' ref.');
 
         return details;
