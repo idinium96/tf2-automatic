@@ -181,18 +181,16 @@ export = class Listings {
                 // We are not buying / selling more, remove the listing
                 listing.remove();
             } else {
-                const newDetails = this.getDetails(listing.intent, match);
-                const newPureStock = this.pureStock();
+                const newDetails = this.getDetails(listing.intent, match, pureStock);
 
-                if (listing.details !== newDetails || listing.pure !== newPureStock) {
+                if (listing.details !== newDetails) {
                     // Listing details don't match, update listing with new details and price
                     const currencies = match[listing.intent === 0 ? 'buy' : 'sell'];
 
                     listing.update({
                         time: match.time || moment().unix(),
                         details: newDetails,
-                        currencies: currencies,
-                        pure: newPureStock
+                        currencies: currencies
                     });
                 }
             }
@@ -209,9 +207,8 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     sku: sku,
                     intent: 0,
-                    details: this.getDetails(0, match),
-                    currencies: match.buy,
-                    pure: pureStock
+                    details: this.getDetails(0, match, pureStock),
+                    currencies: match.buy
                 });
             }
 
@@ -221,9 +218,8 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     id: assetids[assetids.length - 1],
                     intent: 1,
-                    details: this.getDetails(1, match),
-                    currencies: match.sell,
-                    pure: pureStock
+                    details: this.getDetails(1, match, pureStock),
+                    currencies: match.sell
                 });
             }
         }
@@ -404,11 +400,10 @@ export = class Listings {
         });
     }
 
-    private getDetails(intent: 0 | 1, entry: Entry): string {
+    private getDetails(intent: 0 | 1, entry: Entry, pureStock: string[]): string {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
         const keyPrice = this.bot.pricelist.getKeyPrice().toString();
-        const pureStock = this.pureStock();
 
         let details: string;
 

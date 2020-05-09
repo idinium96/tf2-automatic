@@ -97,7 +97,6 @@ declare module 'bptf-listings' {
             intent: 0 | 1;
             details?: string;
             currencies: object;
-            pure: string[];
             time: number;
         }
 
@@ -120,8 +119,6 @@ declare module 'bptf-listings' {
 
             details: string;
 
-            pure: string[];
-
             created: number;
 
             bump: number;
@@ -136,7 +133,6 @@ declare module 'bptf-listings' {
                 time: number;
                 currencies?: { keys: number; metal: number };
                 details?: string;
-                pure?: string[];
                 offers?: boolean;
                 buyout?: boolean;
             }): void;
