@@ -153,6 +153,8 @@ export = class Listings {
 
         const match = data && data.enabled === false ? null : this.bot.pricelist.getPrice(sku, true);
 
+        const pureStock = this.pureStock();
+
         let hasBuyListing = item.paintkit !== null;
         let hasSellListing = false;
 
@@ -179,7 +181,8 @@ export = class Listings {
                 // We are not buying / selling more, remove the listing
                 listing.remove();
             } else {
-                const newDetails = this.getDetails(listing.intent, match);
+                const newDetails = this.getDetails(listing.intent, match, pureStock);
+                const newPureStock = this.pureStock();
 
                 if (listing.details !== newDetails) {
                     // Listing details don't match, update listing with new details and price
@@ -188,7 +191,8 @@ export = class Listings {
                     listing.update({
                         time: match.time || moment().unix(),
                         details: newDetails,
-                        currencies: currencies
+                        currencies: currencies,
+                        pure: newPureStock
                     });
                 }
             }
@@ -205,7 +209,8 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     sku: sku,
                     intent: 0,
-                    details: this.getDetails(0, match),
+                    details: this.getDetails(0, match, pureStock),
+                    pure: pureStock,
                     currencies: match.buy
                 });
             }
@@ -216,7 +221,8 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     id: assetids[assetids.length - 1],
                     intent: 1,
-                    details: this.getDetails(1, match),
+                    details: this.getDetails(1, match, pureStock),
+                    pure: pureStock,
                     currencies: match.sell
                 });
             }
@@ -398,10 +404,49 @@ export = class Listings {
         });
     }
 
-    private getDetails(intent: 0 | 1, entry: Entry): string {
+    private getDetails(intent: 0 | 1, entry: Entry, pureStock: string[]): string {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
         const keyPrice = this.bot.pricelist.getKeyPrice().toString();
+
+        let details: string;
+
+        if (entry.name === 'Mann Co. Supply Crate Key' || !entry[key].toString().includes('key')) {
+            details = this.templates[key]
+                .replace(/%price%/g, entry[key].toString())
+                .replace(/%name%/g, entry.name)
+                .replace(/%max_stock%/g, entry.max.toString())
+                .replace(
+                    /%current_stock%/g,
+                    this.bot.inventoryManager
+                        .getInventory()
+                        .getAmount(entry.sku)
+                        .toString()
+                )
+                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
+                .replace(/%pureStock%/g, pureStock.join(', '))
+                .replace(/%keyPrice%/g, '');
+        } else {
+            details = this.templates[key]
+                .replace(/%price%/g, entry[key].toString())
+                .replace(/%name%/g, entry.name)
+                .replace(/%max_stock%/g, entry.max.toString())
+                .replace(
+                    /%current_stock%/g,
+                    this.bot.inventoryManager
+                        .getInventory()
+                        .getAmount(entry.sku)
+                        .toString()
+                )
+                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
+                .replace(/%pureStock%/g, pureStock.join(', '))
+                .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key.');
+        }
+
+        return details;
+    }
+
+    private pureStock(): string[] {
         const pureStock: string[] = [];
         let pure: { name: string; amount: number }[];
 
@@ -440,41 +485,6 @@ export = class Listings {
         for (let i = 0; i < pure.length; i++) {
             pureStock.push(pure[i].name + ': ' + pure[i].amount);
         }
-
-        let details: string;
-
-        if (entry.name === 'Mann Co. Supply Crate Key' || !entry[key].toString().includes('key')) {
-            details = this.templates[key]
-                .replace(/%price%/g, entry[key].toString())
-                .replace(/%name%/g, entry.name)
-                .replace(/%max_stock%/g, entry.max.toString())
-                .replace(
-                    /%current_stock%/g,
-                    this.bot.inventoryManager
-                        .getInventory()
-                        .getAmount(entry.sku)
-                        .toString()
-                )
-                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
-                .replace(/%keyPrice%/g, '');
-        } else {
-            details = this.templates[key]
-                .replace(/%price%/g, entry[key].toString())
-                .replace(/%name%/g, entry.name)
-                .replace(/%max_stock%/g, entry.max.toString())
-                .replace(
-                    /%current_stock%/g,
-                    this.bot.inventoryManager
-                        .getInventory()
-                        .getAmount(entry.sku)
-                        .toString()
-                )
-                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
-                .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key.');
-        }
-
-        return details;
+        return pureStock;
     }
 };
