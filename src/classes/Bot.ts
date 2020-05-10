@@ -154,8 +154,10 @@ export = class Bot {
 
         this.addListener(this.listingManager, 'heartbeat', this.handler.onHeartbeat.bind(this), true);
 
-        this.addListener(this.pricelist, 'pricelist', this.handler.onPricelist.bind(this.handler), false);
-        this.addListener(this.pricelist, 'price', this.handler.onPriceChange.bind(this.handler), true);
+        if (!this.listings.onResumePriceUpdate()) {
+            this.addListener(this.pricelist, 'pricelist', this.handler.onPricelist.bind(this.handler), false);
+            this.addListener(this.pricelist, 'price', this.handler.onPriceChange.bind(this.handler), true);
+        }
     }
 
     getHandler(): Handler {

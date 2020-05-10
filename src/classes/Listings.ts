@@ -18,6 +18,8 @@ export = class Listings {
 
     private removingAllListings = false;
 
+    private pausePriceUpdate = false;
+
     private cancelCheckingListings = false;
 
     private autoRelistEnabled = false;
@@ -231,6 +233,7 @@ export = class Listings {
 
     checkAll(): Promise<void> {
         return new Promise(resolve => {
+            this.onPausePriceUpdate();
             if (process.env.DISABLE_LISTINGS === 'true') {
                 return resolve();
             }
@@ -259,6 +262,7 @@ export = class Listings {
                 this.recursiveCheckPricelist(pricelist).asCallback(() => {
                     log.debug('Done checking all');
                     // Done checking all listings
+                    this.onResumePriceUpdate();
                     this.checkingAllListings = false;
                     next();
                 });
@@ -273,6 +277,16 @@ export = class Listings {
                 doneRemovingAll();
             });
         });
+    }
+
+    onPausePriceUpdate(): boolean {
+        this.pausePriceUpdate = true;
+        return this.pausePriceUpdate;
+    }
+
+    onResumePriceUpdate(): boolean {
+        this.pausePriceUpdate = false;
+        return this.pausePriceUpdate;
     }
 
     private recursiveCheckPricelist(pricelist: Entry[]): Promise<void> {
