@@ -812,7 +812,19 @@ export = class MyHandler extends Handler {
             this.sortInventory();
 
             // Update all listings
-            this.bot.listings.checkAll();
+            if (process.env.DISABLE_CHECK_ALL_LISTINGS_AFTER_TRADE === 'false') {
+                this.bot.listings.checkAll();
+            } else {
+                const diff = offer.getDiff() || {};
+
+                for (const sku in diff) {
+                    if (!Object.prototype.hasOwnProperty.call(diff, sku)) {
+                        continue;
+                    }
+
+                    this.bot.listings.checkBySKU(sku);
+                }
+            }
 
             this.inviteToGroups(offer.partner);
         }
