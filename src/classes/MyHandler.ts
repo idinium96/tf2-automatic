@@ -812,7 +812,7 @@ export = class MyHandler extends Handler {
             this.sortInventory();
 
             // Update all listings
-            this.bot.listings.checkAll();
+            this.bot.listings.checkAllWithDelay();
 
             this.inviteToGroups(offer.partner);
         }
