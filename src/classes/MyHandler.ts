@@ -811,17 +811,8 @@ export = class MyHandler extends Handler {
             // Sort inventory
             this.sortInventory();
 
-            // Update listings
-            const diff = offer.getDiff() || {};
-
-            for (const sku in diff) {
-                if (!Object.prototype.hasOwnProperty.call(diff, sku)) {
-                    continue;
-                }
-
-                this.bot.listings.checkBySKU(sku);
-                this.bot.listings.checkAll();
-            }
+            // Update all listings
+            this.bot.listings.checkAll();
 
             this.inviteToGroups(offer.partner);
         }
