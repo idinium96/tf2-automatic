@@ -820,6 +820,7 @@ export = class MyHandler extends Handler {
                 }
 
                 this.bot.listings.checkBySKU(sku);
+                this.bot.listings.checkAll();
             }
 
             this.inviteToGroups(offer.partner);
