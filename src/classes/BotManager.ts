@@ -3,6 +3,7 @@ import Bot from './Bot';
 import async from 'async';
 import SteamUser from 'steam-user';
 import SchemaManager from 'tf2-schema';
+import Listings from './Listings';
 import io from 'socket.io-client';
 import pm2 from 'pm2';
 
@@ -15,6 +16,8 @@ export = class BotManager {
     private readonly socket: SocketIOClient.Socket;
 
     private readonly schemaManager: SchemaManager;
+
+    private readonly listings: Listings;
 
     private bot: Bot = null;
 
@@ -52,7 +55,11 @@ export = class BotManager {
             log.debug('Disconnected from socket server', { reason: reason });
 
             if (reason === 'io server disconnect') {
-                this.socket.connect();
+                if (this.listings.onPausePriceUpdate) {
+                    // Do not reconnect
+                } else {
+                    this.socket.connect();
+                }
             }
         });
     }
