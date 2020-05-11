@@ -869,7 +869,7 @@ export = class MyHandler extends Handler {
                     '\nDUPE_ITEMS - ' +
                     (process.env.DUPE_ITEMS_NOTE
                         ? process.env.DUPE_ITEMS_NOTE
-                        : 'The item you offered is appeared to be duped. Please wait for my bot to review it. Thank you.') +
+                        : 'The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.') +
                     '\nDUPE_CHECK_FAILED - ' +
                     (process.env.DUPE_CHECK_FAILED_NOTE
                         ? process.env.DUPE_CHECK_FAILED_NOTE
