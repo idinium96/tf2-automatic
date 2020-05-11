@@ -401,19 +401,39 @@ export = class Listings {
     private getDetails(intent: 0 | 1, entry: Entry): string {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
+        const keyPrice = this.bot.pricelist.getKeyPrice().toString();
 
-        const details = this.templates[key]
-            .replace(/%price%/g, entry[key].toString())
-            .replace(/%name%/g, entry.name)
-            .replace(/%max_stock%/g, entry.max.toString())
-            .replace(
-                /%current_stock%/g,
-                this.bot.inventoryManager
-                    .getInventory()
-                    .getAmount(entry.sku)
-                    .toString()
-            )
-            .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString());
+        let details: string;
+
+        if (entry.name === 'Mann Co. Supply Crate Key' || !entry[key].toString().includes('key')) {
+            details = this.templates[key]
+                .replace(/%price%/g, entry[key].toString())
+                .replace(/%name%/g, entry.name)
+                .replace(/%max_stock%/g, entry.max.toString())
+                .replace(
+                    /%current_stock%/g,
+                    this.bot.inventoryManager
+                        .getInventory()
+                        .getAmount(entry.sku)
+                        .toString()
+                )
+                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
+                .replace(/%keyPrice%/g, '');
+        } else {
+            details = this.templates[key]
+                .replace(/%price%/g, entry[key].toString())
+                .replace(/%name%/g, entry.name)
+                .replace(/%max_stock%/g, entry.max.toString())
+                .replace(
+                    /%current_stock%/g,
+                    this.bot.inventoryManager
+                        .getInventory()
+                        .getAmount(entry.sku)
+                        .toString()
+                )
+                .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
+                .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key');
+        }
 
         return details;
     }

@@ -535,7 +535,7 @@ export default class Pricelist extends EventEmitter {
                 '11': '13593138', //Strange - #CF6A32
                 '13': '3732395', //Haunted - #38F3AB
                 '14': '11141120', //Collector's - #AA0000
-                '15': '16777215' // Decorated Weapon
+                '15': '16711422' // Decorated Weapon
             }
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
