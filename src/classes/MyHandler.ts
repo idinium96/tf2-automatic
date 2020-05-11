@@ -854,6 +854,8 @@ export = class MyHandler extends Handler {
                     '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]' +
                     '\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
                     '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
+                    '\n⭕DUPE_ITEMS - [Review] I will accept if you offer 15-30% more, if so, please send another trade offer. Thank you.' +
+                    '\n❌DUPE_CHECK_FAILED - [Declined] - Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.' +
                     '\n\nIf you need any help, add me and send "!message <your message>" to directly send your help to my boss.' +
                     '\nThank you.'
             );
