@@ -402,44 +402,6 @@ export = class Listings {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
         const keyPrice = this.bot.pricelist.getKeyPrice().toString();
-        const pureStock: string[] = [];
-        let pure: { name: string; amount: number }[];
-
-        if (process.env.ENABLE_SHOW_PURE_STOCK_ONLY_KEY_AND_REF === 'true') {
-            pure = [
-                {
-                    name: 'Key',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
-                },
-                {
-                    name: 'Ref',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5002;6')
-                }
-            ];
-        } else {
-            pure = [
-                {
-                    name: 'Key',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
-                },
-                {
-                    name: 'Ref',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5002;6')
-                },
-                {
-                    name: 'Rec',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5001;6')
-                },
-                {
-                    name: 'Scrap',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5000;6')
-                }
-            ];
-        }
-
-        for (let i = 0; i < pure.length; i++) {
-            pureStock.push(pure[i].name + ': ' + pure[i].amount);
-        }
 
         let details: string;
 
@@ -456,7 +418,6 @@ export = class Listings {
                         .toString()
                 )
                 .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
                 .replace(/%keyPrice%/g, '');
         } else {
             details = this.templates[key]
@@ -471,7 +432,6 @@ export = class Listings {
                         .toString()
                 )
                 .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
                 .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key.');
         }
 

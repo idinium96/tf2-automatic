@@ -68,8 +68,7 @@
                 "DEBUG": true,
                 "DEBUG_FILE": true,
 
-                "ENABLE_SHOW_PURE_STOCK_ONLY_KEY_AND_REF": false,
-                "BPTF_DETAILS_BUY": "I am buying your %name% for %price%, I have %current_stock% / %max_stock%. Pure Stock - [%pureStock%]. %keyPrice%",
+                "BPTF_DETAILS_BUY": "I am buying your %name% for %price%, I have %current_stock% / %max_stock%. %keyPrice%",
                 "BPTF_DETAILS_SELL": "I am selling my %name% for %price%, I am selling %amount_trade%. %keyPrice%",
                 "OFFER_MESSAGE": "",
 
