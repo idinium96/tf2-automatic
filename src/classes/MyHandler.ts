@@ -853,22 +853,29 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
-                    '\n\nNote:\nINVALID_VALUE - ' +
-                    process.env.INVALID_VALUE_NOTE
-                    ? process.env.INVALID_VALUE_NOTE
-                    : 'Your offer will be ignored. Please cancel it and make another offer with correct value.' +
-                      '\nINVALID_ITEMS - ' +
-                      process.env.INVALID_ITEMS_NOTE
-                    ? process.env.INVALID_ITEMS_NOTE
-                    : 'Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.' +
-                      '\nOVERSTOCKED - ' +
-                      process.env.OVERSTOCKED_NOTE
-                    ? process.env.OVERSTOCKED_NOTE
-                    : "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait." +
-                      '\n\n' +
-                      process.env.ADDITIONAL_NOTE
-                    ? process.env.ADDITIONAL_NOTE
-                    : ''
+                    '\n\nNote:' +
+                    '\nINVALID_VALUE - ' +
+                    (process.env.INVALID_VALUE_NOTE
+                        ? process.env.INVALID_VALUE_NOTE
+                        : 'Your offer will be ignored. Please cancel it and make another offer with correct value.') +
+                    '\nINVALID_ITEMS - ' +
+                    (process.env.INVALID_ITEMS_NOTE
+                        ? process.env.INVALID_ITEMS_NOTE
+                        : 'Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.') +
+                    '\nOVERSTOCKED - ' +
+                    (process.env.OVERSTOCKED_NOTE
+                        ? process.env.OVERSTOCKED_NOTE
+                        : "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.") +
+                    '\nDUPE_ITEMS - ' +
+                    (process.env.DUPE_ITEMS_NOTE
+                        ? process.env.DUPE_ITEMS_NOTE
+                        : 'The item you offered is appeared to be duped. Please wait for my bot to review it. Thank you.') +
+                    '\nDUPE_CHECK_FAILED - ' +
+                    (process.env.DUPE_CHECK_FAILED_NOTE
+                        ? process.env.DUPE_CHECK_FAILED_NOTE
+                        : 'Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.') +
+                    '\n\n' +
+                    (process.env.ADDITIONAL_NOTE ? process.env.ADDITIONAL_NOTE : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
