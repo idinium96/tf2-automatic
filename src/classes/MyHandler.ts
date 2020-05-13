@@ -1194,7 +1194,7 @@ export = class MyHandler extends Handler {
                     tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
                 )
                 .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
-                .replace(/%pureStock%/g, pureStock.toString())
+                .replace(/%pureStock%/g, pureStock.join(', ').toString())
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
