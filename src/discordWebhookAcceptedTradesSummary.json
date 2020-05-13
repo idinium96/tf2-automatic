@@ -16,7 +16,7 @@
                 "url": ""
             },
             "title": "",
-            "description": "A trade with %partnerName% has been marked as accepted.\n__Summary__:\n%tradeSummary%\nKey rate: %keyPrice% ref\nPure stock: %pureStock%\n[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [View my backpack](https://backpack.tf/profiles/76561198053911511)",
+            "description": "A trade with %partnerName% has been marked as accepted.\n__Summary__:\n%tradeSummary%\nKey rate: %keyPrice% ref | Pure stock: %pureStock% ref\n[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [View my backpack](https://backpack.tf/profiles/76561198053911511)",
             "color": "9171753"
         }
     ]
