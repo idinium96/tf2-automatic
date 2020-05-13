@@ -1229,8 +1229,8 @@ export = class MyHandler extends Handler {
 
     private pureStock(): string[] {
         const pureStock: string[] = [];
-        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5002;6') * (1 / 9);
-        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5002;6') * (1 / 3);
+        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
         const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
         const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
         const pure = [
