@@ -1255,7 +1255,7 @@ export = class MyHandler extends Handler {
                 ' ref = ' +
                 pureScrapTotal.toString() +
                 ' scrap = ' +
-                pure[2].amount.toString() +
+                pure[1].amount.toString() +
                 ' ref.'
         );
         return pureStock;
