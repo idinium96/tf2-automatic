@@ -1246,18 +1246,6 @@ export = class MyHandler extends Handler {
         for (let i = 0; i < pure.length; i++) {
             pureStock.push(pure[i].name + ': ' + pure[i].amount);
         }
-        log.debug(
-            pureScrap.toString() +
-                ' ref + ' +
-                pureRec.toString() +
-                ' ref + ' +
-                pureRef.toString() +
-                ' ref = ' +
-                pureScrapTotal.toString() +
-                ' scrap = ' +
-                pure[1].amount.toString() +
-                ' ref.'
-        );
         return pureStock;
     }
 
