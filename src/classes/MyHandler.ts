@@ -782,6 +782,7 @@ export = class MyHandler extends Handler {
 
                 offer.log('trade', 'has been accepted.');
                 const keyPrice = this.bot.pricelist.getKeyPrices();
+                const pureStock = this.pureStock();
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
@@ -801,7 +802,8 @@ export = class MyHandler extends Handler {
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
-                            ' ref',
+                            ' ref | Pure stock: ' +
+                            pureStock.join(', ').toString(),
                         []
                     );
                 }
@@ -1174,6 +1176,7 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarize(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const pureStock = this.pureStock();
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1216,6 +1219,7 @@ export = class MyHandler extends Handler {
                     tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
                 )
                 .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
+                .replace(/%pureStock%/g, pureStock.join(', ').toString())
                 .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
 
             const jsonObject = JSON.parse(stringified);
@@ -1246,6 +1250,28 @@ export = class MyHandler extends Handler {
                 }
             });
         }
+    }
+
+    private pureStock(): string[] {
+        const pureStock: string[] = [];
+        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
+        const pure = [
+            {
+                name: 'Key',
+                amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
+            },
+            {
+                name: 'Ref',
+                amount: Currencies.toRefined(pureScrapTotal)
+            }
+        ];
+        for (let i = 0; i < pure.length; i++) {
+            pureStock.push(pure[i].name + ': ' + pure[i].amount);
+        }
+        return pureStock;
     }
 
     private checkGroupInvites(): void {
