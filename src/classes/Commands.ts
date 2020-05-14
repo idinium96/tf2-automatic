@@ -601,7 +601,24 @@ export = class Commands {
                     position +
                     ' infront of you.🚶🏻‍♂️🚶🏻‍♂️'
             );
+            if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
+                if (
+                    process.env.DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT === 'false' &&
+                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL !== undefined
+                ) {
+                    this.sendWebhookQueueAlert(position);
+                } else {
+                    this.bot.messageAdmins('[Queue alert] Current position: ' + position, []);
+                }
+            }
         }
+    }
+
+    private sendWebhookQueueAlert(position: number): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+        request.send(JSON.stringify('[Queue alert] Current position: ' + position));
     }
 
     private depositCommand(steamID: SteamID, message: string): void {
