@@ -1,0 +1,25 @@
+{
+    "username": "※Nezuko⚡",
+    "avatar_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/61/617f217886c7c64f8a4f04e19fb0b3a13feebd2b_full.jpg",
+    "embeds": [
+        {
+            "author": {
+                "name": "%name%",
+                "url": "https://www.prices.tf/items/%sku%",
+                "icon_url": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg"
+            },
+            "footer": {
+                "text": "Item's SKU: %sku% • %currentTime%"
+            },
+            "thumbnail": {
+                "url": "%itemImageURL%"
+            },
+            "image": {
+                "url": "%effectURL%"
+            },
+            "title": "",
+            "description": " **※Buying for:** %buyPrice%\n **※Selling for:** %sellPrice%\n[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=74079494&token=Fjv0LdTs) | [View my backpack](https://backpack.tf/profiles/76561198034345222)",
+            "color": "%qualityColor%"
+        }
+    ]
+}

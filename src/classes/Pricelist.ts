@@ -7,6 +7,9 @@ import Currencies from 'tf2-currencies';
 import SKU from 'tf2-sku';
 import SchemaManager from 'tf2-schema';
 
+import { XMLHttpRequest } from 'xmlhttprequest-ts';
+import * as discordEmbed from '../discordWebhookPriceUpdateEmbed.json';
+
 import log from '../lib/logger';
 import { getPricelist, getPrice } from '../lib/ptf-api';
 import validator from '../lib/validator';
@@ -432,13 +435,121 @@ export default class Pricelist extends EventEmitter {
             match.buy = new Currencies(data.buy);
             match.sell = new Currencies(data.sell);
             match.time = data.time;
+
+            const name = this.schema.getName(SKU.fromString(match.sku), false);
+
             this.priceChanged(match.sku, match);
+
+            if (process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false') {
+                this.sendWebHookPriceUpdate(name, match.buy.toString(), match.sell.toString(), data.sku);
+            }
         }
     }
 
     private priceChanged(sku: string, entry: Entry): void {
         this.emit('price', sku, entry);
         this.emit('pricelist', this.prices);
+    }
+
+    private sendWebHookPriceUpdate(name: string, buyPrice: string, sellPrice: string, sku: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+
+        const parts = sku.split(';');
+        const newSku = parts[0] + ';6';
+        const item = SKU.fromString(newSku);
+        const newName = this.schema.getName(item, false);
+
+        const itemImageUrl = this.schema.getItemByItemName(newName);
+
+        const paintCan = {
+            canColor: {
+                '5052;6': '2f4f4f', // A Color Similar to Slate
+                '5031;6': '7d4071', // A Deep Commitment to Purple
+                '5040;6': '141414', // A Distinctive Lack of Hue
+                '5076;6': 'bcddb3', // A Mann's Mint
+                '5077;6': '2d2d24', // After Eight
+                '5038;6': '7e7e7e', // Aged Moustache Grey
+                '5063;6': '654740', // An Air of Debonair
+                '5039;6': 'e6e6e6', // An Extraordinary Abundance of Tinge
+                '5037;6': 'e7b53b', // Australium Gold
+                '5062;6': '3b1f23', // Balaclavas Are Forever
+                '5030;6': 'd8bed8', // Color No. 216-190-216
+                '5065;6': 'c36c2d', // Cream Spirit
+                '5056;6': 'e9967a', // Dark Salmon Injustice
+                '5053;6': '808000', // Drably Olive
+                '5027;6': '729e42', // Indubitably Green
+                '5032;6': 'cf7336', // Mann Co. Orange
+                '5033;6': 'a57545', // Muskelmannbraun
+                '5029;6': '51384a', // Noble Hatter's Violet
+                '5060;6': '483838', // Operator's Overalls
+                '5034;6': 'c5af91', // Peculiarly Drab Tincture
+                '5051;6': 'ff69b4', // Pink as Hell
+                '5035;6': '694d3a', // Radigan Conagher Brown
+                '5046;6': 'b8383b', // Team Spirit
+                '5054;6': '32cd32', // The Bitter Taste of Defeat and Lime
+                '5055;6': 'f0e68c', // The Color of a Gentlemann's Business Pants
+                '5064;6': '803020', // The Value of Teamwork
+                '5061;6': 'a89a8c', // Waterlogged Lab Coat
+                '5036;6': '7c6c57', // Ye Olde Rustic Colour
+                '5028;6': '424f3b' // Zepheniah's Greed
+            }
+        };
+
+        let itemImageUrlPrint: string;
+        if (!itemImageUrl) {
+            itemImageUrlPrint = 'https://jberlife.com/wp-content/uploads/2019/07/sorry-image-not-available.jpg';
+        } else if (Object.keys(paintCan.canColor).includes(newSku)) {
+            itemImageUrlPrint = 'https://backpack.tf/images/440/cans/Paint_Can_' + paintCan.canColor[newSku] + '.png';
+        } else {
+            itemImageUrlPrint = itemImageUrl.image_url_large;
+        }
+
+        let effectsId: string;
+        if (parts[2]) {
+            effectsId = parts[2].replace('u', '');
+        }
+
+        let effectURL: string;
+        if (!effectsId) {
+            effectURL = '';
+        } else {
+            effectURL = 'https://backpack.tf/images/440/particles/' + effectsId + '_94x94.png';
+        }
+
+        const qualityItem = parts[1];
+        const qualityColor = {
+            color: {
+                '0': '11711154', // Normal - #B2B2B2
+                '1': '5076053', // Genuine - #4D7455
+                '3': '4678289', // Vintage - #476291
+                '5': '8802476', // Unusual - #8650AC
+                '6': '16766720', // Unique - #FFD700
+                '7': '7385162', // Community - #70B04A
+                '8': '10817401', // Valve - #A50F79
+                '9': '7385162', //Self-Made - #70B04A
+                '11': '13593138', //Strange - #CF6A32
+                '13': '3732395', //Haunted - #38F3AB
+                '14': '11141120', //Collector's - #AA0000
+                '15': '16711422' // Decorated Weapon
+            }
+        };
+        const qualityColorPrint = qualityColor.color[qualityItem].toString();
+
+        const stringified = JSON.stringify(discordEmbed)
+            .replace(/%name%/g, name)
+            .replace(/%sku%/g, sku)
+            .replace(/%buyPrice%/g, buyPrice)
+            .replace(/%sellPrice%/g, sellPrice)
+            .replace(/%itemImageURL%/g, itemImageUrlPrint)
+            .replace(/%effectURL%/g, effectURL)
+            .replace(/%qualityColor%/g, qualityColorPrint)
+            .replace(/%currentTime%/g, moment.utc().format());
+
+        const jsonObject = JSON.parse(stringified);
+
+        request.send(JSON.stringify(jsonObject));
     }
 
     private getOld(): Entry[] {
