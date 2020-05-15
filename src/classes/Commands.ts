@@ -31,7 +31,6 @@ const COMMANDS: string[] = [
     '!how2trade - Guide on how to use and trade with the bot📋',
     '!price [amount] <name> - Get the price and stock of an item💱',
     '!stock - Get a list of items that the bot has📊',
-    '!weapon - Get craft weapons stock',
     '!rate - Get current key prices🗝📈',
     '!message <Your Messages> - Send a message to the owner of the bot💬',
     '!buy [amount] <name> - Instantly buy an item➡',
@@ -49,6 +48,7 @@ const ADMIN_COMMANDS: string[] = [
     '!deposit - Used to deposit items',
     '!withdraw - Used to withdraw items',
     '!get - Get raw information about a pricelist entry',
+    '!craftweapon - Get craft weapons stock',
     '!add - Add a pricelist entry',
     '!remove - Remove a pricelist entry',
     '!update - Update a pricelist entry',
@@ -93,8 +93,8 @@ export = class Commands {
             this.priceCommand(steamID, message);
         } else if (command === 'stock') {
             this.stockCommand(steamID);
-        } else if (command === 'weapon') {
-            this.weaponCommand(steamID);
+        } else if (command === 'craftweapon' && isAdmin) {
+            this.craftweaponCommand(steamID);
         } else if (command === 'message') {
             this.messageCommand(steamID, message);
         } else if (command === 'rate') {
@@ -332,10 +332,12 @@ export = class Commands {
         this.bot.sendMessage(steamID, reply);
     }
 
-    private weaponCommand(steamID: SteamID): void {
-        const weaponStock = this.craftWeapons();
+    private craftweaponCommand(steamID: SteamID): void {
+        const crafWeaponStock = this.craftWeapons();
 
-        const reply = "📃Here's a list of all craft weapons stock in my inventory:\n" + weaponStock.join(', \n');
+        const reply =
+            "📃Here's a list of all craft weapons stock in my inventory:\n(Selling for 1 scrap each or any 2 of your weapons and Buying any 2 of your weapons for 1 scrap or any 1 of my waepon)\n\n" +
+            crafWeaponStock.join(', \n');
 
         this.bot.sendMessage(steamID, reply);
     }
@@ -2664,7 +2666,11 @@ export = class Commands {
         ];
 
         for (let i = 0; i < craftWeapons.length; i++) {
-            craftWeaponsStock.push(craftWeapons[i].name + ': ' + craftWeapons[i].amount);
+            craftWeaponsStock.push(
+                craftWeapons[i].name +
+                    ': ' +
+                    (craftWeapons[i].amount < 3 ? craftWeapons[i].amount + ' ⚠' : craftWeapons[i].amount)
+            );
         }
         return craftWeaponsStock;
     }
