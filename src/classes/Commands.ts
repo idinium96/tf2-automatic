@@ -2669,7 +2669,7 @@ export = class Commands {
             craftWeaponsStock.push(
                 craftWeapons[i].name +
                     ': ' +
-                    (craftWeapons[i].amount < 3 ? craftWeapons[i].amount + ' ⚠' : craftWeapons[i].amount)
+                    (craftWeapons[i].amount < 3 ? craftWeapons[i].amount + ' ❗❗' : craftWeapons[i].amount + ' ✅')
             );
         }
         return craftWeaponsStock;
