@@ -2108,10 +2108,6 @@ export = class Commands {
                 amount: this.bot.inventoryManager.getInventory().getAmount('131;6')
             },
             {
-                name: "Battalion's Backup",
-                amount: this.bot.inventoryManager.getInventory().getAmount('226;6')
-            },
-            {
                 name: "Cleaner's Carbine",
                 amount: this.bot.inventoryManager.getInventory().getAmount('751;6')
             },
@@ -2152,10 +2148,6 @@ export = class Commands {
                 amount: this.bot.inventoryManager.getInventory().getAmount('425;6')
             },
             {
-                name: 'Bonk! Atomic Punch',
-                amount: this.bot.inventoryManager.getInventory().getAmount('46;6')
-            },
-            {
                 name: 'Flare Gun',
                 amount: this.bot.inventoryManager.getInventory().getAmount('39;6')
             },
@@ -2194,10 +2186,6 @@ export = class Commands {
             {
                 name: "Pretty Boy's Pocket Pistol",
                 amount: this.bot.inventoryManager.getInventory().getAmount('773;6')
-            },
-            {
-                name: 'Buff Banner',
-                amount: this.bot.inventoryManager.getInventory().getAmount('129;6')
             },
             {
                 name: 'Quick-Fix',
