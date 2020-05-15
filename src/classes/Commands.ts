@@ -619,15 +619,11 @@ export = class Commands {
         request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
         request.setRequestHeader('Content-type', 'application/json');
         const ownerID = process.env.OWNER_DISCORD_ID;
-        request.send(
-            JSON.stringify(
-                '{"username": "※Nezuko⚡", "content": <@!' +
-                    ownerID +
-                    '> "[Queue alert] Current position: ' +
-                    position +
-                    '"}'
-            )
-        );
+        const discordQueue = {
+            username: '※Nezuko⚡',
+            content: '<@!' + ownerID + '> [Queue alert] Current position: ' + position
+        };
+        request.send(JSON.stringify(discordQueue));
     }
 
     private depositCommand(steamID: SteamID, message: string): void {
