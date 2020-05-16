@@ -851,11 +851,11 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
-                    '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]' +
-                    '\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
-                    '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
-                    '\n⭕DUPE_ITEMS - [Review] I will accept if you offer 15-30% more, if so, please send another trade offer. Thank you.' +
-                    '\n❌DUPE_CHECK_FAILED - [Declined] - Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.' +
+                    '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered] - If the margin is too large, I will ignore/decline your offer. If it is just missing 5 ref or less, I will accept it so please wait.' +
+                    '\n⭕INVALID_ITEMS - [Review] Some item(s) that you have offered might not in my pricelist (like if you offered weapons/craft hats or so), but my boss will review it. Please wait.' +
+                    '\n⭕OVERSTOCKED - [Review] Some item(s) that you offered reached my maximum amount I can have and my boss will review it. Please wait.' +
+                    '\n⭕DUPE_ITEMS - [Review] My boss will accept if you offer 15-30% more, if so, please send another trade offer. Thank you.' +
+                    '\n❌DUPE_CHECK_FAILED - [Declined/Reconsidered] - Backpack.tf still does not recognize your item Original ID to check for the duped item. You can try again later. Check it yourself by going to your item history page and make sure your profile/inventory is not private. Thank you.' +
                     '\n\nIf you need any help, add me and send "!message <your message>" to directly send your help to my boss.' +
                     '\nThank you.'
             );
