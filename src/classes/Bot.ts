@@ -81,6 +81,8 @@ export = class Bot {
 
     private admins: SteamID[] = [];
 
+    private botAdmins: SteamID[] = [];
+
     private alertTypes: string[] = [];
 
     private ready = false;
@@ -132,6 +134,16 @@ export = class Bot {
             }
         });
 
+        this.botAdmins = (process.env.BOT_ADMINS === undefined ? [] : JSON.parse(process.env.BOT_ADMINS)).map(
+            (steamID: string) => new SteamID(steamID)
+        );
+
+        this.botAdmins.forEach(function(steamID) {
+            if (!steamID.isValid()) {
+                throw new Error('Invalid admin steamID');
+            }
+        });
+
         this.alertTypes = process.env.ALERTS === undefined ? [] : JSON.parse(process.env.ALERTS);
 
         this.addListener(this.client, 'loggedOn', this.handler.onLoggedOn.bind(this.handler), false);
@@ -169,6 +181,15 @@ export = class Bot {
 
     getAdmins(): SteamID[] {
         return this.admins;
+    }
+
+    isBotAdmin(steamID: SteamID | string): boolean {
+        const steamID64 = steamID.toString();
+        return this.botAdmins.some(adminSteamID => adminSteamID.toString() === steamID64);
+    }
+
+    getBotAdmins(): SteamID[] {
+        return this.botAdmins;
     }
 
     getAlertTypes(): string[] {

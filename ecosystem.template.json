@@ -70,6 +70,7 @@
                 "MAX_PRICE_AGE": 28800,
 
                 "ADMINS": ["<your steamid 64>"],
+                "BOT_ADMINS": ["<your other bot steamid 64>"],
                 "KEEP": ["<steamid of person to keep in friendslist>"],
                 "GROUPS": ["103582791462300957"],
                 "ALERTS": ["none"],

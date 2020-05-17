@@ -82,6 +82,8 @@ export = class Commands {
 
         const isAdmin = this.bot.isAdmin(steamID);
 
+        const isBotAdmin = this.bot.isBotAdmin(steamID);
+
         message = removeLinkProtocol(message);
 
         if (command === 'help') {
@@ -106,9 +108,9 @@ export = class Commands {
             this.queueCommand(steamID);
         } else if (command === 'cancel') {
             this.cancelCommand(steamID);
-        } else if (command === 'deposit' && isAdmin) {
+        } else if (command === 'deposit' && (isAdmin || isBotAdmin)) {
             this.depositCommand(steamID, message);
-        } else if (command === 'withdraw' && isAdmin) {
+        } else if (command === 'withdraw' && (isAdmin || isBotAdmin)) {
             this.withdrawCommand(steamID, message);
         } else if (command === 'buycart') {
             this.buyCartCommand(steamID, message);
@@ -151,14 +153,19 @@ export = class Commands {
         } else if (command === 'declinetrade' && isAdmin) {
             this.declinetradeCommand(steamID, message);
         } else {
-            this.bot.sendMessage(steamID, '❌I don\'t know what you mean, please type "!help" for all my commands!');
+            if (!this.bot.isBotAdmin(steamID)) {
+                this.bot.sendMessage(
+                    steamID,
+                    '❌I don\'t know what you mean, please type "!help" for all my commands!'
+                );
+            }
         }
     }
 
     private helpCommand(steamID: SteamID): void {
         let reply = "👨🏻‍💻Here's a list of all my commands:\n- " + COMMANDS.join('\n- ');
 
-        if (this.bot.isAdmin(steamID)) {
+        if (this.bot.isAdmin(steamID) || this.bot.isBotAdmin(steamID)) {
             reply += '\n\nAdmin commands:\n- ' + ADMIN_COMMANDS.join('\n- ');
         }
 

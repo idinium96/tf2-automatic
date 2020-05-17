@@ -88,7 +88,9 @@ export = class MyHandler extends Handler {
             this.groups = groups;
         }
 
-        const friendsToKeep = parseJSON(process.env.KEEP).concat(this.bot.getAdmins());
+        const friendsToKeep = parseJSON(process.env.KEEP)
+            .concat(this.bot.getAdmins())
+            .concat(this.bot.getBotAdmins());
         if (friendsToKeep !== null && Array.isArray(friendsToKeep)) {
             friendsToKeep.forEach(function(steamID64) {
                 if (!new SteamID(steamID64).isValid()) {
@@ -338,7 +340,7 @@ export = class MyHandler extends Handler {
         offer.data('dict', itemsDict);
 
         // Check if the offer is from an admin
-        if (this.bot.isAdmin(offer.partner)) {
+        if (this.bot.isAdmin(offer.partner) || this.bot.isBotAdmin(offer.partner)) {
             offer.log(
                 'trade',
                 'is from an admin, accepting. Summary:\n' +
@@ -979,6 +981,17 @@ export = class MyHandler extends Handler {
                 });
             }
         });
+
+        this.bot.getBotAdmins().forEach(steamID => {
+            if (!this.bot.friends.isFriend(steamID)) {
+                log.info('Not friends with bot admin ' + steamID + ', sending friend request...');
+                this.bot.client.addFriend(steamID, function(err) {
+                    if (err) {
+                        log.warn('Failed to send friend request: ', err);
+                    }
+                });
+            }
+        });
     }
 
     private respondToFriendRequest(steamID: SteamID | string): void {
@@ -1016,13 +1029,15 @@ export = class MyHandler extends Handler {
                 if (tries >= 5) {
                     log.info('I am now friends with ' + steamID.getSteamID64());
 
-                    this.bot.sendMessage(
-                        steamID,
-                        '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
-                            (isAdmin ? 'help' : 'how2trade') +
-                            '" 🤗'
-                    );
-                    return;
+                    if (!this.bot.isBotAdmin(steamID)) {
+                        this.bot.sendMessage(
+                            steamID,
+                            '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
+                                (isAdmin ? 'help' : 'how2trade') +
+                                '" 🤗'
+                        );
+                        return;
+                    }
                 }
 
                 log.debug('Waiting for name');
@@ -1036,14 +1051,16 @@ export = class MyHandler extends Handler {
 
             log.info('I am now friends with ' + friend.player_name + ' (' + steamID.getSteamID64() + ')');
 
-            this.bot.sendMessage(
-                steamID,
-                '🙋🏻‍♀️Hi ' +
-                    friend.player_name +
-                    '! If you don\'t know how things work, please type "!' +
-                    (isAdmin ? 'help' : 'how2trade') +
-                    '" 🤗'
-            );
+            if (!this.bot.isBotAdmin(steamID)) {
+                this.bot.sendMessage(
+                    steamID,
+                    '🙋🏻‍♀️Hi ' +
+                        friend.player_name +
+                        '! If you don\'t know how things work, please type "!' +
+                        (isAdmin ? 'help' : 'how2trade') +
+                        '" 🤗'
+                );
+            }
         });
     }
 
