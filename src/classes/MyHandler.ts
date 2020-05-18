@@ -1102,7 +1102,7 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarize(this.bot.schema);
+        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const keyPrice = this.bot.pricelist.getKeyPrices();
 
@@ -1145,7 +1145,7 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarize(this.bot.schema);
+        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const pureStock = this.pureStock();

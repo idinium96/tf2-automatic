@@ -115,7 +115,7 @@ import CEconItem from 'steamcommunity/classes/CEconItem.js';
 
 import TradeOffer from 'steam-tradeoffer-manager/lib/classes/TradeOffer';
 
-['log', 'summarize', 'getDiff'].forEach(function(v) {
+['log', 'summarize', 'getDiff', 'summarizeWithLink'].forEach(function(v) {
     TradeOffer.prototype[v] = require('./lib/extend/offer/' + v);
 });
 
