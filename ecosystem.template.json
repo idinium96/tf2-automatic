@@ -63,13 +63,13 @@
                 "DEBUG": false,
                 "DEBUG_FILE": true,
 
-                "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
-                "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
-
                 "DISCORD_OWNER_ID": "",
                 "DISCORD_WEBHOOK_USERNAME": "※Nezuko⚡",
                 "DISCORD_WEBHOOK_AVATAR_URL": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/61/617f217886c7c64f8a4f04e19fb0b3a13feebd2b_full.jpg",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "10551537",
+
+                "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
+                "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
 
                 "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
                 "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",
