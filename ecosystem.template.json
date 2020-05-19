@@ -37,7 +37,6 @@
                 "MINIMUM_RECLAIMED": 9,
                 "METAL_THRESHOLD": 9,
 
-                "DISABLE_CHECK_ALL_LISTINGS_AFTER_TRADE": true,
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
                 "DISABLE_MESSAGES": false,

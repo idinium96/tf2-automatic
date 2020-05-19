@@ -809,19 +809,15 @@ export = class MyHandler extends Handler {
             // Sort inventory
             this.sortInventory();
 
-            // Update all listings
-            if (process.env.DISABLE_CHECK_ALL_LISTINGS_AFTER_TRADE === 'false') {
-                this.bot.listings.checkAll();
-            } else {
-                const diff = offer.getDiff() || {};
+            // Update listings
+            const diff = offer.getDiff() || {};
 
-                for (const sku in diff) {
-                    if (!Object.prototype.hasOwnProperty.call(diff, sku)) {
-                        continue;
-                    }
-
-                    this.bot.listings.checkBySKU(sku);
+            for (const sku in diff) {
+                if (!Object.prototype.hasOwnProperty.call(diff, sku)) {
+                    continue;
                 }
+
+                this.bot.listings.checkBySKU(sku);
             }
 
             this.inviteToGroups(offer.partner);
