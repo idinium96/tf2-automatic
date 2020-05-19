@@ -784,7 +784,7 @@ export = class MyHandler extends Handler {
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
-                    process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL !== undefined
+                    process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL
                 ) {
                     this.sendWebHookTradeSummary(offer);
                 } else {
@@ -879,7 +879,7 @@ export = class MyHandler extends Handler {
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
-                process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL !== undefined
+                process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL
             ) {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
