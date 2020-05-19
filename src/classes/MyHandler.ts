@@ -14,8 +14,6 @@ import Currencies from 'tf2-currencies';
 import SKU from 'tf2-sku';
 import async from 'async';
 
-import * as discordTradeSummary from '../discordWebhookAcceptedTrade.json';
-import * as discordReviewOfferSummary from '../discordWebhookReviewOffer.json';
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
 import moment from 'moment';
 
@@ -786,7 +784,7 @@ export = class MyHandler extends Handler {
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
-                    process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL
+                    process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL !== undefined
                 ) {
                     this.sendWebHookTradeSummary(offer);
                 } else {
@@ -881,7 +879,7 @@ export = class MyHandler extends Handler {
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
-                process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL
+                process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL !== undefined
             ) {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
@@ -1130,7 +1128,7 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarize(this.bot.schema);
+        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const keyPrice = this.bot.pricelist.getKeyPrices();
 
@@ -1148,22 +1146,50 @@ export = class MyHandler extends Handler {
                 partnerAvatar = them.avatarFull;
                 partnerName = them.personaName;
             }
-            const stringified = JSON.stringify(discordReviewOfferSummary)
-                .replace(/%partnerId%/g, partnerSteamID)
-                .replace(/%partnerName%/g, partnerName)
-                .replace(/%partnerAvatar%/g, partnerAvatar)
-                .replace(/%offerId%/g, offer.id)
-                .replace(/%reason%/g, reason)
-                .replace(
-                    /%offerSummary%/g,
-                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
-                )
-                .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
-                .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
-
-            const jsonObject = JSON.parse(stringified);
-            request.send(JSON.stringify(jsonObject));
+            /*eslint-disable */
+            const webhookReview = JSON.stringify({
+                username: process.env.DISCORD_WEBHOOK_USERNAME,
+                avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+                content: '<@!' + process.env.DISCORD_OWNER_ID + '>, check this!',
+                embeds: [
+                    {
+                        author: {
+                            name: 'Offer from: ' + partnerName,
+                            url: 'https://steamcommunity.com/profiles/' + partnerSteamID,
+                            icon_url: partnerAvatar
+                        },
+                        footer: {
+                            text:
+                                'Offer #' +
+                                offer.id +
+                                '• SteamID: ' +
+                                partnerSteamID +
+                                ' • ' +
+                                moment().format('MMMM Do YYYY, HH:mm:ss ') +
+                                timeZone
+                        },
+                        thumbnail: {
+                            url: ''
+                        },
+                        title: '',
+                        description:
+                            'An offer sent by ' +
+                            partnerName +
+                            'is waiting for review, reason: ' +
+                            reason +
+                            '\n\n__Offer Summary__:\n' +
+                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            '\nKey rate: ' +
+                            keyPrice.buy.metal.toString() +
+                            '/' +
+                            keyPrice.sell.metal.toString() +
+                            ' ref',
+                        color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
+                    }
+                ]
+            });
+            /*eslint-enable */
+            request.send(webhookReview);
         });
     }
 
@@ -1173,10 +1199,14 @@ export = class MyHandler extends Handler {
         request.setRequestHeader('Content-type', 'application/json');
 
         const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarize(this.bot.schema);
+        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const pureStock = this.pureStock();
+        const mentionOwner =
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true'
+                ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
+                : '';
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1208,23 +1238,53 @@ export = class MyHandler extends Handler {
                 personaName = details.personaName;
                 avatarFull = details.avatarFull;
             }
-            const stringified = JSON.stringify(discordTradeSummary)
-                .replace(/%partnerId%/g, partnerSteamID)
-                .replace(/%partnerName%/g, personaName)
-                .replace(/%partnerAvatar%/g, avatarFull)
-                .replace(/%offerId%/g, offer.id)
-                .replace(/%tradeNum%/g, tradesMade.toString())
-                .replace(
-                    /%tradeSummary%/g,
-                    tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\\n**Offered:**')
-                )
-                .replace(/%keyPrice%/g, keyPrice.buy.metal.toString() + '/' + keyPrice.sell.metal.toString())
-                .replace(/%pureStock%/g, pureStock.join(', ').toString())
-                .replace(/%currentTime%/g, moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone);
-
-            const jsonObject = JSON.parse(stringified);
-
-            request.send(JSON.stringify(jsonObject));
+            /*eslint-disable */
+            const acceptedTradeSummary = JSON.stringify({
+                username: process.env.DISCORD_WEBHOOK_USERNAME,
+                avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+                content: mentionOwner,
+                embeds: [
+                    {
+                        author: {
+                            name: 'Trade from: ' + personaName + ' #' + tradesMade.toString(),
+                            url: 'https://steamcommunity.com/profiles/' + partnerSteamID,
+                            icon_url: avatarFull
+                        },
+                        footer: {
+                            text:
+                                'Offer #' +
+                                offer.id +
+                                '• SteamID: ' +
+                                partnerSteamID +
+                                '• ' +
+                                moment().format('MMMM Do YYYY, HH:mm:ss ') +
+                                timeZone
+                        },
+                        thumbnail: {
+                            url: ''
+                        },
+                        title: '',
+                        description:
+                            'A trade with ' +
+                            personaName +
+                            'has been marked as accepted.\n__Summary__:\n' +
+                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            '\nKey rate: ' +
+                            keyPrice.buy.metal.toString() +
+                            '/' +
+                            keyPrice.sell.metal.toString() +
+                            ' ref | Pure stock: ' +
+                            pureStock.join(', ').toString() +
+                            'ref\n' +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                                ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                                : ''),
+                        color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
+                    }
+                ]
+            });
+            /*eslint-enable */
+            request.send(acceptedTradeSummary);
         });
     }
 

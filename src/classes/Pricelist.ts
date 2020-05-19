@@ -8,7 +8,6 @@ import SKU from 'tf2-sku';
 import SchemaManager from 'tf2-schema';
 
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import * as discordEmbed from '../discordWebhookPriceUpdate.json';
 
 import log from '../lib/logger';
 import { getPricelist, getPrice } from '../lib/ptf-api';
@@ -442,7 +441,7 @@ export default class Pricelist extends EventEmitter {
 
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false' &&
-                process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL
+                process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL !== undefined
             ) {
                 this.sendWebHookPriceUpdate(itemName, match.buy.toString(), match.sell.toString(), data.sku);
             }
@@ -540,19 +539,44 @@ export default class Pricelist extends EventEmitter {
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
 
-        const stringified = JSON.stringify(discordEmbed)
-            .replace(/%itemName%/g, itemName)
-            .replace(/%sku%/g, sku)
-            .replace(/%buyPrice%/g, buyPrice)
-            .replace(/%sellPrice%/g, sellPrice)
-            .replace(/%itemImageURL%/g, itemImageUrlPrint)
-            .replace(/%effectURL%/g, effectURL)
-            .replace(/%qualityColor%/g, qualityColorPrint)
-            .replace(/%currentTime%/g, moment.utc().format());
+        /*eslint-disable */
+        const priceUpdate = JSON.stringify({
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            embeds: [
+                {
+                    author: {
+                        name: itemName,
+                        url: 'https://www.prices.tf/items/' + sku,
+                        icon_url:
+                            'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg'
+                    },
+                    footer: {
+                        text: "Item's SKU: " + sku + '• ' + moment.utc().format()
+                    },
+                    thumbnail: {
+                        url: itemImageUrlPrint
+                    },
+                    image: {
+                        url: effectURL
+                    },
+                    title: '',
+                    description:
+                        '**※Buying for:** ' +
+                        buyPrice +
+                        '\n **※Selling for:** ' +
+                        sellPrice +
+                        '\n' +
+                        (process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
+                            ? process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
+                            : ''),
+                    color: qualityColorPrint
+                }
+            ]
+        });
+        /*eslint-enable */
 
-        const jsonObject = JSON.parse(stringified);
-
-        request.send(JSON.stringify(jsonObject));
+        request.send(priceUpdate);
     }
 
     private getOld(): Entry[] {

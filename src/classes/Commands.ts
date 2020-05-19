@@ -24,7 +24,6 @@ import log from '../lib/logger';
 import SchemaManager from 'tf2-schema';
 
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import * as partnerMsgWebhook from '../discordWebhookPartnerMessage.json';
 
 const COMMANDS: string[] = [
     '!help - Get list of commands📜',
@@ -395,7 +394,7 @@ export = class Commands {
             // Send message to recipient
             this.bot.sendMessage(
                 recipient,
-                'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
             );
 
             // Send confirmation message to admin
@@ -427,8 +426,8 @@ export = class Commands {
             }
 
             if (
-                (process.env.DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER =
-                    'false' && process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL)
+                process.env.DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER === 'false' &&
+                process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL !== undefined
             ) {
                 this.sendWebhookPartnerMessage(
                     steamID.toString(),
@@ -448,23 +447,37 @@ export = class Commands {
         request.open('POST', process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL);
         request.setRequestHeader('Content-type', 'application/json');
 
-        const partnerSteamID = steamID;
-        const partnerMsg = msg;
-        const partnerName = theirName;
-        const partnerAvatar = theirAvatar;
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
 
-        const stringified = JSON.stringify(partnerMsgWebhook)
-            .replace(/%partnerName%/g, partnerName)
-            .replace(/%partnerAvatarURL%/g, partnerAvatar)
-            .replace(/%partnerSteamID%/g, partnerSteamID)
-            .replace(/%partnerMsg%/g, partnerMsg)
-            .replace(/%ownerDiscordId%/g, process.env.OWNER_DISCORD_ID)
-            .replace(/%currentTime%/g, moment().format());
+        /*eslint-disable */
+        const discordPartnerMsg = JSON.stringify({
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            content: '<@!' + process.env.DISCORD_OWNER_ID + '>, new message!',
+            embeds: [
+                {
+                    author: {
+                        name: theirName,
+                        url: 'https://steamcommunity.com/profiles/' + steamID,
+                        icon_url: theirAvatar
+                    },
+                    footer: {
+                        text:
+                            'Partner SteamID: ' +
+                            steamID +
+                            ' • ' +
+                            moment().format('MMMM Do YYYY, HH:mm:ss ') +
+                            timeZone
+                    },
+                    title: '',
+                    description: '💬 ' + msg,
+                    color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
+                }
+            ]
+        });
+        /*eslint-enable */
 
-        const jsonObject = JSON.parse(stringified);
-
-        request.send(JSON.stringify(jsonObject));
-        log.debug('Sent partner message to webhook');
+        request.send(discordPartnerMsg);
     }
 
     private cartCommand(steamID: SteamID): void {
@@ -613,7 +626,32 @@ export = class Commands {
                     position +
                     ' infront of you.🚶🏻‍♂️🚶🏻‍♂️'
             );
+            if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
+                if (
+                    process.env.DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT === 'false' &&
+                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL !== undefined
+                ) {
+                    this.sendWebhookQueueAlert(position);
+                } else {
+                    this.bot.messageAdmins('[Queue alert] Current position: ' + position, []);
+                }
+            }
         }
+    }
+
+    private sendWebhookQueueAlert(position: number): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+        const ownerID = process.env.DISCORD_OWNER_ID;
+        /*eslint-disable */
+        const discordQueue = {
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            content: '<@!' + ownerID + '> [Queue alert] Current position: ' + position
+        };
+        /*eslint-enable */
+        request.send(JSON.stringify(discordQueue));
     }
 
     private depositCommand(steamID: SteamID, message: string): void {
@@ -1627,7 +1665,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1690,7 +1728,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        'Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
