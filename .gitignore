@@ -78,8 +78,3 @@ logs/
 # ignore compiled code
 dist/
 
-# ignore discord webhook files for dev
-src/discordWebhookAcceptedTrade.json
-src/discordWebhookPriceUpdate.json
-src/discordWebhookReviewOffer.json
-src/discordWebhookPartnerMessage.json
