@@ -8,7 +8,6 @@ import SKU from 'tf2-sku';
 import SchemaManager from 'tf2-schema';
 
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import * as discordEmbed from '../discordWebhookPriceUpdateEmbed.json';
 
 import log from '../lib/logger';
 import { getPricelist, getPrice } from '../lib/ptf-api';
@@ -440,7 +439,10 @@ export default class Pricelist extends EventEmitter {
 
             this.priceChanged(match.sku, match);
 
-            if (process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false') {
+            if (
+                process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false' &&
+                process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL !== undefined
+            ) {
                 this.sendWebHookPriceUpdate(name, match.buy.toString(), match.sell.toString(), data.sku);
             }
         }
@@ -451,7 +453,7 @@ export default class Pricelist extends EventEmitter {
         this.emit('pricelist', this.prices);
     }
 
-    private sendWebHookPriceUpdate(name: string, buyPrice: string, sellPrice: string, sku: string): void {
+    private sendWebHookPriceUpdate(itemName: string, buyPrice: string, sellPrice: string, sku: string): void {
         const request = new XMLHttpRequest();
         request.open('POST', process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL);
         request.setRequestHeader('Content-type', 'application/json');
@@ -537,19 +539,44 @@ export default class Pricelist extends EventEmitter {
         };
         const qualityColorPrint = qualityColor.color[qualityItem].toString();
 
-        const stringified = JSON.stringify(discordEmbed)
-            .replace(/%name%/g, name)
-            .replace(/%sku%/g, sku)
-            .replace(/%buyPrice%/g, buyPrice)
-            .replace(/%sellPrice%/g, sellPrice)
-            .replace(/%itemImageURL%/g, itemImageUrlPrint)
-            .replace(/%effectURL%/g, effectURL)
-            .replace(/%qualityColor%/g, qualityColorPrint)
-            .replace(/%currentTime%/g, moment.utc().format());
+        /*eslint-disable */
+        const priceUpdate = JSON.stringify({
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            embeds: [
+                {
+                    author: {
+                        name: itemName,
+                        url: 'https://www.prices.tf/items/' + sku,
+                        icon_url:
+                            'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg'
+                    },
+                    footer: {
+                        text: "Item's SKU: " + sku + '• ' + moment.utc().format()
+                    },
+                    thumbnail: {
+                        url: itemImageUrlPrint
+                    },
+                    image: {
+                        url: effectURL
+                    },
+                    title: '',
+                    description:
+                        '**※Buying for:** ' +
+                        buyPrice +
+                        '\n **※Selling for:** ' +
+                        sellPrice +
+                        '\n' +
+                        process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
+                            ? process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
+                            : '',
+                    color: qualityColorPrint
+                }
+            ]
+        });
+        /*eslint-enable */
 
-        const jsonObject = JSON.parse(stringified);
-
-        request.send(JSON.stringify(jsonObject));
+        request.send(priceUpdate);
     }
 
     private getOld(): Entry[] {

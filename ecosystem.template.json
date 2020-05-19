@@ -42,19 +42,6 @@
                 "DISABLE_LISTINGS": false,
                 "DISABLE_MESSAGES": false,
                 "DISABLE_QUEUE_ALERT": false,
-                "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
-                "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
-                "DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY": false,
-                "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
-                "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
-
-                "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
-                "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",
-                "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
-                "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
-                "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
-                "OWNER_DISCORD_ID": "",
-                "TIMEZONE": "",
 
                 "TRADES_MADE_STARTER_VALUE": 0,
                 "LAST_TOTAL_TRADES": 0,
@@ -75,7 +62,32 @@
                 "ALERTS": ["none"],
 
                 "DEBUG": false,
-                "DEBUG_FILE": true
+                "DEBUG_FILE": true,
+
+                "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
+                "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
+
+                "DISCORD_OWNER_ID": "",
+                "DISCORD_WEBHOOK_USERNAME": "※Nezuko⚡",
+                "DISCORD_WEBHOOK_AVATAR_URL": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/61/617f217886c7c64f8a4f04e19fb0b3a13feebd2b_full.jpg",
+                "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "10551537",
+
+                "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
+                "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",
+                "DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=74079494&token=Fjv0LdTs) | [View my backpack](https://backpack.tf/profiles/76561198034345222)",
+
+                "DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY": false,
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=74079494&token=Fjv0LdTs) | [View my backpack](https://backpack.tf/profiles/76561198034345222)",
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER": false,
+
+                "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
+                "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
+
+                "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
+                "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
+
+                "TIMEZONE": ""
             }
         }
     ]
