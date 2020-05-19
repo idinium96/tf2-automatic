@@ -30,17 +30,6 @@
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
                 "DISABLE_MESSAGES": false,
-                "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
-                "DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY": false,
-                "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
-                "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
-
-                "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",
-                "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
-                "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
-                "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
-                "OWNER_DISCORD_ID": "",
-                "TIMEZONE": "",
 
                 "TRADES_MADE_STARTER_VALUE": 0,
                 "LAST_TOTAL_TRADES": 0,
@@ -71,6 +60,27 @@
                 "BPTF_DETAILS_BUY": "I am buying your %name% for %price%, I have %current_stock% / %max_stock%. %keyPrice%.",
                 "BPTF_DETAILS_SELL": "I am selling my %name% for %price%, I am selling %amount_trade%. %keyPrice%",
                 "OFFER_MESSAGE": "",
+
+                "DISCORD_OWNER_ID": "",
+                "DISCORD_WEBHOOK_USERNAME": "",
+                "DISCORD_WEBHOOK_AVATAR_URL": "",
+                "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
+                "TIMEZONE": "",
+
+                "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
+                "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",
+                "DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [View my backpack](https://backpack.tf/profiles/76561198053911511)",
+
+                "DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY": false,
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [View my backpack](https://backpack.tf/profiles/76561198053911511)",
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER": false,
+
+                "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
+                "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
+
+                "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
+                "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
 
                 "ENABLE_MANUAL_REVIEW": true,
                 "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
