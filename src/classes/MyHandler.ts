@@ -1276,9 +1276,9 @@ export = class MyHandler extends Handler {
                             ' ref | Pure stock: ' +
                             pureStock.join(', ').toString() +
                             'ref\n' +
-                            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
-                                : '',
+                                : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]

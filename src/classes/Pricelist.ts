@@ -567,9 +567,9 @@ export default class Pricelist extends EventEmitter {
                         '\n **※Selling for:** ' +
                         sellPrice +
                         '\n' +
-                        process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
+                        (process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
                             ? process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
-                            : '',
+                            : ''),
                     color: qualityColorPrint
                 }
             ]
