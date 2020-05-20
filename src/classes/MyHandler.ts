@@ -801,7 +801,8 @@ export = class MyHandler extends Handler {
                             '/' +
                             keyPrice.sell.metal.toString() +
                             ' ref | Pure stock: ' +
-                            pureStock.join(', ').toString(),
+                            pureStock.join(', ').toString() +
+                            ' ref',
                         []
                     );
                 }
@@ -1275,7 +1276,7 @@ export = class MyHandler extends Handler {
                             keyPrice.sell.metal.toString() +
                             ' ref | Pure stock: ' +
                             pureStock.join(', ').toString() +
-                            'ref\n' +
+                            ' ref\n' +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
