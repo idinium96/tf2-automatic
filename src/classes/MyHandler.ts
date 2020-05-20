@@ -848,7 +848,8 @@ export = class MyHandler extends Handler {
                     offer
                         .summarize(this.bot.schema)
                         .replace(/Profit from overpay/g, '')
-                        .replace(/Loss from underpay/g, '') +
+                        .replace(/Loss from underpay/g, '')
+                        .replace(/:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\nNote: ' +
                           (meta.uniqueReasons.includes('INVALID_VALUE')
