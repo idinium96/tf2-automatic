@@ -87,6 +87,7 @@
                 "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
 
                 "ENABLE_MANUAL_REVIEW": true,
+                "DISABLE_REVIEW_OFFER_NOTE": false,
                 "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
                 "INVALID_ITEMS_NOTE": "Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.",
                 "OVERSTOCKED_NOTE": "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.",
@@ -191,6 +192,7 @@
                 "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
 
                 "ENABLE_MANUAL_REVIEW": true,
+                "DISABLE_REVIEW_OFFER_NOTE": false,
                 "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
                 "INVALID_ITEMS_NOTE": "Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.",
                 "OVERSTOCKED_NOTE": "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.",
