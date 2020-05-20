@@ -1587,6 +1587,9 @@ export = class Commands {
             their: UnknownDictionary<number>;
         } = offerData.dict || { our: null, their: null };
 
+        const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+        const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+
         if (!value) {
             reply +=
                 'Asked: ' +
@@ -1603,7 +1606,11 @@ export = class Commands {
                 new Currencies(value.their).toString() +
                 ' (' +
                 summarizeItems(items.their, this.bot.schema) +
-                ')';
+                (valueDiff > 0
+                    ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                    : valueDiff < 0
+                    ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                    : '');
         }
 
         this.bot.sendMessage(steamID, reply);
