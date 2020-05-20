@@ -836,8 +836,8 @@ export = class MyHandler extends Handler {
                     offer
                         .summarize(this.bot.schema)
                         .replace(/Profit from overpay/g, '')
-                        .replace(/Loss from underpay/g, '')
-                        .replace(/:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
+                        .replace(/Loss from /g, '')
+                        .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
                     '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]\nNote for weapons: \n⚠I am BUYING 2:1 scrap OR 2:1 weapons (any 2 of YOUR weapons for 1 scrap OR any 1 of MY weapon) and;\n⚠I am SELLING 1:1 scrap OR 1:2 weapons (any 1 of MY weapon for 1 scrap OR any 2 of YOUR weapons)\n(except for other weapons that are priced differently).' +
                     '\n\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
                     '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
