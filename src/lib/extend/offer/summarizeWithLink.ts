@@ -17,6 +17,9 @@ export = function(schema: SchemaManager.Schema): string {
         their: UnknownDictionary<number>;
     } = self.data('dict') || { our: null, their: null };
 
+    const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+    const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff))).toString();
+
     if (!value) {
         return (
             'Asked: ' +
@@ -30,11 +33,15 @@ export = function(schema: SchemaManager.Schema): string {
             new Currencies(value.our).toString() +
             ' (' +
             summarizeItemsWithLink(items.our, schema) +
-            ')Offered: ' +
+            ')\nOffered: ' +
             new Currencies(value.their).toString() +
             ' (' +
             summarizeItemsWithLink(items.their, schema) +
-            ')'
+            (valueDiff > 0
+                ? ')\nProfit from overpay: ' + valueDiffRef + ' ref'
+                : valueDiff < 0
+                ? ')\nLoss from underpay: ' + valueDiffRef + ' ref'
+                : '')
         );
     }
 };
