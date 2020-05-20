@@ -845,7 +845,10 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
-                    offer.summarize(this.bot.schema) +
+                    offer
+                        .summarize(this.bot.schema)
+                        .replace(/Profit from overpay/g, '')
+                        .replace(/Loss from underpay/g, '') +
                     '\n\nNote:' +
                     '\nINVALID_VALUE - ' +
                     (process.env.INVALID_VALUE_NOTE
