@@ -1610,7 +1610,7 @@ export = class Commands {
                     ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
                     : valueDiff < 0
                     ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
-                    : '');
+                    : ')');
         }
 
         this.bot.sendMessage(steamID, reply);

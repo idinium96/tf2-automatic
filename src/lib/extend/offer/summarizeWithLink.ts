@@ -41,7 +41,7 @@ export = function(schema: SchemaManager.Schema): string {
                 ? ')\nProfit from overpay: ' + valueDiffRef + ' ref'
                 : valueDiff < 0
                 ? ')\nLoss from underpay: ' + valueDiffRef + ' ref'
-                : '')
+                : ')')
         );
     }
 };
