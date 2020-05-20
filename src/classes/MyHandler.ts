@@ -784,7 +784,10 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer.summarize(this.bot.schema) +
+                            offer
+                                .summarize(this.bot.schema)
+                                .replace(/Profit from overpay/g, '📈Profit from overpay')
+                                .replace(/Loss from underpay/g, '📉Loss from underpay') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -881,7 +884,10 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema) +
+                        offer
+                            .summarize(this.bot.schema)
+                            .replace(/Profit from overpay/g, '📈Profit from overpay')
+                            .replace(/Loss from underpay/g, '📉Loss from underpay') +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
