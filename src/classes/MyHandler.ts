@@ -337,11 +337,7 @@ export = class MyHandler extends Handler {
 
         // Check if the offer is from an admin
         if (this.bot.isAdmin(offer.partner)) {
-            offer.log(
-                'trade',
-                'is from an admin, accepting. Summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-            );
+            offer.log('trade', 'is from an admin, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'ADMIN' };
         }
 
@@ -354,11 +350,7 @@ export = class MyHandler extends Handler {
         const itemsDiff = offer.getDiff();
 
         if (offer.itemsToGive.length === 0 && ['donate', 'gift'].includes(offer.message.toLowerCase())) {
-            offer.log(
-                'trade',
-                'is a gift offer, accepting. Summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-            );
+            offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'GIFT' };
         } else if (offer.itemsToReceive.length === 0 || offer.itemsToGive.length === 0) {
             offer.log('info', 'is a gift offer, declining...');
@@ -713,10 +705,7 @@ export = class MyHandler extends Handler {
             };
         }
 
-        offer.log(
-            'trade',
-            'accepting. Summary:\n' + offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-        );
+        offer.log('trade', 'accepting. Summary:\n' + offer.summarize(this.bot.schema));
 
         return { action: 'accept', reason: 'VALID' };
     }
@@ -788,7 +777,7 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                            offer.summarize(this.bot.schema) +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -844,7 +833,7 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                    offer.summarize(this.bot.schema) +
                     '\n\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]\nNote for weapons: \n⚠I am BUYING 2:1 scrap OR 2:1 weapons (any 2 of YOUR weapons for 1 scrap OR any 1 of MY weapon) and;\n⚠I am SELLING 1:1 scrap OR 1:2 weapons (any 1 of MY weapon for 1 scrap OR any 2 of YOUR weapons)\n(except for other weapons that are priced differently).' +
                     '\n\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
                     '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
@@ -865,7 +854,7 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                        offer.summarize(this.bot.schema) +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
@@ -1146,7 +1135,11 @@ export = class MyHandler extends Handler {
                             'is waiting for review, reason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            tradeSummary
+                                .replace('Asked:', '**Asked:**')
+                                .replace('Offered:', '**Offered:**')
+                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
+                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -1236,7 +1229,11 @@ export = class MyHandler extends Handler {
                             'A trade with ' +
                             personaName +
                             'has been marked as accepted.\n__Summary__:\n' +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            tradeSummary
+                                .replace('Asked:', '**Asked:**')
+                                .replace('Offered:', '**Offered:**')
+                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
+                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
