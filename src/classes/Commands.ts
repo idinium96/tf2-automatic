@@ -428,7 +428,7 @@ export = class Commands {
 
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER === 'false' &&
-                process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL !== undefined
+                process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL
             ) {
                 this.sendWebhookPartnerMessage(
                     steamID.toString(),
@@ -630,7 +630,7 @@ export = class Commands {
             if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT === 'false' &&
-                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL !== undefined
+                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL
                 ) {
                     this.sendWebhookQueueAlert(position);
                 } else {

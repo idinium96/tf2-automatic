@@ -441,7 +441,7 @@ export default class Pricelist extends EventEmitter {
 
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE === 'false' &&
-                process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL !== undefined
+                process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL
             ) {
                 this.sendWebHookPriceUpdate(name, match.buy.toString(), match.sell.toString(), data.sku);
             }
