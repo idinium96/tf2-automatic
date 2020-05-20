@@ -17,12 +17,11 @@ export = function(schema: SchemaManager.Schema): string {
         their: UnknownDictionary<number>;
     } = self.data('dict') || { our: null, their: null };
 
-    const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
-    const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
-
     if (!value) {
         return 'Asked: ' + summarizeItems(items.our, schema) + 'Offered: ' + summarizeItems(items.their, schema);
     } else {
+        const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+        const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
         return (
             'Asked: ' +
             new Currencies(value.our).toString() +
