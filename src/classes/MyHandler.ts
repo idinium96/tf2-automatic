@@ -337,11 +337,7 @@ export = class MyHandler extends Handler {
 
         // Check if the offer is from an admin
         if (this.bot.isAdmin(offer.partner)) {
-            offer.log(
-                'trade',
-                'is from an admin, accepting. Summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-            );
+            offer.log('trade', 'is from an admin, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'ADMIN' };
         }
 
@@ -354,11 +350,7 @@ export = class MyHandler extends Handler {
         const itemsDiff = offer.getDiff();
 
         if (offer.itemsToGive.length === 0 && ['donate', 'gift'].includes(offer.message.toLowerCase())) {
-            offer.log(
-                'trade',
-                'is a gift offer, accepting. Summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-            );
+            offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'GIFT' };
         } else if (offer.itemsToReceive.length === 0 || offer.itemsToGive.length === 0) {
             offer.log('info', 'is a gift offer, declining...');
@@ -713,10 +705,7 @@ export = class MyHandler extends Handler {
             };
         }
 
-        offer.log(
-            'trade',
-            'accepting. Summary:\n' + offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:')
-        );
+        offer.log('trade', 'accepting. Summary:\n' + offer.summarize(this.bot.schema));
 
         return { action: 'accept', reason: 'VALID' };
     }
@@ -795,13 +784,17 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                            offer
+                                .summarize(this.bot.schema)
+                                .replace(/Profit from overpay/g, '📈Profit from overpay')
+                                .replace(/Loss from underpay/g, '📉Loss from underpay') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
                             ' ref | Pure stock: ' +
-                            pureStock.join(', ').toString(),
+                            pureStock.join(', ').toString() +
+                            ' ref',
                         []
                     );
                 }
@@ -852,7 +845,7 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
-                    offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                    offer.summarize(this.bot.schema) +
                     '\n\nNote:' +
                     '\nINVALID_VALUE - ' +
                     (process.env.INVALID_VALUE_NOTE
@@ -891,7 +884,10 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema).replace('Offered:', '\nOffered:') +
+                        offer
+                            .summarize(this.bot.schema)
+                            .replace(/Profit from overpay/g, '📈Profit from overpay')
+                            .replace(/Loss from underpay/g, '📉Loss from underpay') +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
@@ -1178,7 +1174,11 @@ export = class MyHandler extends Handler {
                             'is waiting for review, reason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            tradeSummary
+                                .replace('Asked:', '**Asked:**')
+                                .replace('Offered:', '**Offered:**')
+                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
+                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -1268,14 +1268,18 @@ export = class MyHandler extends Handler {
                             'A trade with ' +
                             personaName +
                             'has been marked as accepted.\n__Summary__:\n' +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '\n**Offered:**') +
+                            tradeSummary
+                                .replace('Asked:', '**Asked:**')
+                                .replace('Offered:', '**Offered:**')
+                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
+                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
                             ' ref | Pure stock: ' +
                             pureStock.join(', ').toString() +
-                            'ref\n' +
+                            ' ref\n' +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
