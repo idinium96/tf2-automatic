@@ -1,5 +1,5 @@
 // TODO: Update version for each release
-process.env.BOT_VERSION = '3.5.5-n';
+process.env.BOT_VERSION = '3.7.7-n';
 
 import fs from 'fs';
 import path from 'path';
