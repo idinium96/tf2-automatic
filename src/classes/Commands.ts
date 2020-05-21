@@ -1587,9 +1587,6 @@ export = class Commands {
             their: UnknownDictionary<number>;
         } = offerData.dict || { our: null, their: null };
 
-        const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
-        const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
-
         if (!value) {
             reply +=
                 'Asked: ' +
@@ -1597,6 +1594,8 @@ export = class Commands {
                 '\nOffered: ' +
                 summarizeItems(items.their, this.bot.schema);
         } else {
+            const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+            const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
             reply +=
                 'Asked: ' +
                 new Currencies(value.our).toString() +
