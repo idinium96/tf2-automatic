@@ -862,8 +862,8 @@ export = class MyHandler extends Handler {
                                   : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
                               : meta.uniqueReasons.includes('OVERSTOCKED')
                               ? process.env.OVERSTOCKED_NOTE
-                                  ? 'INVALID_ITEMS - ' + process.env.OVERSTOCKED_NOTE
-                                  : "INVALID_ITEMS - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
+                                  ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                                  : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
                               : meta.uniqueReasons.includes('DUPE_ITEMS')
                               ? process.env.DUPE_ITEMS_NOTE
                                   ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
