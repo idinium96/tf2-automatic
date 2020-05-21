@@ -21,7 +21,7 @@ export = function(schema: SchemaManager.Schema): string {
         return (
             'Asked: ' +
             summarizeItemsWithLink(items.our, schema) +
-            'Offered: ' +
+            '\nOffered: ' +
             summarizeItemsWithLink(items.their, schema)
         );
     } else {
