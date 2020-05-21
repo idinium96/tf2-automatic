@@ -173,7 +173,7 @@ export = class Commands {
             process.env.CUSTOM_HOW2TRADE_MESSAGE
                 ? process.env.CUSTOM_HOW2TRADE_MESSAGE
                 : 'You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
-                '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
+                      '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
 
@@ -210,9 +210,9 @@ export = class Commands {
                 amount === 1
                     ? match.buy
                     : Currencies.toCurrencies(
-                        match.buy.toValue(keyPrice.metal) * amount,
-                        isKey ? undefined : keyPrice.metal
-                    );
+                          match.buy.toValue(keyPrice.metal) * amount,
+                          isKey ? undefined : keyPrice.metal
+                      );
 
             reply += pluralize(match.name, 2) + ' for ' + currencies.toString();
         }
@@ -222,9 +222,9 @@ export = class Commands {
                 amount === 1
                     ? match.sell
                     : Currencies.toCurrencies(
-                        match.sell.toValue(keyPrice.metal) * amount,
-                        isKey ? undefined : keyPrice.metal
-                    );
+                          match.sell.toValue(keyPrice.metal) * amount,
+                          isKey ? undefined : keyPrice.metal
+                      );
 
             if (reply === '') {
                 reply = 'I am selling ';
@@ -280,7 +280,7 @@ export = class Commands {
             });
         }
 
-        items.sort(function (a, b) {
+        items.sort(function(a, b) {
             if (a.amount === b.amount) {
                 if (a.name < b.name) {
                     return -1;
@@ -339,12 +339,12 @@ export = class Commands {
         this.bot.sendMessage(
             steamID,
             'I value 🗝Mann Co. Supply Crate Keys at ' +
-            keyPrice +
-            '. This means that one key is the same as ' +
-            keyPrice +
-            ', and ' +
-            keyPrice +
-            ' is the same as one key.'
+                keyPrice +
+                '. This means that one key is the same as ' +
+                keyPrice +
+                ', and ' +
+                keyPrice +
+                ' is the same as one key.'
         );
     }
 
@@ -403,11 +403,11 @@ export = class Commands {
             // Send message to all other admins that an admin replied
             this.bot.messageAdmins(
                 (adminDetails ? adminDetails.player_name + ' (' + steamID + ')' : steamID) +
-                ' sent a message to ' +
-                (recipentDetails ? recipentDetails.player_name + ' (' + recipientSteamID + ')' : recipientSteamID) +
-                ' with "' +
-                reply +
-                '".',
+                    ' sent a message to ' +
+                    (recipentDetails ? recipentDetails.player_name + ' (' + recipientSteamID + ')' : recipientSteamID) +
+                    ' with "' +
+                    reply +
+                    '".',
                 [steamID]
             );
             return;
@@ -588,8 +588,8 @@ export = class Commands {
             this.bot.sendMessage(
                 cart.partner,
                 '❌ You already have an active offer! Please finish it before requesting a new one:  https://steamcommunity.com/tradeoffer/' +
-                activeOfferID +
-                '/'
+                    activeOfferID +
+                    '/'
             );
             return;
         }
@@ -606,10 +606,10 @@ export = class Commands {
                 this.bot.sendMessage(
                     cart.partner,
                     '⌛ You are already in the queue! Please wait your turn, there ' +
-                    (currentPosition !== 1 ? 'are' : 'is') +
-                    ' ' +
-                    currentPosition +
-                    ' infront of you.'
+                        (currentPosition !== 1 ? 'are' : 'is') +
+                        ' ' +
+                        currentPosition +
+                        ' infront of you.'
                 );
             }
             return;
@@ -621,10 +621,10 @@ export = class Commands {
             this.bot.sendMessage(
                 cart.partner,
                 '⌛ You have been added to the queue! Please wait your turn, there ' +
-                (position !== 1 ? 'are' : 'is') +
-                ' ' +
-                position +
-                ' infront of you.'
+                    (position !== 1 ? 'are' : 'is') +
+                    ' ' +
+                    position +
+                    ' infront of you.'
             );
             if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
                 if (
@@ -693,9 +693,9 @@ export = class Commands {
         this.bot.sendMessage(
             steamID,
             pluralize(name, Math.abs(amount), true) +
-            ' has been ' +
-            (amount >= 0 ? 'added to' : 'removed from') +
-            ' your cart. 🛒'
+                ' has been ' +
+                (amount >= 0 ? 'added to' : 'removed from') +
+                ' your cart. 🛒'
         );
     }
 
@@ -756,18 +756,18 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 'I only have ' +
-                pluralize(name, amount, true) +
-                '. ' +
-                (amount > 1 ? 'They have' : 'It has') +
-                ' been added to your cart 🛒.'
+                    pluralize(name, amount, true) +
+                    '. ' +
+                    (amount > 1 ? 'They have' : 'It has') +
+                    ' been added to your cart 🛒.'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
                 pluralize(name, Math.abs(amount), true) +
-                ' has been ' +
-                (amount >= 0 ? 'added to' : 'removed from') +
-                ' your cart. 🛒'
+                    ' has been ' +
+                    (amount >= 0 ? 'added to' : 'removed from') +
+                    ' your cart. 🛒'
             );
         }
 
@@ -808,11 +808,11 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 'I ' +
-                (ourAmount > 0 ? "can't sell" : "don't have") +
-                ' any ' +
-                (cartAmount > 0 ? 'more ' : '') +
-                pluralize(name, 0) +
-                '.'
+                    (ourAmount > 0 ? "can't sell" : "don't have") +
+                    ' any ' +
+                    (cartAmount > 0 ? 'more ' : '') +
+                    pluralize(name, 0) +
+                    '.'
             );
             return;
         }
@@ -831,16 +831,13 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 'I can only sell ' +
-                pluralize(name, amount, true) +
-                '. ' +
-                (amount > 1 ? 'They have' : 'It has') +
-                ' been added to your cart.'
+                    pluralize(name, amount, true) +
+                    '. ' +
+                    (amount > 1 ? 'They have' : 'It has') +
+                    ' been added to your cart.'
             );
         } else {
-            this.bot.sendMessage(
-                steamID,
-                pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒'
-            );
+            this.bot.sendMessage(steamID, pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒');
         }
 
         cart.addOurItem(match.sku, amount);
@@ -880,11 +877,11 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 'I ' +
-                (ourAmount > 0 ? "can't buy" : "don't want") +
-                ' any ' +
-                (cartAmount > 0 ? 'more ' : '') +
-                pluralize(name, 0) +
-                '.'
+                    (ourAmount > 0 ? "can't buy" : "don't want") +
+                    ' any ' +
+                    (cartAmount > 0 ? 'more ' : '') +
+                    pluralize(name, 0) +
+                    '.'
             );
             return;
         }
@@ -900,10 +897,10 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 'I can only buy ' +
-                pluralize(name, amount, true) +
-                '. ' +
-                (amount > 1 ? 'They have' : 'It has') +
-                ' been added to your cart. 🛒'
+                    pluralize(name, amount, true) +
+                    '. ' +
+                    (amount > 1 ? 'They have' : 'It has') +
+                    ' been added to your cart. 🛒'
             );
         } else {
             this.bot.sendMessage(
@@ -1260,7 +1257,7 @@ export = class Commands {
                 this.bot.sendMessage(
                     steamID,
                     '❌ Failed to update pricelist entry: ' +
-                    (err.body && err.body.message ? err.body.message : err.message)
+                        (err.body && err.body.message ? err.body.message : err.message)
                 );
             });
     }
@@ -1286,7 +1283,7 @@ export = class Commands {
                 this.bot.sendMessage(
                     steamID,
                     '❌ Error while requesting price check: ' +
-                    (err.body && err.body.message ? err.body.message : err.message)
+                        (err.body && err.body.message ? err.body.message : err.message)
                 );
                 return;
             }
@@ -1476,13 +1473,13 @@ export = class Commands {
         this.bot.sendMessage(
             steamID,
             'All trades are recorded from ' +
-            pluralize('day', totalDays, true) +
-            ' ago 📊\n\n Total: ' +
-            (process.env.LAST_TOTAL_TRADES ? +process.env.LAST_TOTAL_TRADES + tradesTotal : tradesTotal) +
-            ' \n Last 24 hours: ' +
-            trades24Hours +
-            ' \n Since beginning of today: ' +
-            tradesToday
+                pluralize('day', totalDays, true) +
+                ' ago 📊\n\n Total: ' +
+                (process.env.LAST_TOTAL_TRADES ? +process.env.LAST_TOTAL_TRADES + tradesTotal : tradesTotal) +
+                ' \n Last 24 hours: ' +
+                trades24Hours +
+                ' \n Since beginning of today: ' +
+                tradesToday
         );
     }
 
@@ -1608,8 +1605,8 @@ export = class Commands {
                 (valueDiff > 0
                     ? ')\n📈 Profit from overpay: ' + valueDiffRef + ' ref'
                     : valueDiff < 0
-                        ? ')\n📉 Loss from underpay: ' + valueDiffRef + ' ref'
-                        : ')');
+                    ? ')\n📉 Loss from underpay: ' + valueDiffRef + ' ref'
+                    : ')');
         }
 
         this.bot.sendMessage(steamID, reply);
@@ -1758,8 +1755,8 @@ export = class Commands {
                 this.bot.sendMessage(
                     steamID,
                     '⚠️ Are you sure that you want to remove ' +
-                    pluralize('item', pricelistLength, true) +
-                    '? Try again with i_am_sure=yes_i_am'
+                        pluralize('item', pricelistLength, true) +
+                        '? Try again with i_am_sure=yes_i_am'
                 );
                 return;
             }
@@ -1852,8 +1849,8 @@ export = class Commands {
             this.bot.sendMessage(
                 steamID,
                 '❌ I could not find any items in my pricelist that contains "' +
-                name +
-                '", I might not be trading the item you are looking for.'
+                    name +
+                    '", I might not be trading the item you are looking for.'
             );
             return null;
         } else if (Array.isArray(match)) {
