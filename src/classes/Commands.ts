@@ -44,26 +44,26 @@ const COMMANDS: string[] = [
 ];
 
 const ADMIN_COMMANDS: string[] = [
-    '!deposit - Used to deposit items',
-    '!withdraw - Used to withdraw items',
-    '!get - Get raw information about a pricelist entry',
-    '!craftweapon - Get craft weapons stock',
-    '!add - Add a pricelist entry',
-    '!remove - Remove a pricelist entry',
-    '!update - Update a pricelist entry',
-    '!pricecheck - Requests an item to be priced by PricesTF',
-    '!expand - Uses Backpack Expanders to increase the inventory limit',
-    '!stop - Stop the bot',
-    '!restart - Restart the bot',
-    '!version - Get version that the bot is running',
-    '!avatar - Change avatar',
-    '!name - Change name',
-    '!stats - Get statistics for accepted trades',
-    '!message <SteamID64> <Your Messages> - Send a message to a user',
-    '!trades - Get a list of offers pending for manual review',
-    '!trade <offerID> - Get info about a trade',
-    '!accepttrade <offerID> [Your Message] - Manually accept an active offer',
-    '!declinetrade <offerID> [Your Message] - Manually decline an active offer'
+    '!deposit <name=>&<amount=> - Used to deposit items⬅',
+    '!withdraw <name=>&<amount=> - Used to withdraw items➡',
+    '!add - Add a pricelist entry📝',
+    '!update - Update a pricelist entry🔆',
+    '!remove <sku=> OR <item=> - Remove a pricelist entry✂',
+    '!get <sku=> OR <item=> - Get raw information about a pricelist entry🗃',
+    '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF♻',
+    '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit🎒',
+    '!stop - Stop the bot🛑',
+    '!restart - Restart the bot🔁',
+    '!version - Get version that the bot is running🌐',
+    '!avatar <image_URL> - Change avatar🛃',
+    '!name <new_name>- Change name🆕',
+    '!craftweapon - get a list of craft weapon stock',
+    '!stats - Get statistics for accepted trades🔢',
+    '!trades - Get a list of offers pending for manual review🧾💱',
+    '!trade <offerID> - Get info about a trade🧐💱',
+    '!accepttrade <offerID> [Your Message] - Manually accept an active offer✅💱',
+    '!declinetrade <offerID> [Your Message] - Manually decline an active offer❌💱',
+    '!message <steamid> <your message> - Send a message to a user💬'
 ];
 
 export = class Commands {
@@ -153,7 +153,12 @@ export = class Commands {
         } else if (command === 'declinetrade' && isAdmin) {
             this.declinetradeCommand(steamID, message);
         } else {
-            this.bot.sendMessage(steamID, '❌I don\'t know what you mean, please type "!help" for all my commands!');
+            this.bot.sendMessage(
+                steamID,
+                process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
+                    ? process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
+                    : '❌I don\'t know what you mean, please type "!help" for all my commands!'
+            );
         }
     }
 
@@ -170,8 +175,10 @@ export = class Commands {
     private howToTradeCommand(steamID: SteamID): void {
         this.bot.sendMessage(
             steamID,
-            '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
-                '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
+            process.env.CUSTOM_HOW2TRADE_MESSAGE
+                ? process.env.CUSTOM_HOW2TRADE_MESSAGE
+                : '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
+                      '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
 
@@ -644,11 +651,14 @@ export = class Commands {
         const request = new XMLHttpRequest();
         request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
         request.setRequestHeader('Content-type', 'application/json');
-        const ownerID = process.env.OWNER_DISCORD_ID;
+        const ownerID = process.env.DISCORD_OWNER_ID;
+        /*eslint-disable */
         const discordQueue = {
-            username: '※Nezuko⚡',
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
             content: '<@!' + ownerID + '> [Queue alert] Current position: ' + position
         };
+        /*eslint-enable */
         request.send(JSON.stringify(discordQueue));
     }
 
@@ -1587,9 +1597,6 @@ export = class Commands {
             their: UnknownDictionary<number>;
         } = offerData.dict || { our: null, their: null };
 
-        const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
-        const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
-
         if (!value) {
             reply +=
                 'Asked: ' +
@@ -1597,6 +1604,8 @@ export = class Commands {
                 '\nOffered: ' +
                 summarizeItems(items.their, this.bot.schema);
         } else {
+            const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+            const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
             reply +=
                 'Asked: ' +
                 new Currencies(value.our).toString() +
@@ -1621,27 +1630,27 @@ export = class Commands {
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"❌');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.');
+            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.');
+            this.bot.sendMessage(steamID, 'Offer is not active.❌');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
             return;
         }
 
@@ -1649,7 +1658,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    'Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                    '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                 );
                 return;
             }
@@ -1664,7 +1673,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        'Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                        '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                     );
                     return;
                 }
@@ -1684,27 +1693,27 @@ export = class Commands {
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"');
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"❌');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.');
+            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.');
+            this.bot.sendMessage(steamID, 'Offer is not active.❌');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
             return;
         }
 
@@ -1712,7 +1721,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    'Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                    '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                 );
                 return;
             }
@@ -1727,7 +1736,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        'Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                        '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                     );
                     return;
                 }

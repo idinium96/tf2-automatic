@@ -153,8 +153,6 @@ export = class Listings {
 
         const match = data && data.enabled === false ? null : this.bot.pricelist.getPrice(sku, true);
 
-        const pureStock = this.pureStock();
-
         let hasBuyListing = item.paintkit !== null;
         let hasSellListing = false;
 
@@ -181,8 +179,7 @@ export = class Listings {
                 // We are not buying / selling more, remove the listing
                 listing.remove();
             } else {
-                const newDetails = this.getDetails(listing.intent, match, pureStock);
-                const newPureStock = this.pureStock();
+                const newDetails = this.getDetails(listing.intent, match);
 
                 if (listing.details !== newDetails) {
                     // Listing details don't match, update listing with new details and price
@@ -191,8 +188,7 @@ export = class Listings {
                     listing.update({
                         time: match.time || moment().unix(),
                         details: newDetails,
-                        currencies: currencies,
-                        pure: newPureStock
+                        currencies: currencies
                     });
                 }
             }
@@ -209,8 +205,7 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     sku: sku,
                     intent: 0,
-                    details: this.getDetails(0, match, pureStock),
-                    pure: pureStock,
+                    details: this.getDetails(0, match),
                     currencies: match.buy
                 });
             }
@@ -221,8 +216,7 @@ export = class Listings {
                     time: match.time || moment().unix(),
                     id: assetids[assetids.length - 1],
                     intent: 1,
-                    details: this.getDetails(1, match, pureStock),
-                    pure: pureStock,
+                    details: this.getDetails(1, match),
                     currencies: match.sell
                 });
             }
@@ -404,7 +398,7 @@ export = class Listings {
         });
     }
 
-    private getDetails(intent: 0 | 1, entry: Entry, pureStock: string[]): string {
+    private getDetails(intent: 0 | 1, entry: Entry): string {
         const buying = intent === 0;
         const key = buying ? 'buy' : 'sell';
         const keyPrice = this.bot.pricelist.getKeyPrice().toString();
@@ -424,7 +418,6 @@ export = class Listings {
                         .toString()
                 )
                 .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
                 .replace(/%keyPrice%/g, '');
         } else {
             details = this.templates[key]
@@ -439,52 +432,9 @@ export = class Listings {
                         .toString()
                 )
                 .replace(/%amount_trade%/g, this.bot.inventoryManager.amountCanTrade(entry.sku, buying).toString())
-                .replace(/%pureStock%/g, pureStock.join(', '))
-                .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key.');
+                .replace(/%keyPrice%/g, 'Key rate: ' + keyPrice + '/key');
         }
 
         return details;
-    }
-
-    private pureStock(): string[] {
-        const pureStock: string[] = [];
-        let pure: { name: string; amount: number }[];
-
-        if (process.env.ENABLE_SHOW_PURE_STOCK_ONLY_KEY_AND_REF === 'true') {
-            pure = [
-                {
-                    name: 'Key',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
-                },
-                {
-                    name: 'Ref',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5002;6')
-                }
-            ];
-        } else {
-            pure = [
-                {
-                    name: 'Key',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
-                },
-                {
-                    name: 'Ref',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5002;6')
-                },
-                {
-                    name: 'Rec',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5001;6')
-                },
-                {
-                    name: 'Scrap',
-                    amount: this.bot.inventoryManager.getInventory().getAmount('5000;6')
-                }
-            ];
-        }
-
-        for (let i = 0; i < pure.length; i++) {
-            pureStock.push(pure[i].name + ': ' + pure[i].amount);
-        }
-        return pureStock;
     }
 };

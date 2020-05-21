@@ -21,16 +21,6 @@
                 "BPTF_ACCESS_TOKEN": "",
                 "BPTF_API_KEY": "",
 
-                "ENABLE_SHOW_PURE_STOCK_ONLY_KEY_AND_REF": true,
-                "BPTF_DETAILS_BUY": "I am buying your %name% for %price%, I have %current_stock% / %max_stock%. Pure Stock - [%pureStock%], %keyPrice%",
-                "BPTF_DETAILS_SELL": "I am selling my %name% for %price%, I am selling %amount_trade%. %keyPrice%",
-                "OFFER_MESSAGE": "",
-
-                "ENABLE_SHOW_ONLY_METAL": false,
-                "ENABLE_DUPE_CHECK": true,
-                "DECLINE_DUPES": false,
-                "MINIMUM_KEYS_DUPE_CHECK": 10,
-                "ENABLE_MANUAL_REVIEW": true,
                 "AUTOBUMP": true,
 
                 "MINIMUM_SCRAP": 9,
@@ -45,6 +35,11 @@
                 "TRADES_MADE_STARTER_VALUE": 0,
                 "LAST_TOTAL_TRADES": 0,
                 "TRADING_STARTING_TIME_UNIX": 0,
+
+                "ENABLE_SHOW_ONLY_METAL": false,
+                "ENABLE_DUPE_CHECK": true,
+                "DECLINE_DUPES": false,
+                "MINIMUM_KEYS_DUPE_CHECK": 10,
 
                 "SKIP_BPTF_TRADEOFFERURL": false,
                 "SKIP_ACCOUNT_LIMITATIONS": false,
@@ -63,10 +58,15 @@
                 "DEBUG": false,
                 "DEBUG_FILE": true,
 
+                "BPTF_DETAILS_BUY": "I am buying your %name% for %price%, I have %current_stock% / %max_stock%. Pure Stock - [%pureStock%], %keyPrice%",
+                "BPTF_DETAILS_SELL": "I am selling my %name% for %price%, I am selling %amount_trade%. %keyPrice%",
+                "OFFER_MESSAGE": "",
+
                 "DISCORD_OWNER_ID": "",
-                "DISCORD_WEBHOOK_USERNAME": "※Nezuko⚡",
-                "DISCORD_WEBHOOK_AVATAR_URL": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/61/617f217886c7c64f8a4f04e19fb0b3a13feebd2b_full.jpg",
+                "DISCORD_WEBHOOK_USERNAME": "",
+                "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "10551537",
+                "TIMEZONE": "",
 
                 "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
                 "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
@@ -86,7 +86,23 @@
                 "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
                 "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
 
-                "TIMEZONE": ""
+                "ENABLE_MANUAL_REVIEW": true,
+                "DISABLE_REVIEW_OFFER_NOTE": false,
+                "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
+                "INVALID_ITEMS_NOTE": "Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.",
+                "OVERSTOCKED_NOTE": "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.",
+                "DUPE_ITEMS_NOTE": "The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.",
+                "DUPE_CHECK_FAILED_NOTE": "Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.",
+                "ADDITIONAL_NOTE": "",
+
+                "CUSTOM_WELCOME_MESSAGE": "",
+                "CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN": "",
+                "CUSTOM_HOW2TRADE_MESSAGE": "",
+
+                "CUSTOM_SUCCESS_MESSAGE": "✅Success! The offer went through successfully.",
+                "CUSTOM_DECLINED_MESSAGE": "❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.",
+                "CUSTOM_TRADED_AWAY_MESSAGE": "❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).",
+                "CUSTOM_CLEARING_FRIENDS_MESSAGE": "I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗"
             }
         }
     ]

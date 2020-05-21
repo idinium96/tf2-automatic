@@ -726,12 +726,16 @@ export = class MyHandler extends Handler {
                 if (offer.state === TradeOfferManager.ETradeOfferState.Accepted) {
                     this.bot.sendMessage(
                         offer.partner,
-                        '✅Success! The offer went through successfully. \n\nFeel free to join our Discord server: https://discord.gg/AXTGF4g'
+                        process.env.CUSTOM_SUCCESS_MESSAGE
+                            ? process.env.CUSTOM_SUCCESS_MESSAGE
+                            : '✅Success! The offer went through successfully.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
+                        process.env.CUSTOM_DECLINED_MESSAGE
+                            ? process.env.CUSTOM_DECLINED_MESSAGE
+                            : '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Canceled) {
                     let reason: string;
@@ -751,7 +755,9 @@ export = class MyHandler extends Handler {
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.InvalidItems) {
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
+                        process.env.CUSTOM_TRADED_AWAY_MESSAGE
+                            ? process.env.CUSTOM_TRADED_AWAY_MESSAGE
+                            : '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
                     );
                 }
             }
@@ -763,6 +769,7 @@ export = class MyHandler extends Handler {
 
                 offer.log('trade', 'has been accepted.');
                 const keyPrice = this.bot.pricelist.getKeyPrices();
+                const pureStock = this.pureStock();
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
@@ -777,11 +784,16 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer.summarize(this.bot.schema) +
+                            offer
+                                .summarize(this.bot.schema)
+                                .replace(/Profit from overpay/g, '📈Profit from overpay')
+                                .replace(/Loss from underpay/g, '📉Loss from underpay') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
+                            ' ref | Pure stock: ' +
+                            pureStock.join(', ').toString() +
                             ' ref',
                         []
                     );
@@ -838,11 +850,31 @@ export = class MyHandler extends Handler {
                         .replace(/Profit from overpay/g, '')
                         .replace(/Loss from /g, '')
                         .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
-                    '\nNote:\n❌INVALID_VALUE - [Ignored/Declined/Reconsidered]\nNote for weapons: \n⚠I am BUYING 2:1 scrap OR 2:1 weapons (any 2 of YOUR weapons for 1 scrap OR any 1 of MY weapon) and;\n⚠I am SELLING 1:1 scrap OR 1:2 weapons (any 1 of MY weapon for 1 scrap OR any 2 of YOUR weapons)\n(except for other weapons that are priced differently).' +
-                    '\n\n⭕INVALID_ITEMS - [Review] I am not buying/selling that item(s), but my boss will review it.' +
-                    '\n⭕OVERSTOCKED - [Review] Item(s) you offered reached my maximum amount I can have.' +
-                    '\n\nIf you need any help, add me and send "!message <your message>" to directly send your help to my boss.' +
-                    '\nThank you.'
+                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
+                        ? '\nNote: ' +
+                          (meta.uniqueReasons.includes('INVALID_VALUE')
+                              ? process.env.INVALID_VALUE_NOTE
+                                  ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
+                                  : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.'
+                              : meta.uniqueReasons.includes('INVALID_ITEMS')
+                              ? process.env.INVALID_ITEMS_NOTE
+                                  ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
+                                  : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
+                              : meta.uniqueReasons.includes('OVERSTOCKED')
+                              ? process.env.OVERSTOCKED_NOTE
+                                  ? 'INVALID_ITEMS - ' + process.env.OVERSTOCKED_NOTE
+                                  : "INVALID_ITEMS - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
+                              : meta.uniqueReasons.includes('DUPE_ITEMS')
+                              ? process.env.DUPE_ITEMS_NOTE
+                                  ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
+                                  : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.'
+                              : meta.uniqueReasons.includes('DUPE_CHECK_FAILED')
+                              ? process.env.DUPE_CHECK_FAILED_NOTE
+                                  ? process.env.DUPE_CHECK_FAILED_NOTE
+                                  : 'Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.'
+                              : '') +
+                          (process.env.ADDITIONAL_NOTE ? process.env.ADDITIONAL_NOTE : '')
+                        : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
@@ -858,7 +890,10 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema) +
+                        offer
+                            .summarize(this.bot.schema)
+                            .replace(/Profit from overpay/g, '📈Profit from overpay')
+                            .replace(/Loss from underpay/g, '📉Loss from underpay') +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
@@ -1003,9 +1038,11 @@ export = class MyHandler extends Handler {
 
                     this.bot.sendMessage(
                         steamID,
-                        '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
-                            (isAdmin ? 'help' : 'how2trade') +
-                            '" 🤗'
+                        process.env.CUSTOM_WELCOME_MESSAGE
+                            ? process.env.CUSTOM_WELCOME_MESSAGE
+                            : '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
+                                  (isAdmin ? 'help' : 'how2trade') +
+                                  '" 🤗'
                     );
                     return;
                 }
@@ -1023,11 +1060,13 @@ export = class MyHandler extends Handler {
 
             this.bot.sendMessage(
                 steamID,
-                '🙋🏻‍♀️Hi ' +
-                    friend.player_name +
-                    '! If you don\'t know how things work, please type "!' +
-                    (isAdmin ? 'help' : 'how2trade') +
-                    '" 🤗'
+                process.env.CUSTOM_WELCOME_MESSAGE
+                    ? process.env.CUSTOM_WELCOME_MESSAGE
+                    : '🙋🏻‍♀️Hi ' +
+                          friend.player_name +
+                          '! If you don\'t know how things work, please type "!' +
+                          (isAdmin ? 'help' : 'how2trade') +
+                          '" 🤗'
             );
         });
     }
@@ -1076,7 +1115,9 @@ export = class MyHandler extends Handler {
             friendsToRemove.forEach(element => {
                 this.bot.sendMessage(
                     element.steamID,
-                    'I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗'
+                    process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
+                        ? process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
+                        : 'I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗'
                 );
                 this.bot.client.removeFriend(element.steamID);
             });
