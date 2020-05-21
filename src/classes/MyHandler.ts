@@ -77,7 +77,7 @@ export = class MyHandler extends Handler {
 
         const groups = parseJSON(process.env.GROUPS);
         if (groups !== null && Array.isArray(groups)) {
-            groups.forEach(function(groupID64) {
+            groups.forEach(function (groupID64) {
                 if (!new SteamID(groupID64).isValid()) {
                     throw new Error('Invalid group SteamID64 "' + groupID64 + '"');
                 }
@@ -88,7 +88,7 @@ export = class MyHandler extends Handler {
 
         const friendsToKeep = parseJSON(process.env.KEEP).concat(this.bot.getAdmins());
         if (friendsToKeep !== null && Array.isArray(friendsToKeep)) {
-            friendsToKeep.forEach(function(steamID64) {
+            friendsToKeep.forEach(function (steamID64) {
                 if (!new SteamID(steamID64).isValid()) {
                     throw new Error('Invalid SteamID64 "' + steamID64 + '"');
                 }
@@ -121,7 +121,7 @@ export = class MyHandler extends Handler {
             files.readFile(paths.files.pricelist, true),
             files.readFile(paths.files.loginAttempts, true),
             files.readFile(paths.files.pollData, true)
-        ]).then(function([loginKey, pricelist, loginAttempts, pollData]) {
+        ]).then(function ([loginKey, pricelist, loginAttempts, pollData]) {
             return { loginKey, pricelist, loginAttempts, pollData };
         });
     }
@@ -129,14 +129,14 @@ export = class MyHandler extends Handler {
     onReady(): void {
         log.info(
             'tf2-automatic v' +
-                process.env.BOT_VERSION +
-                ' is ready! ' +
-                pluralize('item', this.bot.pricelist.getLength(), true) +
-                ' in pricelist, ' +
-                pluralize('listing', this.bot.listingManager.listings.length, true) +
-                ' on www.backpack.tf (cap: ' +
-                this.bot.listingManager.cap +
-                ')'
+            process.env.BOT_VERSION +
+            ' is ready! ' +
+            pluralize('item', this.bot.pricelist.getLength(), true) +
+            ' in pricelist, ' +
+            pluralize('listing', this.bot.listingManager.listings.length, true) +
+            ' on www.backpack.tf (cap: ' +
+            this.bot.listingManager.cap +
+            ')'
         );
 
         this.bot.client.gamesPlayed(['tf2-automatic', 440]);
@@ -165,7 +165,7 @@ export = class MyHandler extends Handler {
                 return resolve();
             }
 
-            this.bot.listings.removeAll().asCallback(function(err) {
+            this.bot.listings.removeAll().asCallback(function (err) {
                 if (err) {
                     log.warn('Failed to r emove all listings: ', err);
                 }
@@ -209,7 +209,7 @@ export = class MyHandler extends Handler {
     onLoginKey(loginKey: string): void {
         log.debug('New login key');
 
-        files.writeFile(paths.files.loginKey, loginKey, false).catch(function(err) {
+        files.writeFile(paths.files.loginKey, loginKey, false).catch(function (err) {
             log.warn('Failed to save login key: ', err);
         });
     }
@@ -224,7 +224,7 @@ export = class MyHandler extends Handler {
     }
 
     onLoginAttempts(attempts: number[]): void {
-        files.writeFile(paths.files.loginAttempts, attempts, true).catch(function(err) {
+        files.writeFile(paths.files.loginAttempts, attempts, true).catch(function (err) {
             log.warn('Failed to save login attempts: ', err);
         });
     }
@@ -368,32 +368,32 @@ export = class MyHandler extends Handler {
         // A list of things that is wrong about the offer and other information
         const wrongAboutOffer: (
             | {
-                  reason: 'OVERSTOCKED';
-                  sku: string;
-                  buying: boolean;
-                  diff: number;
-                  amountCanTrade: number;
-              }
+                reason: 'OVERSTOCKED';
+                sku: string;
+                buying: boolean;
+                diff: number;
+                amountCanTrade: number;
+            }
             | {
-                  reason: 'INVALID_ITEMS';
-                  sku: string;
-                  buying: boolean;
-                  amount: number;
-              }
+                reason: 'INVALID_ITEMS';
+                sku: string;
+                buying: boolean;
+                amount: number;
+            }
             | {
-                  reason: 'INVALID_VALUE';
-                  our: number;
-                  their: number;
-              }
+                reason: 'INVALID_VALUE';
+                our: number;
+                their: number;
+            }
             | {
-                  reason: 'DUPE_CHECK_FAILED';
-                  assetid?: string;
-                  error?: string;
-              }
+                reason: 'DUPE_CHECK_FAILED';
+                assetid?: string;
+                error?: string;
+            }
             | {
-                  reason: 'DUPED_ITEMS';
-                  assetid: string;
-              }
+                reason: 'DUPED_ITEMS';
+                assetid: string;
+            }
         )[] = [];
 
         let assetidsToCheck = [];
@@ -639,7 +639,7 @@ export = class MyHandler extends Handler {
             const requests = assetidsToCheck.map(assetid => {
                 return (callback: (err: Error | null, result: boolean | null) => void): void => {
                     log.debug('Dupe checking ' + assetid + '...');
-                    Promise.resolve(inventory.isDuped(assetid)).asCallback(function(err, result) {
+                    Promise.resolve(inventory.isDuped(assetid)).asCallback(function (err, result) {
                         log.debug('Dupe check for ' + assetid + ' done');
                         callback(err, result);
                     });
@@ -647,7 +647,7 @@ export = class MyHandler extends Handler {
             });
 
             try {
-                const result: (boolean | null)[] = await Promise.fromCallback(function(callback) {
+                const result: (boolean | null)[] = await Promise.fromCallback(function (callback) {
                     async.series(requests, callback);
                 });
 
@@ -728,14 +728,14 @@ export = class MyHandler extends Handler {
                         offer.partner,
                         process.env.CUSTOM_SUCCESS_MESSAGE
                             ? process.env.CUSTOM_SUCCESS_MESSAGE
-                            : '✅Success! The offer went through successfully.'
+                            : '✅ Success! The offer went through successfully.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_DECLINED_MESSAGE
                             ? process.env.CUSTOM_DECLINED_MESSAGE
-                            : '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
+                            : '❌ Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Canceled) {
                     let reason: string;
@@ -750,14 +750,14 @@ export = class MyHandler extends Handler {
 
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
+                        '❌ Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.InvalidItems) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_TRADED_AWAY_MESSAGE
                             ? process.env.CUSTOM_TRADED_AWAY_MESSAGE
-                            : '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
+                            : '❌ Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
                     );
                 }
             }
@@ -780,21 +780,21 @@ export = class MyHandler extends Handler {
                     this.bot.messageAdmins(
                         'trade',
                         'Trade #' +
-                            offer.id +
-                            ' with ' +
-                            offer.partner.getSteamID64() +
-                            ' is accepted. Summary:\n' +
-                            offer
-                                .summarize(this.bot.schema)
-                                .replace(/Profit from overpay/g, '📈Profit from overpay')
-                                .replace(/Loss from underpay/g, '📉Loss from underpay') +
-                            '\nKey rate: ' +
-                            keyPrice.buy.metal.toString() +
-                            '/' +
-                            keyPrice.sell.metal.toString() +
-                            ' ref | Pure stock: ' +
-                            pureStock.join(', ').toString() +
-                            ' ref',
+                        offer.id +
+                        ' with ' +
+                        offer.partner.getSteamID64() +
+                        ' is accepted. Summary:\n' +
+                        offer
+                            .summarize(this.bot.schema)
+                            .replace(/Profit from overpay/g, '📈 Profit from overpay')
+                            .replace(/Loss from underpay/g, '📉 Loss from underpay') +
+                        '\nKey rate: ' +
+                        keyPrice.buy.metal.toString() +
+                        '/' +
+                        keyPrice.sell.metal.toString() +
+                        ' ref | Pure stock: ' +
+                        pureStock.join(', ').toString() +
+                        ' ref',
                         []
                     );
                 }
@@ -843,38 +843,38 @@ export = class MyHandler extends Handler {
             this.bot.sendMessage(
                 offer.partner,
                 'Your offer is waiting for review, reason: ' +
-                    meta.uniqueReasons.join(', ') +
-                    '\n\nYour offer summary:\n' +
-                    offer
-                        .summarize(this.bot.schema)
-                        .replace(/Profit from overpay/g, '')
-                        .replace(/Loss from /g, '')
-                        .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
-                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
-                        ? '\nNote: ' +
-                          (meta.uniqueReasons.includes('INVALID_VALUE')
-                              ? process.env.INVALID_VALUE_NOTE
-                                  ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
-                                  : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.'
-                              : meta.uniqueReasons.includes('INVALID_ITEMS')
-                              ? process.env.INVALID_ITEMS_NOTE
-                                  ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
-                                  : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
-                              : meta.uniqueReasons.includes('OVERSTOCKED')
-                              ? process.env.OVERSTOCKED_NOTE
-                                  ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
-                                  : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
-                              : meta.uniqueReasons.includes('DUPE_ITEMS')
-                              ? process.env.DUPE_ITEMS_NOTE
-                                  ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
-                                  : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.'
-                              : meta.uniqueReasons.includes('DUPE_CHECK_FAILED')
-                              ? process.env.DUPE_CHECK_FAILED_NOTE
-                                  ? process.env.DUPE_CHECK_FAILED_NOTE
-                                  : 'Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.'
-                              : '') +
-                          (process.env.ADDITIONAL_NOTE ? process.env.ADDITIONAL_NOTE : '')
-                        : '')
+                meta.uniqueReasons.join(', ') +
+                '\n\nYour offer summary:\n' +
+                offer
+                    .summarize(this.bot.schema)
+                    .replace(/Profit from overpay/g, '')
+                    .replace(/Loss from /g, '')
+                    .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
+                (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
+                    ? '\nNote: ' +
+                    (meta.uniqueReasons.includes('INVALID_VALUE')
+                        ? process.env.INVALID_VALUE_NOTE
+                            ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
+                            : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.'
+                        : meta.uniqueReasons.includes('INVALID_ITEMS')
+                            ? process.env.INVALID_ITEMS_NOTE
+                                ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
+                                : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
+                            : meta.uniqueReasons.includes('OVERSTOCKED')
+                                ? process.env.OVERSTOCKED_NOTE
+                                    ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                                    : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
+                                : meta.uniqueReasons.includes('DUPE_ITEMS')
+                                    ? process.env.DUPE_ITEMS_NOTE
+                                        ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
+                                        : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.'
+                                    : meta.uniqueReasons.includes('DUPE_CHECK_FAILED')
+                                        ? process.env.DUPE_CHECK_FAILED_NOTE
+                                            ? process.env.DUPE_CHECK_FAILED_NOTE
+                                            : 'Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.'
+                                        : '') +
+                    (process.env.ADDITIONAL_NOTE ? process.env.ADDITIONAL_NOTE : '')
+                    : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
@@ -884,21 +884,21 @@ export = class MyHandler extends Handler {
             } else {
                 this.bot.messageAdmins(
                     'Offer #' +
-                        offer.id +
-                        ' from ' +
-                        offer.partner +
-                        ' is waiting for review, reason: ' +
-                        meta.uniqueReasons.join(', ') +
-                        '\nOffer Summary:\n' +
-                        offer
-                            .summarize(this.bot.schema)
-                            .replace(/Profit from overpay/g, '📈Profit from overpay')
-                            .replace(/Loss from underpay/g, '📉Loss from underpay') +
-                        '\nKey rate: ' +
-                        keyPrice.buy.metal.toString() +
-                        '/' +
-                        keyPrice.sell.metal.toString() +
-                        ' ref',
+                    offer.id +
+                    ' from ' +
+                    offer.partner +
+                    ' is waiting for review, reason: ' +
+                    meta.uniqueReasons.join(', ') +
+                    '\nOffer Summary:\n' +
+                    offer
+                        .summarize(this.bot.schema)
+                        .replace(/Profit from overpay/g, '📈 Profit from overpay')
+                        .replace(/Loss from underpay/g, '📉 Loss from underpay') +
+                    '\nKey rate: ' +
+                    keyPrice.buy.metal.toString() +
+                    '/' +
+                    keyPrice.sell.metal.toString() +
+                    ' ref',
                     []
                 );
             }
@@ -992,7 +992,7 @@ export = class MyHandler extends Handler {
         this.bot.getAdmins().forEach(steamID => {
             if (!this.bot.friends.isFriend(steamID)) {
                 log.info('Not friends with admin ' + steamID + ', sending friend request...');
-                this.bot.client.addFriend(steamID, function(err) {
+                this.bot.client.addFriend(steamID, function (err) {
                     if (err) {
                         log.warn('Failed to send friend request: ', err);
                     }
@@ -1006,7 +1006,7 @@ export = class MyHandler extends Handler {
 
         log.debug('Sending friend request to ' + steamID64 + '...');
 
-        this.bot.client.addFriend(steamID, function(err) {
+        this.bot.client.addFriend(steamID, function (err) {
             if (err) {
                 log.warn('Failed to send friend request to ' + steamID64 + ': ', err);
                 return;
@@ -1040,9 +1040,9 @@ export = class MyHandler extends Handler {
                         steamID,
                         process.env.CUSTOM_WELCOME_MESSAGE
                             ? process.env.CUSTOM_WELCOME_MESSAGE
-                            : '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
-                                  (isAdmin ? 'help' : 'how2trade') +
-                                  '" 🤗'
+                            : 'Hi! If you don\'t know how things work, please type "!' +
+                            (isAdmin ? 'help' : 'how2trade') +
+                            '"'
                     );
                     return;
                 }
@@ -1062,11 +1062,11 @@ export = class MyHandler extends Handler {
                 steamID,
                 process.env.CUSTOM_WELCOME_MESSAGE
                     ? process.env.CUSTOM_WELCOME_MESSAGE
-                    : '🙋🏻‍♀️Hi ' +
-                          friend.player_name +
-                          '! If you don\'t know how things work, please type "!' +
-                          (isAdmin ? 'help' : 'how2trade') +
-                          '" 🤗'
+                    : 'Hi ' +
+                    friend.player_name +
+                    '! If you don\'t know how things work, please type "!' +
+                    (isAdmin ? 'help' : 'how2trade') +
+                    '"'
             );
         });
     }
@@ -1086,7 +1086,7 @@ export = class MyHandler extends Handler {
             const friendsWithTrades = this.bot.trades.getTradesWithPeople(friends);
 
             // Ignore friends to keep
-            this.friendsToKeep.forEach(function(steamID) {
+            this.friendsToKeep.forEach(function (steamID) {
                 delete friendsWithTrades[steamID];
             });
 
@@ -1117,7 +1117,7 @@ export = class MyHandler extends Handler {
                     element.steamID,
                     process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
                         ? process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
-                        : 'I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗'
+                        : 'I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
                 );
                 this.bot.client.removeFriend(element.steamID);
             });
@@ -1137,7 +1137,7 @@ export = class MyHandler extends Handler {
         let partnerAvatar: string;
         let partnerName: string;
         log.debug('getting partner Avatar and Name...');
-        offer.getUserDetails(function(err, me, them) {
+        offer.getUserDetails(function (err, me, them) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 partnerAvatar =
@@ -1233,7 +1233,7 @@ export = class MyHandler extends Handler {
         let personaName: string;
         let avatarFull: string;
         log.debug('getting partner Avatar and Name...');
-        this.getPartnerDetails(offer, function(err, details) {
+        this.getPartnerDetails(offer, function (err, details) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 personaName = 'unknown';
@@ -1301,7 +1301,7 @@ export = class MyHandler extends Handler {
     private getPartnerDetails(offer: TradeOfferManager.TradeOffer, callback: (err: any, details: any) => void): any {
         // check state of the offer
         if (offer.state === TradeOfferManager.ETradeOfferState.active) {
-            offer.getUserDetails(function(err, me, them) {
+            offer.getUserDetails(function (err, me, them) {
                 if (err) {
                     callback(err, {});
                 } else {
@@ -1364,14 +1364,14 @@ export = class MyHandler extends Handler {
                 this.bot.client.myGroups[steamID] !== SteamUser.EClanRelationship.Member &&
                 this.bot.client.myGroups[steamID] !== SteamUser.EClanRelationship.Blocked
             ) {
-                this.bot.community.getSteamGroup(new SteamID(steamID), function(err, group) {
+                this.bot.community.getSteamGroup(new SteamID(steamID), function (err, group) {
                     if (err) {
                         log.warn('Failed to get group: ', err);
                         return;
                     }
 
                     log.info('Not member of group "' + group.name + ' ("' + steamID + '"), joining...');
-                    group.join(function(err) {
+                    group.join(function (err) {
                         if (err) {
                             log.warn('Failed to join group: ', err);
                         }
@@ -1382,7 +1382,7 @@ export = class MyHandler extends Handler {
     }
 
     onPollData(pollData: PollData): void {
-        files.writeFile(paths.files.pollData, pollData, true).catch(function(err) {
+        files.writeFile(paths.files.pollData, pollData, true).catch(function (err) {
             log.warn('Failed to save polldata: ', err);
         });
     }
@@ -1401,7 +1401,7 @@ export = class MyHandler extends Handler {
                 pricelist.map(entry => entry.getJSON()),
                 true
             )
-            .catch(function(err) {
+            .catch(function (err) {
                 log.warn('Failed to save pricelist: ', err);
             });
     }
