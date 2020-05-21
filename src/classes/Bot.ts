@@ -263,7 +263,7 @@ export = class Bot {
             request(
                 {
                     method: 'GET',
-                    url: 'https://raw.githubusercontent.com/idinium96/tf2-automatic/NezukoBot/package.json',
+                    url: 'https://raw.githubusercontent.com/idinium96/tf2-automatic/IdiNiumBot/package.json',
                     json: true
                 },
                 function(err, response, body) {
