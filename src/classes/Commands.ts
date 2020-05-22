@@ -26,43 +26,43 @@ import SchemaManager from 'tf2-schema';
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
 
 const COMMANDS: string[] = [
-    '!help - Get list of commands📜',
-    '!how2trade - Guide on how to use and trade with the bot📋',
-    '!price [amount] <name> - Get the price and stock of an item💱',
-    '!stock - Get a list of items that the bot has📊',
-    '!rate - Get current key prices🗝📈',
-    '!message <your message> - Send a message to the owner of the bot💬',
-    '!buy [amount] <name> - Instantly buy an item➡',
-    '!sell [amount] <name> - Instantly sell an item⬅',
-    '!buycart [amount] <name> - Adds an item you want to buy to the cart➡🛒',
-    '!sellcart [amount] <name> - Adds an item you want to sell to the cart⬅🛒',
-    '!cart - See current cart🛒',
-    '!clearcart - Clears the current cart🛒❎',
-    '!checkout - Make the bot send an offer the items in the cart🛒✅',
-    '!queue - See your position in the queue🚶🏻‍♂️🚶🏻‍♂️',
-    '!cancel - Cancel an already made offer, or cancel offer being made❌'
+    '!help - Get list of commands',
+    '!how2trade - Guide on how to use and trade with the bot',
+    '!price [amount] <name> - Get the price and stock of an item',
+    '!stock - Get a list of items that the bot has',
+    '!rate - Get current key prices',
+    '!message <your message> - Send a message to the owner of the bot 💬',
+    '!buy [amount] <name> - Instantly buy an item',
+    '!sell [amount] <name> - Instantly sell an item',
+    '!buycart [amount] <name> - Adds an item you want to buy to the cart 🛒',
+    '!sellcart [amount] <name> - Adds an item you want to sell to the cart 🛒',
+    '!cart - See current cart 🛒',
+    '!clearcart - Clears the current cart ❎🛒',
+    '!checkout - Make the bot send an offer the items in the cart ✅🛒',
+    '!queue - See your position in the queue',
+    '!cancel - Cancel an already made offer, or cancel offer being made ❌'
 ];
 
 const ADMIN_COMMANDS: string[] = [
-    '!deposit <name=>&<amount=> - Used to deposit items⬅',
-    '!withdraw <name=>&<amount=> - Used to withdraw items➡',
-    '!add - Add a pricelist entry📝',
-    '!update - Update a pricelist entry🔆',
-    '!remove <sku=> OR <item=> - Remove a pricelist entry✂',
-    '!get <sku=> OR <item=> - Get raw information about a pricelist entry🗃',
-    '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF♻',
-    '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit🎒',
-    '!stop - Stop the bot🛑',
-    '!restart - Restart the bot🔁',
-    '!version - Get version that the bot is running🌐',
-    '!avatar <image_URL> - Change avatar🛃',
-    '!name <new_name>- Change name🆕',
-    '!stats - Get statistics for accepted trades🔢',
-    '!trades - Get a list of offers pending for manual review🧾💱',
-    '!trade <offerID> - Get info about a trade🧐💱',
-    '!accepttrade <offerID> [Your Message] - Manually accept an active offer✅💱',
-    '!declinetrade <offerID> [Your Message] - Manually decline an active offer❌💱',
-    '!message <steamid> <your message> - Send a message to a user💬'
+    '!deposit <name=>&<amount=> - Used to deposit items',
+    '!withdraw <name=>&<amount=> - Used to withdraw items',
+    '!add - Add a pricelist entry ➕',
+    '!update - Update a pricelist entry',
+    '!remove <sku=> OR <item=> - Remove a pricelist entry ➖',
+    '!get <sku=> OR <item=> - Get raw information about a pricelist entry',
+    '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF',
+    '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit',
+    '!stop - Stop the bot 🔴',
+    '!restart - Restart the bot 🔁',
+    '!version - Get version that the bot is running',
+    '!avatar <image_URL> - Change avatar',
+    '!name <new_name>- Change name',
+    '!stats - Get statistics for accepted trades 📊',
+    '!trades - Get a list of offers pending for manual review',
+    '!trade <offerID> - Get info about a trade',
+    '!accepttrade <offerID> [Your Message] - Manually accept an active offer ✅',
+    '!declinetrade <offerID> [Your Message] - Manually decline an active offer ❌',
+    '!message <steamid> <your message> - Send a message to a user 💬'
 ];
 
 export = class Commands {
@@ -152,13 +152,13 @@ export = class Commands {
                 steamID,
                 process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
                     ? process.env.CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN
-                    : '❌I don\'t know what you mean, please type "!help" for all my commands!'
+                    : '❌ I don\'t know what you mean, please type "!help" for all my commands!'
             );
         }
     }
 
     private helpCommand(steamID: SteamID): void {
-        let reply = "👨🏻‍💻Here's a list of all my commands:\n- " + COMMANDS.join('\n- ');
+        let reply = "📜 Here's a list of all my commands:\n- " + COMMANDS.join('\n- ');
 
         if (this.bot.isAdmin(steamID)) {
             reply += '\n\nAdmin commands:\n- ' + ADMIN_COMMANDS.join('\n- ');
@@ -172,7 +172,7 @@ export = class Commands {
             steamID,
             process.env.CUSTOM_HOW2TRADE_MESSAGE
                 ? process.env.CUSTOM_HOW2TRADE_MESSAGE
-                : '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
+                : 'You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
                       '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
@@ -199,7 +199,7 @@ export = class Commands {
         const isKey = match.sku === '5021;6';
 
         if (isBuying) {
-            reply = '⬅I am buying ';
+            reply = 'I am buying ';
 
             if (amount !== 1) {
                 reply += amount + ' ';
@@ -227,7 +227,7 @@ export = class Commands {
                       );
 
             if (reply === '') {
-                reply = '➡I am selling ';
+                reply = 'I am selling ';
 
                 if (amount !== 1) {
                     reply += amount + ' ';
@@ -325,7 +325,7 @@ export = class Commands {
             }
         }
 
-        let reply = "📃Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
+        let reply = "📜 Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
         if (left > 0) {
             reply += ',\nand ' + left + ' other ' + pluralize('item', left);
         }
@@ -356,10 +356,10 @@ export = class Commands {
             if (isAdmin) {
                 this.bot.sendMessage(
                     steamID,
-                    'The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
+                    '❌ The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
                 );
             } else {
-                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                this.bot.sendMessage(steamID, '❌ The owner has disabled messages.');
             }
             return;
         }
@@ -370,7 +370,7 @@ export = class Commands {
             if (parts.length < 3) {
                 this.bot.sendMessage(
                     steamID,
-                    'Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
+                    '❌ Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
                 );
                 return;
             }
@@ -380,10 +380,10 @@ export = class Commands {
             const recipientSteamID = new SteamID(recipient);
 
             if (!recipientSteamID.isValid()) {
-                this.bot.sendMessage(steamID, '"' + recipient + '" is not a valid steamid.');
+                this.bot.sendMessage('❌ ' + steamID, '"' + recipient + '" is not a valid steamid.');
                 return;
             } else if (!this.bot.friends.isFriend(recipientSteamID)) {
-                this.bot.sendMessage(steamID, 'I am not friends with the user.');
+                this.bot.sendMessage(steamID, '❌ I am not friends with the user.');
                 return;
             }
 
@@ -398,9 +398,9 @@ export = class Commands {
             );
 
             // Send confirmation message to admin
-            this.bot.sendMessage(steamID, 'Your message has been sent.');
+            this.bot.sendMessage(steamID, '✅ Your message has been sent.');
 
-            // Send message to all other wadmins that an admin replied
+            // Send message to all other admins that an admin replied
             this.bot.messageAdmins(
                 (adminDetails ? adminDetails.player_name + ' (' + steamID + ')' : steamID) +
                     ' sent a message to ' +
@@ -415,13 +415,13 @@ export = class Commands {
             const admins = this.bot.getAdmins();
             if (!admins || admins.length === 0) {
                 // Just default to same message as if it was disabled
-                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                this.bot.sendMessage(steamID, '❌ The owner has disabled messages.');
                 return;
             }
 
             const msg = message.substr(message.toLowerCase().indexOf('message') + 8);
             if (!msg) {
-                this.bot.sendMessage(steamID, 'Please include a message. Here\'s an example: "!message Hi"');
+                this.bot.sendMessage(steamID, '❌ Please include a message. Here\'s an example: "!message Hi"');
                 return;
             }
 
@@ -438,7 +438,7 @@ export = class Commands {
             } else {
                 this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
             }
-            this.bot.sendMessage(steamID, 'Your message has been sent.');
+            this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
     }
 
@@ -487,14 +487,14 @@ export = class Commands {
     private clearCartCommand(steamID: SteamID): void {
         Cart.removeCart(steamID);
 
-        this.bot.sendMessage(steamID, '🛒Your cart has been cleared.✅');
+        this.bot.sendMessage(steamID, '🛒 Your cart has been cleared.');
     }
 
     private checkoutCommand(steamID: SteamID): void {
         const cart = Cart.getCart(steamID);
 
         if (cart === null) {
-            this.bot.sendMessage(steamID, '🛒Your cart is empty.❎');
+            this.bot.sendMessage(steamID, '🛒 Your cart is empty.');
             return;
         }
 
@@ -507,11 +507,11 @@ export = class Commands {
         const position = (this.bot.handler as MyHandler).cartQueue.getPosition(steamID);
 
         if (position === -1) {
-            this.bot.sendMessage(steamID, '❌You are not in the queue.');
+            this.bot.sendMessage(steamID, '❌ You are not in the queue.');
         } else if (position === 0) {
-            this.bot.sendMessage(steamID, '✅Your offer is being made.');
+            this.bot.sendMessage(steamID, '⌛ Your offer is being made.');
         } else {
-            this.bot.sendMessage(steamID, 'There is ' + position + ' infront of you.🚶🏻‍♂️🚶🏻‍♂️');
+            this.bot.sendMessage(steamID, 'There is ' + position + ' infront of you.');
         }
     }
 
@@ -529,29 +529,29 @@ export = class Commands {
             if (cart.isMade()) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Your offer is already being sent! Please try again when the offer is active.'
+                    '⌛ Your offer is already being sent! Please try again when the offer is active.'
                 );
                 return;
             } else if (cart.isCanceled()) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Your offer is already being canceled. Please wait a few seconds for it to be canceled.'
+                    '⌛ Your offer is already being canceled. Please wait a few seconds for it to be canceled.'
                 );
                 return;
             }
 
             cart.setCanceled('BY_USER');
         } else if (positionInQueue !== -1) {
-            // The user is in the queu
+            // The user is in the queue
             this.cartQueue.dequeue(steamID);
-            this.bot.sendMessage(steamID, '❌You have been removed from the queue.');
+            this.bot.sendMessage(steamID, '✅ You have been removed from the queue.');
         } else {
             // User is not in the queue, check if they have an active offer
 
             const activeOffer = this.bot.trades.getActiveOffer(steamID);
 
             if (activeOffer === null) {
-                this.bot.sendMessage(steamID, "❌You don't have an active offer.");
+                this.bot.sendMessage(steamID, "❌ You don't have an active offer.");
                 return;
             }
 
@@ -559,7 +559,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to cancel the offer.'
+                        '❌ Ohh nooooes! Something went wrong while trying to cancel the offer.'
                     );
                     return;
                 }
@@ -573,7 +573,7 @@ export = class Commands {
                     if (err) {
                         this.bot.sendMessage(
                             steamID,
-                            '❌Ohh nooooes! Something went wrong while trying to cancel the offer.'
+                            '❌ Ohh nooooes! Something went wrong while trying to cancel the offer.'
                         );
                     }
                 });
@@ -587,7 +587,7 @@ export = class Commands {
         if (activeOfferID !== null) {
             this.bot.sendMessage(
                 cart.partner,
-                '‼You already have an active offer! Please finish it before requesting a new one:  https://steamcommunity.com/tradeoffer/' +
+                '❌ You already have an active offer! Please finish it before requesting a new one:  https://steamcommunity.com/tradeoffer/' +
                     activeOfferID +
                     '/'
             );
@@ -600,16 +600,16 @@ export = class Commands {
             if (currentPosition === 0) {
                 this.bot.sendMessage(
                     cart.partner,
-                    '✅You are already in the queue! Please wait while I process your offer.'
+                    '⌛ You are already in the queue! Please wait while I process your offer.'
                 );
             } else {
                 this.bot.sendMessage(
                     cart.partner,
-                    '✅You are already in the queue! Please wait your turn, there ' +
+                    '⌛ You are already in the queue! Please wait your turn, there ' +
                         (currentPosition !== 1 ? 'are' : 'is') +
                         ' ' +
                         currentPosition +
-                        ' infront of you.🚶🏻‍♂️🚶🏻‍♂️'
+                        ' infront of you.'
                 );
             }
             return;
@@ -620,11 +620,11 @@ export = class Commands {
         if (position !== 0) {
             this.bot.sendMessage(
                 cart.partner,
-                '✅You have been added to the queue! Please wait your turn, there ' +
+                '⌛ You have been added to the queue! Please wait your turn, there ' +
                     (position !== 1 ? 'are' : 'is') +
                     ' ' +
                     position +
-                    ' infront of you.🚶🏻‍♂️🚶🏻‍♂️'
+                    ' infront of you.'
             );
             if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
                 if (
@@ -633,7 +633,7 @@ export = class Commands {
                 ) {
                     this.sendWebhookQueueAlert(position);
                 } else {
-                    this.bot.messageAdmins('[Queue alert] Current position: ' + position, []);
+                    this.bot.messageAdmins('⚠️ [Queue alert] Current position: ' + position, []);
                 }
             }
         }
@@ -659,7 +659,7 @@ export = class Commands {
         if (currentCart !== null && !(currentCart instanceof AdminCart)) {
             this.bot.sendMessage(
                 steamID,
-                '❗You already have a different cart open🛒, finish it before making a new one.'
+                '❌ You already have a different cart open, finish it before making a new one. 🛒'
             );
             return;
         }
@@ -695,7 +695,7 @@ export = class Commands {
             pluralize(name, Math.abs(amount), true) +
                 ' has been ' +
                 (amount >= 0 ? 'added to' : 'removed from') +
-                ' your cart.'
+                ' your cart. 🛒'
         );
     }
 
@@ -704,7 +704,7 @@ export = class Commands {
         if (currentCart !== null && !(currentCart instanceof AdminCart)) {
             this.bot.sendMessage(
                 steamID,
-                '❗You already have a different cart open🛒✅, finish it before making a new one.'
+                '❌ You already have a different cart open, finish it before making a new one. 🛒'
             );
             return;
         }
@@ -739,7 +739,7 @@ export = class Commands {
         if (amountCanTrade <= 0) {
             this.bot.sendMessage(
                 steamID,
-                "❌I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
+                "❌ I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
             );
             amount = 0;
         } else if (amount > amountCanTrade) {
@@ -748,7 +748,7 @@ export = class Commands {
             if (amount === cartAmount && cartAmount > 0) {
                 this.bot.sendMessage(
                     steamID,
-                    "❌I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
+                    "❌ I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
                 );
                 return;
             }
@@ -759,7 +759,7 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart🛒✅.'
+                    ' been added to your cart 🛒.'
             );
         } else {
             this.bot.sendMessage(
@@ -767,7 +767,7 @@ export = class Commands {
                 pluralize(name, Math.abs(amount), true) +
                     ' has been ' +
                     (amount >= 0 ? 'added to' : 'removed from') +
-                    ' your cart.🛒❎'
+                    ' your cart. 🛒'
             );
         }
 
@@ -781,7 +781,7 @@ export = class Commands {
         if (currentCart !== null && !(currentCart instanceof UserCart)) {
             this.bot.sendMessage(
                 steamID,
-                '❗You already have a different cart open🛒, finish it before making a new one.'
+                '❌ You already have a different cart open, finish it before making a new one. 🛒'
             );
             return;
         }
@@ -807,7 +807,7 @@ export = class Commands {
         if (amountCanTrade <= 0) {
             this.bot.sendMessage(
                 steamID,
-                '😣I ' +
+                'I ' +
                     (ourAmount > 0 ? "can't sell" : "don't have") +
                     ' any ' +
                     (cartAmount > 0 ? 'more ' : '') +
@@ -823,24 +823,21 @@ export = class Commands {
             if (amount === cartAmount && cartAmount > 0) {
                 this.bot.sendMessage(
                     steamID,
-                    "😥I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
+                    "I don't have any " + (ourAmount > 0 ? 'more ' : '') + pluralize(name, 0) + '.'
                 );
                 return;
             }
 
             this.bot.sendMessage(
                 steamID,
-                '😣I can only sell ' +
+                'I can only sell ' +
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
                     ' been added to your cart.'
             );
         } else {
-            this.bot.sendMessage(
-                steamID,
-                pluralize(name, Math.abs(amount), true) + ' has been added to your cart.🛒✅'
-            );
+            this.bot.sendMessage(steamID, pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒');
         }
 
         cart.addOurItem(match.sku, amount);
@@ -853,7 +850,7 @@ export = class Commands {
         if (currentCart !== null && !(currentCart instanceof UserCart)) {
             this.bot.sendMessage(
                 steamID,
-                '❗You already have a different cart open🛒, finish it before making a new one.'
+                '❌ You already have a different cart open, finish it before making a new one. 🛒'
             );
             return;
         }
@@ -879,7 +876,7 @@ export = class Commands {
         if (amountCanTrade <= 0) {
             this.bot.sendMessage(
                 steamID,
-                '😰I ' +
+                'I ' +
                     (ourAmount > 0 ? "can't buy" : "don't want") +
                     ' any ' +
                     (cartAmount > 0 ? 'more ' : '') +
@@ -893,22 +890,22 @@ export = class Commands {
             amount = amountCanTrade;
 
             if (amount === cartAmount && cartAmount > 0) {
-                this.bot.sendMessage(steamID, "😥I don't want any more " + pluralize(name, 0) + '.');
+                this.bot.sendMessage(steamID, "I don't want any more " + pluralize(name, 0) + '.');
                 return;
             }
 
             this.bot.sendMessage(
                 steamID,
-                '🤕I can only buy ' +
+                'I can only buy ' +
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart.'
+                    ' been added to your cart. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
-                pluralize(name, Math.abs(amount), true) + ' has been added to your cart.🛒✅'
+                '✅ ' + pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒'
             );
         }
 
@@ -964,7 +961,7 @@ export = class Commands {
             if (match === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌I could not find any items in my pricelist that contains "' + params.item + '"'
+                    '❌ I could not find any items in my pricelist that contains "' + params.item + '"'
                 );
                 return;
             } else if (Array.isArray(match)) {
@@ -974,7 +971,7 @@ export = class Commands {
                 }
 
                 let reply =
-                    "👩🏻‍💻I've found " +
+                    "I've found " +
                     match.length +
                     ' items. Try with one of the items shown below:\n' +
                     match.join(',\n');
@@ -1000,14 +997,14 @@ export = class Commands {
         }
 
         if (params.sku === undefined) {
-            this.bot.sendMessage(steamID, '❌Missing item');
+            this.bot.sendMessage(steamID, '❌ Missing item');
             return;
         }
 
         const match = this.bot.pricelist.getPrice(params.sku as string);
 
         if (match === null) {
-            this.bot.sendMessage(steamID, '❌Could not find item "' + params.sku + '" in the pricelist');
+            this.bot.sendMessage(steamID, '❌ Could not find item "' + params.sku + '" in the pricelist');
         } else {
             this.bot.sendMessage(steamID, '/code ' + JSON.stringify(match, null, 4));
         }
@@ -1069,10 +1066,10 @@ export = class Commands {
         this.bot.pricelist
             .addPrice(params as EntryData, true)
             .then(entry => {
-                this.bot.sendMessage(steamID, '✅Added "' + entry.name + '".');
+                this.bot.sendMessage(steamID, '✅ Added "' + entry.name + '".');
             })
             .catch(err => {
-                this.bot.sendMessage(steamID, '❌Failed to add the item to the pricelist: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ Failed to add the item to the pricelist: ' + err.message);
             });
     }
 
@@ -1092,7 +1089,7 @@ export = class Commands {
             const pricelist = this.bot.pricelist.getPrices();
 
             if (pricelist.length === 0) {
-                this.bot.sendMessage(steamID, '🚮Your pricelist is empty.');
+                this.bot.sendMessage(steamID, 'Your pricelist is empty.');
                 return;
             }
 
@@ -1147,22 +1144,22 @@ export = class Commands {
 
             if (params.autoprice !== true) {
                 this.bot.getHandler().onPricelist(pricelist);
-                this.bot.sendMessage(steamID, '✅Updated pricelist!');
+                this.bot.sendMessage(steamID, '✅ Updated pricelist!');
                 this.bot.listings.redoListings().asCallback();
                 return;
             }
 
-            this.bot.sendMessage(steamID, 'Updating prices...');
+            this.bot.sendMessage(steamID, '⌛ Updating prices...');
 
             this.bot.pricelist
                 .setupPricelist()
                 .then(() => {
-                    this.bot.sendMessage(steamID, '✅Updated pricelist!');
+                    this.bot.sendMessage(steamID, '✅ Updated pricelist!');
                     this.bot.listings.redoListings().asCallback();
                 })
                 .catch(err => {
                     log.warn('Failed to update prices: ', err);
-                    this.bot.sendMessage(steamID, '❌Failed to update prices: ' + err.message);
+                    this.bot.sendMessage(steamID, '❌ Failed to update prices: ' + err.message);
                     return;
                 });
             return;
@@ -1192,7 +1189,7 @@ export = class Commands {
             if (match === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌I could not find any items in my pricelist that contains "' + params.item + '"'
+                    '❌ I could not find any items in my pricelist that contains "' + params.item + '"'
                 );
                 return;
             } else if (Array.isArray(match)) {
@@ -1202,7 +1199,7 @@ export = class Commands {
                 }
 
                 let reply =
-                    "👩🏻‍💻I've found " +
+                    "I've found " +
                     match.length +
                     ' items. Try with one of the items shown below:\n' +
                     match.join(',\n');
@@ -1228,7 +1225,7 @@ export = class Commands {
         }
 
         if (!this.bot.pricelist.hasPrice(params.sku as string)) {
-            this.bot.sendMessage(steamID, '❌Item is not in the pricelist.');
+            this.bot.sendMessage(steamID, '❌ Item is not in the pricelist.');
             return;
         }
 
@@ -1238,7 +1235,7 @@ export = class Commands {
         delete params.sku;
 
         if (Object.keys(params).length === 0) {
-            this.bot.sendMessage(steamID, '❌Missing properties to update.');
+            this.bot.sendMessage(steamID, '⚠️ Missing properties to update.');
             return;
         }
 
@@ -1254,12 +1251,12 @@ export = class Commands {
         this.bot.pricelist
             .updatePrice(entryData, true)
             .then(entry => {
-                this.bot.sendMessage(steamID, '✅Updated "' + entry.name + '".');
+                this.bot.sendMessage(steamID, '✅ Updated "' + entry.name + '".');
             })
             .catch(err => {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Failed to update pricelist entry: ' +
+                    '❌ Failed to update pricelist entry: ' +
                         (err.body && err.body.message ? err.body.message : err.message)
                 );
             });
@@ -1285,13 +1282,13 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Error while requesting price check: ' +
+                    '❌ Error while requesting price check: ' +
                         (err.body && err.body.message ? err.body.message : err.message)
                 );
                 return;
             }
 
-            this.bot.sendMessage(steamID, '📝Price check requested for ' + body.name + ', the item will be checked.');
+            this.bot.sendMessage(steamID, '⌛ Price check requested for ' + body.name + ', the item will be checked.');
         });
     }
 
@@ -1299,7 +1296,7 @@ export = class Commands {
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (typeof params.craftable !== 'boolean') {
-            this.bot.sendMessage(steamID, 'Missing `craftable=true|false`');
+            this.bot.sendMessage(steamID, '⚠️ Missing `craftable=true|false`');
             return;
         }
 
@@ -1315,32 +1312,32 @@ export = class Commands {
 
         if (assetids.length === 0) {
             // No backpack expanders
-            this.bot.sendMessage(steamID, "❌I couldn't find any " + pluralize(name, 0));
+            this.bot.sendMessage(steamID, "❌ I couldn't find any " + pluralize(name, 0));
             return;
         }
 
         this.bot.tf2gc.useItem(assetids[0], err => {
             if (err) {
                 log.warn('Error trying to expand inventory: ', err);
-                this.bot.sendMessage(steamID, '❌Failed to expand inventory: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ Failed to expand inventory: ' + err.message);
                 return;
             }
 
-            this.bot.sendMessage(steamID, 'Used ' + name + '!');
+            this.bot.sendMessage(steamID, '✅ Used ' + name + '!');
         });
     }
 
     private stopCommand(steamID: SteamID): void {
-        this.bot.sendMessage(steamID, 'Stopping...');
+        this.bot.sendMessage(steamID, '⌛ Stopping...');
 
         this.bot.botManager.stopProcess().catch(err => {
             log.warn('Error occurred while trying to stop: ', err);
-            this.bot.sendMessage(steamID, '❌An error occurred while trying to stop: ' + err.message);
+            this.bot.sendMessage(steamID, '❌ An error occurred while trying to stop: ' + err.message);
         });
     }
 
     private restartCommand(steamID: SteamID): void {
-        this.bot.sendMessage(steamID, 'Restarting...');
+        this.bot.sendMessage(steamID, '⌛ Restarting...');
 
         this.bot.botManager
             .restartProcess()
@@ -1348,20 +1345,20 @@ export = class Commands {
                 if (!restarting) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌You are not running the bot with PM2! See the documentation: https://github.com/Nicklason/tf2-automatic/wiki/PM2'
+                        '❌ You are not running the bot with PM2! See the documentation: https://github.com/Nicklason/tf2-automatic/wiki/PM2'
                     );
                 }
             })
             .catch(err => {
                 log.warn('Error occurred while trying to restart: ', err);
-                this.bot.sendMessage(steamID, '❌An error occurred while trying to restart: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ An error occurred while trying to restart: ' + err.message);
             });
     }
 
     private versionCommand(steamID: SteamID): void {
         this.bot.sendMessage(
             steamID,
-            '✅Currently running tf2-automatic@' + process.env.BOT_VERSION + '. Checking for a new version...'
+            'Currently running tf2-automatic@' + process.env.BOT_VERSION + '. Checking for a new version...'
         );
 
         this.bot
@@ -1372,12 +1369,12 @@ export = class Commands {
                 } else if (this.bot.lastNotifiedVersion === latestVersion) {
                     this.bot.sendMessage(
                         steamID,
-                        `❇Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`
+                        `⚠️ Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`
                     );
                 }
             })
             .catch(err => {
-                this.bot.sendMessage(steamID, '❌Failed to check for updates: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ Failed to check for updates: ' + err.message);
             });
     }
 
@@ -1385,7 +1382,7 @@ export = class Commands {
         const newName = CommandParser.removeCommand(message);
 
         if (newName === '') {
-            this.bot.sendMessage(steamID, '❌You forgot to add a name. Example: "!name Nicklason"');
+            this.bot.sendMessage(steamID, '❌ You forgot to add a name. Example: "!name Nicklason"');
             return;
         }
 
@@ -1396,11 +1393,11 @@ export = class Commands {
             err => {
                 if (err) {
                     log.warn('Error while changing name: ', err);
-                    this.bot.sendMessage(steamID, '❌Error while changing name: ' + err.message);
+                    this.bot.sendMessage(steamID, '❌ Error while changing name: ' + err.message);
                     return;
                 }
 
-                this.bot.sendMessage(steamID, 'Successfully changed name.✅');
+                this.bot.sendMessage(steamID, '✅ Successfully changed name.');
             }
         );
     }
@@ -1411,7 +1408,7 @@ export = class Commands {
         if (imageUrl === '') {
             this.bot.sendMessage(
                 steamID,
-                '❗You forgot to add an image url. Example: "!avatar https://steamuserimages-a.akamaihd.net/ugc/949595415286366323/8FECE47652C9D77501035833E937584E30D0F5E7/"'
+                '❌ You forgot to add an image url. Example: "!avatar https://steamuserimages-a.akamaihd.net/ugc/949595415286366323/8FECE47652C9D77501035833E937584E30D0F5E7/"'
             );
             return;
         }
@@ -1419,7 +1416,7 @@ export = class Commands {
         if (!validUrl.isUri(imageUrl)) {
             this.bot.sendMessage(
                 steamID,
-                '❗Your url is not valid. Example: "!avatar https://steamuserimages-a.akamaihd.net/ugc/949595415286366323/8FECE47652C9D77501035833E937584E30D0F5E7/"'
+                '❌ Your url is not valid. Example: "!avatar https://steamuserimages-a.akamaihd.net/ugc/949595415286366323/8FECE47652C9D77501035833E937584E30D0F5E7/"'
             );
             return;
         }
@@ -1427,11 +1424,11 @@ export = class Commands {
         this.bot.community.uploadAvatar(imageUrl, err => {
             if (err) {
                 log.warn('Error while uploading new avatar: ', err);
-                this.bot.sendMessage(steamID, '❌Error while uploading new avatar: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ Error while uploading new avatar: ' + err.message);
                 return;
             }
 
-            this.bot.sendMessage(steamID, '✅Successfully uploaded new avatar.');
+            this.bot.sendMessage(steamID, '✅ Successfully uploaded new avatar.');
         });
     }
 
@@ -1477,7 +1474,7 @@ export = class Commands {
             steamID,
             'All trades are recorded from ' +
                 pluralize('day', totalDays, true) +
-                ' ago✅\n\n Total: ' +
+                ' ago 📊\n\n Total: ' +
                 (process.env.LAST_TOTAL_TRADES ? +process.env.LAST_TOTAL_TRADES + tradesTotal : tradesTotal) +
                 ' \n Last 24 hours: ' +
                 trades24Hours +
@@ -1514,14 +1511,14 @@ export = class Commands {
         }
 
         if (offers.length === 0) {
-            this.bot.sendMessage(steamID, '❌There are no active offers pending for review.');
+            this.bot.sendMessage(steamID, '❌ There are no active offers pending for review.');
             return;
         }
 
         offers.sort((a, b) => a.id - b.id);
 
         let reply =
-            '🧾There is ' + offers.length + ' active ' + pluralize('offer', offers.length) + ' that you can review:';
+            'There is ' + offers.length + ' active ' + pluralize('offer', offers.length) + ' that you can review:';
 
         for (let i = 0; i < offers.length; i++) {
             const offer = offers[i];
@@ -1543,27 +1540,27 @@ export = class Commands {
         const offerId = CommandParser.removeCommand(message).trim();
 
         if (offerId === '') {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!trade 1234"❌');
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!trade 1234"');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
+            this.bot.sendMessage(steamID, '❌ Offer does not exist.');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.❌');
+            this.bot.sendMessage(steamID, '❌ Offer is not active.');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action?.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
+            this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
@@ -1572,7 +1569,7 @@ export = class Commands {
         // TODO: Create static class for trade offer related functions?
 
         let reply =
-            'Offer #' +
+            '⚠️ Offer #' +
             offerId +
             ' from ' +
             offerData.partner +
@@ -1606,9 +1603,9 @@ export = class Commands {
                 ' (' +
                 summarizeItems(items.their, this.bot.schema) +
                 (valueDiff > 0
-                    ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                    ? ')\n📈 Profit from overpay: ' + valueDiffRef + ' ref'
                     : valueDiff < 0
-                    ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                    ? ')\n📉 Loss from underpay: ' + valueDiffRef + ' ref'
                     : ')');
         }
 
@@ -1620,27 +1617,27 @@ export = class Commands {
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294"❌');
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!accepttrade 3957959294"');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
+            this.bot.sendMessage(steamID, '❌ Offer does not exist.');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.❌');
+            this.bot.sendMessage(steamID, '❌ Offer is not active.');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
+            this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
@@ -1648,7 +1645,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                    '❌ Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                 );
                 return;
             }
@@ -1663,7 +1660,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
+                        '❌ Ohh nooooes! Something went wrong while trying to accept the offer: ' + err.message
                     );
                     return;
                 }
@@ -1683,27 +1680,27 @@ export = class Commands {
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
         if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294"❌');
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!declinetrade 3957959294"');
             return;
         }
 
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, 'Offer does not exist.❌');
+            this.bot.sendMessage(steamID, '❌ Offer does not exist.');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, 'Offer is not active.❌');
+            this.bot.sendMessage(steamID, '❌ Offer is not active.');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action.action !== 'skip') {
-            this.bot.sendMessage(steamID, "Offer can't be reviewed.❌");
+            this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
@@ -1711,7 +1708,7 @@ export = class Commands {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                    '❌ Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                 );
                 return;
             }
@@ -1726,7 +1723,7 @@ export = class Commands {
                 if (err) {
                     this.bot.sendMessage(
                         steamID,
-                        '❌Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
+                        '❌ Ohh nooooes! Something went wrong while trying to decline the offer: ' + err.message
                     );
                     return;
                 }
@@ -1750,14 +1747,14 @@ export = class Commands {
             const pricelistLength = this.bot.pricelist.getLength();
 
             if (pricelistLength === 0) {
-                this.bot.sendMessage(steamID, '🧾❌Your pricelist is already empty!');
+                this.bot.sendMessage(steamID, '❌ Your pricelist is already empty!');
                 return;
             }
 
             if (params.i_am_sure !== 'yes_i_am') {
                 this.bot.sendMessage(
                     steamID,
-                    '⁉Are you sure that you want to remove ' +
+                    '⚠️ Are you sure that you want to remove ' +
                         pluralize('item', pricelistLength, true) +
                         '? Try again with i_am_sure=yes_i_am'
                 );
@@ -1767,10 +1764,10 @@ export = class Commands {
             this.bot.pricelist
                 .removeAll()
                 .then(() => {
-                    this.bot.sendMessage(steamID, '♻Cleared pricelist!');
+                    this.bot.sendMessage(steamID, '✅ Cleared pricelist!');
                 })
                 .catch(err => {
-                    this.bot.sendMessage(steamID, '❌♻Failed to clear pricelist: ' + err.message);
+                    this.bot.sendMessage(steamID, '❌ Failed to clear pricelist: ' + err.message);
                 });
             return;
         }
@@ -1782,7 +1779,7 @@ export = class Commands {
             if (match === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌I could not find any items in my pricelist that contains "' + params.item + '"'
+                    '❌ I could not find any items in my pricelist that contains "' + params.item + '"'
                 );
                 return;
             } else if (Array.isArray(match)) {
@@ -1792,7 +1789,7 @@ export = class Commands {
                 }
 
                 let reply =
-                    "👩🏻‍💻I've found " +
+                    "I've found " +
                     match.length +
                     ' items. Try with one of the items shown below:\n' +
                     match.join(',\n');
@@ -1820,10 +1817,10 @@ export = class Commands {
         this.bot.pricelist
             .removePrice(params.sku as string, true)
             .then(entry => {
-                this.bot.sendMessage(steamID, '🚮Removed "' + entry.name + '".');
+                this.bot.sendMessage(steamID, '✅ Removed "' + entry.name + '".');
             })
             .catch(err => {
-                this.bot.sendMessage(steamID, '❌Failed to remove pricelist entry: ' + err.message);
+                this.bot.sendMessage(steamID, '❌ Failed to remove pricelist entry: ' + err.message);
             });
     }
 
@@ -1843,7 +1840,7 @@ export = class Commands {
         }
 
         if (!name) {
-            this.bot.sendMessage(steamID, '❗You forgot to add a name. Here\'s an example: "!price Team Captain"');
+            this.bot.sendMessage(steamID, '⚠️ You forgot to add a name. Here\'s an example: "!price Team Captain"');
             return null;
         }
 
@@ -1851,7 +1848,7 @@ export = class Commands {
         if (match === null) {
             this.bot.sendMessage(
                 steamID,
-                '❌I could not find any items in my pricelist that contains "' +
+                '❌ I could not find any items in my pricelist that contains "' +
                     name +
                     '", I might not be trading the item you are looking for.'
             );
@@ -1863,7 +1860,7 @@ export = class Commands {
             }
 
             let reply =
-                "👩🏻‍💻I've found " + match.length + ' items. Try with one of the items shown below:\n' + match.join(',\n');
+                "I've found " + match.length + ' items. Try with one of the items shown below:\n' + match.join(',\n');
             if (matchCount > match.length) {
                 const other = matchCount - match.length;
                 reply += ',\nand ' + other + ' other ' + pluralize('item', other) + '.';
@@ -1903,7 +1900,7 @@ export = class Commands {
             if (match.length === 0) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find an item in the schema with the name "' + params.name + '".'
+                    '❌ Could not find an item in the schema with the name "' + params.name + '".'
                 );
                 return null;
             } else if (match.length !== 1) {
@@ -1914,7 +1911,7 @@ export = class Commands {
                     .map(schemaItem => schemaItem.defindex + ' (' + schemaItem.name + ')');
 
                 let reply =
-                    "👩🏻‍💻I've found " +
+                    "I've found " +
                     matchCount +
                     ' items with a matching name. Please use one of the defindexes below as "defindex":\n' +
                     parsed.join(',\n');
@@ -1944,7 +1941,7 @@ export = class Commands {
         }
 
         if (!foundSomething) {
-            this.bot.sendMessage(steamID, '❌Missing item properties.');
+            this.bot.sendMessage(steamID, '⚠️ Missing item properties.');
             return null;
         }
 
@@ -1954,7 +1951,7 @@ export = class Commands {
             if (schemaItem === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find an item in the schema with the defindex "' + params.defindex + '".'
+                    '❌ Could not find an item in the schema with the defindex "' + params.defindex + '".'
                 );
                 return null;
             }
@@ -1971,7 +1968,7 @@ export = class Commands {
             if (quality === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find a quality in the schema with the name "' + params.quality + '".'
+                    '❌ Could not find a quality in the schema with the name "' + params.quality + '".'
                 );
                 return null;
             }
@@ -1984,7 +1981,7 @@ export = class Commands {
             if (paintkit === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find a skin in the schema with the name "' + item.paintkit + '".'
+                    '❌ Could not find a skin in the schema with the name "' + item.paintkit + '".'
                 );
                 return null;
             }
@@ -1998,7 +1995,7 @@ export = class Commands {
             if (effect === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find an unusual effect in the schema with the name "' + params.effect + '".'
+                    '❌ Could not find an unusual effect in the schema with the name "' + params.effect + '".'
                 );
                 return null;
             }
@@ -2014,7 +2011,7 @@ export = class Commands {
             if (schemaItem === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find an item in the schema with the defindex "' + params.defindex + '".'
+                    '❌ Could not find an item in the schema with the defindex "' + params.defindex + '".'
                 );
                 return null;
             }
@@ -2037,7 +2034,7 @@ export = class Commands {
             if (match.length === 0) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find an item in the schema with the name "' + params.name + '".'
+                    '❌ Could not find an item in the schema with the name "' + params.name + '".'
                 );
                 return null;
             } else if (match.length !== 1) {
@@ -2048,7 +2045,7 @@ export = class Commands {
                     .map(schemaItem => schemaItem.defindex + ' (' + schemaItem.name + ')');
 
                 let reply =
-                    "👩🏻‍💻I've found " +
+                    "I've found " +
                     matchCount +
                     ' items with a matching name. Please use one of the defindexes below as "output":\n' +
                     parsed.join(',\n');
@@ -2074,7 +2071,7 @@ export = class Commands {
             if (quality === null) {
                 this.bot.sendMessage(
                     steamID,
-                    '❌Could not find a quality in the schema with the name "' + params.outputQuality + '".'
+                    '❌ Could not find a quality in the schema with the name "' + params.outputQuality + '".'
                 );
                 return null;
             }

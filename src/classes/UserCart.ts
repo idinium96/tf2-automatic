@@ -27,11 +27,11 @@ class UserCart extends Cart {
         ]);
 
         if (banned) {
-            return Promise.reject('⛔you are banned in one or more trading communities');
+            return Promise.reject('you are banned in one or more trading communities');
         }
 
         if (escrow) {
-            return Promise.reject('⚠trade would be held');
+            return Promise.reject('trade would be held');
         }
 
         // TODO: Check for dupes

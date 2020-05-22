@@ -239,11 +239,11 @@ abstract class Cart {
 
     sendOffer(): Promise<string | void> {
         if (this.isEmpty()) {
-            return Promise.reject("❌I don't or you don't have enough items for this trade");
+            return Promise.reject("❌ I don't or you don't have enough items for this trade");
         }
 
         if (this.offer === null) {
-            return Promise.reject(new Error('Offer has not yet been constructed'));
+            return Promise.reject(new Error('⌛ Offer has not yet been constructed'));
         }
 
         if (this.offer.data('dict') === undefined) {
@@ -324,12 +324,12 @@ abstract class Cart {
 
     toString(): string {
         if (this.isEmpty()) {
-            return '❌Your cart is empty.';
+            return '❌ Your cart is empty.';
         }
 
         let str = '🛒== YOUR CART ==🛒';
 
-        str += '\n\n➡My side (items you will receive):';
+        str += '\n\nMy side (items you will receive):';
         for (const sku in this.our) {
             if (!Object.prototype.hasOwnProperty.call(this.our, sku)) {
                 continue;
@@ -339,7 +339,7 @@ abstract class Cart {
             str += '\n- ' + this.our[sku] + 'x ' + name;
         }
 
-        str += '\n\n⬅Your side (items you will lose):';
+        str += '\n\nYour side (items you will lose):';
         for (const sku in this.their) {
             if (!Object.prototype.hasOwnProperty.call(this.their, sku)) {
                 continue;
@@ -376,7 +376,7 @@ abstract class Cart {
         const cart = this.getCart(steamID);
 
         if (cart === null) {
-            return '❌Your cart is empty.';
+            return '❌ Your cart is empty.';
         }
 
         return cart.toString();
