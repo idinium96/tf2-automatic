@@ -99,9 +99,9 @@
                 "CUSTOM_I_DONT_KNOW_WHAT_YOU_MEAN": "",
                 "CUSTOM_HOW2TRADE_MESSAGE": "",
 
-                "CUSTOM_SUCCESS_MESSAGE": "✅Success! The offer went through successfully.",
-                "CUSTOM_DECLINED_MESSAGE": "❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.",
-                "CUSTOM_TRADED_AWAY_MESSAGE": "❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).",
+                "CUSTOM_SUCCESS_MESSAGE": "✅ Success! The offer went through successfully.",
+                "CUSTOM_DECLINED_MESSAGE": "❌ Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.",
+                "CUSTOM_TRADED_AWAY_MESSAGE": "❌ Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).",
                 "CUSTOM_CLEARING_FRIENDS_MESSAGE": "I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗"
             }
         }
