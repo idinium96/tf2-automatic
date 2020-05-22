@@ -839,6 +839,38 @@ export = class MyHandler extends Handler {
         }
 
         if (action === 'skip') {
+            const reviewReasons: string[] = [];
+            let note: string;
+            if (meta.uniqueReasons.includes('INVALID_VALUE')) {
+                note = process.env.INVALID_VALUE_NOTE
+                    ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
+                    : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
+                reviewReasons.push(note);
+            }
+            if (meta.uniqueReasons.includes('INVALID_ITEMS')) {
+                note = process.env.INVALID_ITEMS_NOTE
+                    ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
+                    : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.';
+                reviewReasons.push(note);
+            }
+            if (meta.uniqueReasons.includes('OVERSTOCKED')) {
+                note = process.env.OVERSTOCKED_NOTE
+                    ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                    : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.";
+                reviewReasons.push(note);
+            }
+            if (meta.uniqueReasons.includes('DUPE_ITEMS')) {
+                note = process.env.DUPE_ITEMS_NOTE
+                    ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
+                    : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
+                reviewReasons.push(note);
+            }
+            if (meta.uniqueReasons.includes('DUPE_CHECK_FAILED')) {
+                note = process.env.DUPE_CHECK_FAILED_NOTE
+                    ? 'DUPE_CHECK_FAILED - ' + process.env.DUPE_CHECK_FAILED_NOTE
+                    : 'DUPE_CHECK_FAILED - Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.';
+                reviewReasons.push(note);
+            }
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
@@ -850,31 +882,8 @@ export = class MyHandler extends Handler {
                         .replace(/Profit from overpay/g, '')
                         .replace(/Loss from /g, '')
                         .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
-                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
-                        ? '\nNote: ' +
-                          (meta.uniqueReasons.includes('INVALID_VALUE')
-                              ? process.env.INVALID_VALUE_NOTE
-                                  ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
-                                  : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.'
-                              : meta.uniqueReasons.includes('INVALID_ITEMS')
-                              ? process.env.INVALID_ITEMS_NOTE
-                                  ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
-                                  : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
-                              : meta.uniqueReasons.includes('OVERSTOCKED')
-                              ? process.env.OVERSTOCKED_NOTE
-                                  ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
-                                  : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
-                              : meta.uniqueReasons.includes('DUPE_ITEMS')
-                              ? process.env.DUPE_ITEMS_NOTE
-                                  ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
-                                  : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.'
-                              : meta.uniqueReasons.includes('DUPE_CHECK_FAILED')
-                              ? process.env.DUPE_CHECK_FAILED_NOTE
-                                  ? process.env.DUPE_CHECK_FAILED_NOTE
-                                  : 'Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.'
-                              : '') +
-                          (process.env.ADDITIONAL_NOTE ? process.env.ADDITIONAL_NOTE : '')
-                        : '')
+                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false' ? '\nNote:\n' + reviewReasons.join('\n') : '') +
+                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
