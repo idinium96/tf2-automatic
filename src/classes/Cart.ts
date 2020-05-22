@@ -239,7 +239,7 @@ abstract class Cart {
 
     sendOffer(): Promise<string | void> {
         if (this.isEmpty()) {
-            return Promise.reject("❌I don't or you don't have enough items for this trade");
+            return Promise.reject("❌ I don't or you don't have enough items for this trade");
         }
 
         if (this.offer === null) {
@@ -322,12 +322,12 @@ abstract class Cart {
 
     toString(): string {
         if (this.isEmpty()) {
-            return '❌Your cart is empty.';
+            return '❌ Your cart is empty.';
         }
 
-        let str = '🛒== YOUR CART ==🛒';
+        let str = '🛒 == YOUR CART == 🛒';
 
-        str += '\n\n➡My side (items you will receive):';
+        str += '\n\n📥 My side (items you will receive): 📥';
         for (const sku in this.our) {
             if (!Object.prototype.hasOwnProperty.call(this.our, sku)) {
                 continue;
@@ -337,7 +337,7 @@ abstract class Cart {
             str += '\n- ' + this.our[sku] + 'x ' + name;
         }
 
-        str += '\n\n⬅Your side (items you will lose):';
+        str += '\n\n📤 Your side (items you will lose): 📤';
         for (const sku in this.their) {
             if (!Object.prototype.hasOwnProperty.call(this.their, sku)) {
                 continue;
@@ -346,6 +346,7 @@ abstract class Cart {
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
             str += '\n- ' + this.their[sku] + 'x ' + name;
         }
+        str += '\n\nType !checkout to checkout and proceed trade, or !clearcart to cancel.';
 
         return str;
     }
@@ -374,7 +375,7 @@ abstract class Cart {
         const cart = this.getCart(steamID);
 
         if (cart === null) {
-            return '❌Your cart is empty.';
+            return '❌ Your cart is empty.';
         }
 
         return cart.toString();
