@@ -728,14 +728,14 @@ export = class MyHandler extends Handler {
                         offer.partner,
                         process.env.CUSTOM_SUCCESS_MESSAGE
                             ? process.env.CUSTOM_SUCCESS_MESSAGE
-                            : '✅Success! The offer went through successfully.'
+                            : '✅ Success! The offer went through successfully.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_DECLINED_MESSAGE
                             ? process.env.CUSTOM_DECLINED_MESSAGE
-                            : '❌Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
+                            : '❌ Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Canceled) {
                     let reason: string;
@@ -750,14 +750,14 @@ export = class MyHandler extends Handler {
 
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
+                        '❌ Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.InvalidItems) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_TRADED_AWAY_MESSAGE
                             ? process.env.CUSTOM_TRADED_AWAY_MESSAGE
-                            : '❌Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
+                            : '❌ Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
                     );
                 }
             }
@@ -786,8 +786,8 @@ export = class MyHandler extends Handler {
                             ' is accepted. Summary:\n' +
                             offer
                                 .summarize(this.bot.schema)
-                                .replace(/Profit from overpay/g, '📈Profit from overpay')
-                                .replace(/Loss from underpay/g, '📉Loss from underpay') +
+                                .replace(/Profit from overpay/g, '📈 Profit from overpay')
+                                .replace(/Loss from underpay/g, '📉 Loss from underpay') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -862,8 +862,8 @@ export = class MyHandler extends Handler {
                                   : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.'
                               : meta.uniqueReasons.includes('OVERSTOCKED')
                               ? process.env.OVERSTOCKED_NOTE
-                                  ? 'INVALID_ITEMS - ' + process.env.OVERSTOCKED_NOTE
-                                  : "INVALID_ITEMS - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
+                                  ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                                  : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait."
                               : meta.uniqueReasons.includes('DUPE_ITEMS')
                               ? process.env.DUPE_ITEMS_NOTE
                                   ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
@@ -892,8 +892,8 @@ export = class MyHandler extends Handler {
                         '\nOffer Summary:\n' +
                         offer
                             .summarize(this.bot.schema)
-                            .replace(/Profit from overpay/g, '📈Profit from overpay')
-                            .replace(/Loss from underpay/g, '📉Loss from underpay') +
+                            .replace(/Profit from overpay/g, '📈 Profit from overpay')
+                            .replace(/Loss from underpay/g, '📉 Loss from underpay') +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
@@ -1040,9 +1040,9 @@ export = class MyHandler extends Handler {
                         steamID,
                         process.env.CUSTOM_WELCOME_MESSAGE
                             ? process.env.CUSTOM_WELCOME_MESSAGE
-                            : '🙋🏻‍♀️Hi! If you don\'t know how things work, please type "!' +
+                            : 'Hi! If you don\'t know how things work, please type "!' +
                                   (isAdmin ? 'help' : 'how2trade') +
-                                  '" 🤗'
+                                  '"'
                     );
                     return;
                 }
@@ -1062,11 +1062,11 @@ export = class MyHandler extends Handler {
                 steamID,
                 process.env.CUSTOM_WELCOME_MESSAGE
                     ? process.env.CUSTOM_WELCOME_MESSAGE
-                    : '🙋🏻‍♀️Hi ' +
+                    : 'Hi ' +
                           friend.player_name +
                           '! If you don\'t know how things work, please type "!' +
                           (isAdmin ? 'help' : 'how2trade') +
-                          '" 🤗'
+                          '"'
             );
         });
     }
@@ -1117,7 +1117,7 @@ export = class MyHandler extends Handler {
                     element.steamID,
                     process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
                         ? process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
-                        : 'I am cleaning up my friend list and you have been selected to be removed.🙇🏻‍♂️ Feel free to add me again if you want to trade at the other time!🤗'
+                        : 'I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
                 );
                 this.bot.client.removeFriend(element.steamID);
             });
