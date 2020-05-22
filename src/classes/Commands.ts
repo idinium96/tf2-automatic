@@ -837,7 +837,12 @@ export = class Commands {
                     ' been added to your cart.'
             );
         } else {
-            this.bot.sendMessage(steamID, pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒');
+            this.bot.sendMessage(
+                steamID,
+                '✅ ' +
+                    pluralize(name, Math.abs(amount), true) +
+                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
+            );
         }
 
         cart.addOurItem(match.sku, amount);
@@ -905,7 +910,9 @@ export = class Commands {
         } else {
             this.bot.sendMessage(
                 steamID,
-                '✅ ' + pluralize(name, Math.abs(amount), true) + ' has been added to your cart. 🛒'
+                '✅ ' +
+                    pluralize(name, Math.abs(amount), true) +
+                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
             );
         }
 
