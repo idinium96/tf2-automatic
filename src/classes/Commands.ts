@@ -60,8 +60,8 @@ const ADMIN_COMMANDS: string[] = [
     '!stats - Get statistics for accepted trades 📊',
     '!trades - Get a list of offers pending for manual review',
     '!trade <offerID> - Get info about a trade',
-    '!accepttrade <offerID> [Your Message] - Manually accept an active offer ✅',
-    '!declinetrade <offerID> [Your Message] - Manually decline an active offer ❌',
+    '!accept <offerID> [Your Message] - Manually accept an active offer ✅',
+    '!decline <offerID> [Your Message] - Manually decline an active offer ❌',
     '!message <steamid> <your message> - Send a message to a user 💬'
 ];
 
@@ -143,10 +143,10 @@ export = class Commands {
             this.tradesCommand(steamID);
         } else if (command === 'trade' && isAdmin) {
             this.tradeCommand(steamID, message);
-        } else if (command === 'accepttrade' && isAdmin) {
-            this.accepttradeCommand(steamID, message);
-        } else if (command === 'declinetrade' && isAdmin) {
-            this.declinetradeCommand(steamID, message);
+        } else if (command === 'accept' && isAdmin) {
+            this.acceptCommand(steamID, message);
+        } else if (command === 'decline' && isAdmin) {
+            this.declineCommand(steamID, message);
         } else {
             this.bot.sendMessage(
                 steamID,
@@ -1612,7 +1612,7 @@ export = class Commands {
         this.bot.sendMessage(steamID, reply);
     }
 
-    private accepttradeCommand(steamID: SteamID, message: string): void {
+    private acceptCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
@@ -1675,7 +1675,7 @@ export = class Commands {
         });
     }
 
-    private declinetradeCommand(steamID: SteamID, message: string): void {
+    private declineCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
 
