@@ -792,7 +792,7 @@ class UserCart extends Cart {
 
         const { isBuyer, currencies } = this.getCurrencies();
 
-        let str = '== YOUR CART ==';
+        let str = '🛒== YOUR CART ==🛒';
 
         str += '\n\nMy side (items you will receive):';
         for (const sku in this.our) {
@@ -823,6 +823,7 @@ class UserCart extends Cart {
             // They don't offer any currencies, add our currencies to cart string because they are buying our value
             str += '\n' + (Object.keys(this.their).length === 0 ? '' : 'and ') + currencies.toString();
         }
+        str += '\n\nType !checkout to checkout and proceed trade, or !clearcart to cancel.';
 
         return str;
     }
