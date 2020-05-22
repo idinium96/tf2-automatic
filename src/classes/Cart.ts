@@ -348,6 +348,7 @@ abstract class Cart {
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
             str += '\n- ' + this.their[sku] + 'x ' + name;
         }
+        str += '\n\nType !checkout to checkout and proceed trade, or !clearcart to cancel.';
 
         return str;
     }
