@@ -692,10 +692,11 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            pluralize(name, Math.abs(amount), true) +
+            '✅ ' +
+                pluralize(name, Math.abs(amount), true) +
                 ' has been ' +
                 (amount >= 0 ? 'added to' : 'removed from') +
-                ' your cart. 🛒'
+                ' your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
         );
     }
 
@@ -759,15 +760,16 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart 🛒.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
-                pluralize(name, Math.abs(amount), true) +
+                '✅ ' +
+                    pluralize(name, Math.abs(amount), true) +
                     ' has been ' +
                     (amount >= 0 ? 'added to' : 'removed from') +
-                    ' your cart. 🛒'
+                    ' your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -834,14 +836,14 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
                 '✅ ' +
                     pluralize(name, Math.abs(amount), true) +
-                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
+                    ' has been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -905,14 +907,14 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart. 🛒'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
                 '✅ ' +
                     pluralize(name, Math.abs(amount), true) +
-                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
+                    ' has been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -1861,7 +1863,14 @@ export = class Commands {
                 steamID,
                 '❌ I could not find any items in my pricelist that contains "' +
                     name +
-                    '", I might not be trading the item you are looking for.'
+                    '", I might not be trading the item you are looking for, or try:' +
+                    '\n• remove "The"' +
+                    '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
+                    '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
+                    `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +
+                    '\n• check for dot (.) like "Lucky No. 42" or "B.A.S.E. Jumper"' +
+                    '\n• check for exclamation mark (!) like "Bonk! Atomic Punch"' +
+                    `\n• if you're looking for uncraftable items, do it like "Non-Craftable Crit-a-Cola"`
             );
             return null;
         } else if (Array.isArray(match)) {
