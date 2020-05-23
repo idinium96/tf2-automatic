@@ -862,8 +862,11 @@ export = class MyHandler extends Handler {
         meta: UnknownDictionary<any>
     ): void {
         const notify = offer.data('notify') === true;
-
+        if (!notify) {
+            return;
+        }
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const items: { our: {}; their: {} } = offer.data('dict');
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         let valueDiff: number;
@@ -884,25 +887,26 @@ export = class MyHandler extends Handler {
             ).toString();
         }
 
-        if (!notify) {
-            return;
+        const itemsList: string[] = [];
+        for (const sku in items.their) {
+            if (!Object.prototype.hasOwnProperty.call(items.their, sku)) {
+                continue;
+            }
+            const theirItemsSku = sku;
+            itemsList.push(theirItemsSku);
         }
 
         if (action === 'skip') {
             const reviewReasons: string[] = [];
             let note: string;
-            const missingPure: string[] = [];
-            let notePure: string;
+            let missingPureNote: string;
             if (meta.uniqueReasons.includes('INVALID_VALUE')) {
                 note = process.env.INVALID_VALUE_NOTE
                     ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
                     : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
                 reviewReasons.push(note);
-                notePure =
-                    "\n[You're missing: " +
-                    valueDiffRef +
-                    (valueDiffRef >= keyPrice.sell.metal ? ' ref (' + valueDiffKey + ')]' : ' ref]');
-                missingPure.push(notePure);
+                missingPureNote =
+                    "\n[You're missing: " + itemsList.includes('5021;6') ? valueDiffKey : valueDiffRef + ' ref';
             }
             if (meta.uniqueReasons.includes('INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
@@ -939,7 +943,7 @@ export = class MyHandler extends Handler {
                         .replace('Asked', 'My side')
                         .replace('Offered', 'Your side') +
                     (meta.uniqueReasons.includes('INVALID_VALUE') && !meta.uniqueReasons.includes('INVALID_ITEMS')
-                        ? missingPure
+                        ? missingPureNote
                         : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
