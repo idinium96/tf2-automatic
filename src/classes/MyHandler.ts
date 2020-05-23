@@ -912,13 +912,13 @@ export = class MyHandler extends Handler {
             if (meta.uniqueReasons.includes('DUPE_ITEMS')) {
                 note = process.env.DUPE_ITEMS_NOTE
                     ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
-                    : 'DUPE_ITEMS - The item you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
+                    : 'DUPE_ITEMS - The item(s) you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('DUPE_CHECK_FAILED')) {
                 note = process.env.DUPE_CHECK_FAILED_NOTE
                     ? 'DUPE_CHECK_FAILED - ' + process.env.DUPE_CHECK_FAILED_NOTE
-                    : 'DUPE_CHECK_FAILED - Backpack.tf still does not recognized your item Original ID to check for duped item. You can try again later. Check it yourself by go to your item history page. Thank you.';
+                    : 'DUPE_CHECK_FAILED - Backpack.tf still does not recognize your item(s) Original ID to check for the duped item. You can try again later. Check it yourself by going to your item history page. Thank you.';
                 reviewReasons.push(note);
             }
             // Notify partner and admin that the offer is waiting for manual review
@@ -928,13 +928,14 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema) +
-                    '\n🔑Key rate: ' +
-                    keyPrice.sell.metal.toString() +
-                    ' ref/key' +
+                    (meta.uniqueReasons.includes('INVALID_VALUE') ? "\n(You're missing: " + valueDiffKey + ')' : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
                         : '') +
-                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
+                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '') +
+                    '\n🔑Key rate: ' +
+                    keyPrice.sell.metal.toString() +
+                    ' ref/key'
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
