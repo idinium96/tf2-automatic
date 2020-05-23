@@ -927,7 +927,10 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
-                    offer.summarize(this.bot.schema) +
+                    offer
+                        .summarize(this.bot.schema)
+                        .replace('Asked', 'My side')
+                        .replace('Offered', 'Your side') +
                     (meta.uniqueReasons.includes('INVALID_VALUE') ? "\n(You're missing: " + valueDiffKey + ')' : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
