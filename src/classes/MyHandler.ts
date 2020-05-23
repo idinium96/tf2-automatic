@@ -776,15 +776,21 @@ export = class MyHandler extends Handler {
                 const value: { our: Currency; their: Currency } = offer.data('value');
 
                 let valueDiff: number;
-                let valueDiffRef: string;
+                let valueDiffRef: number;
+                let valueDiffKey: string;
                 if (!value) {
                     valueDiff = 0;
-                    valueDiffRef = '';
+                    valueDiffRef = 0;
+                    valueDiffKey = '';
                 } else {
                     valueDiff =
                         new Currencies(value.their).toValue(keyPrice.sell.metal) -
                         new Currencies(value.our).toValue(keyPrice.sell.metal);
-                    valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+                    valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
+                    valueDiffKey = Currencies.toCurrencies(
+                        Math.abs(valueDiff),
+                        Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
+                    ).toString();
                 }
 
                 if (
@@ -802,11 +808,17 @@ export = class MyHandler extends Handler {
                             ' is accepted. Summary:\n' +
                             offer.summarize(this.bot.schema) +
                             (valueDiff > 0
-                                ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                                ? '\n📈Profit from overpay: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                                ? '\n📉Loss from underpay: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\nKey rate: ' +
+                            '\n🔑Key rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
@@ -855,15 +867,21 @@ export = class MyHandler extends Handler {
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         let valueDiff: number;
-        let valueDiffRef: string;
+        let valueDiffRef: number;
+        let valueDiffKey: string;
         if (!value) {
             valueDiff = 0;
-            valueDiffRef = '';
+            valueDiffRef = 0;
+            valueDiffKey = '';
         } else {
             valueDiff =
                 new Currencies(value.their).toValue(keyPrice.sell.metal) -
                 new Currencies(value.our).toValue(keyPrice.sell.metal);
-            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
+            valueDiffKey = Currencies.toCurrencies(
+                Math.abs(valueDiff),
+                Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
+            ).toString();
         }
 
         if (!notify) {
@@ -910,7 +928,12 @@ export = class MyHandler extends Handler {
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer.summarize(this.bot.schema) +
-                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false' ? '\nNote:\n' + reviewReasons.join('\n') : '') +
+                    '\n🔑Key rate: ' +
+                    keyPrice.sell.metal.toString() +
+                    ' ref/key' +
+                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
+                        ? '\n\nNote:\n' + reviewReasons.join('\n')
+                        : '') +
                     (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
             );
             if (
@@ -929,11 +952,17 @@ export = class MyHandler extends Handler {
                         '\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
                         (valueDiff > 0
-                            ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                            ? '\n📈Profit from overpay: ' +
+                              valueDiffRef +
+                              ' ref' +
+                              (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : valueDiff < 0
-                            ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                            ? '\n📉Loss from underpay: ' +
+                              valueDiffRef +
+                              ' ref' +
+                              (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : '') +
-                        '\nKey rate: ' +
+                        '\n🔑Key rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
                         keyPrice.sell.metal.toString() +
@@ -1176,15 +1205,21 @@ export = class MyHandler extends Handler {
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         let valueDiff: number;
-        let valueDiffRef: string;
+        let valueDiffRef: number;
+        let valueDiffKey: string;
         if (!value) {
             valueDiff = 0;
-            valueDiffRef = '';
+            valueDiffRef = 0;
+            valueDiffKey = '';
         } else {
             valueDiff =
                 new Currencies(value.their).toValue(keyPrice.sell.metal) -
                 new Currencies(value.our).toValue(keyPrice.sell.metal);
-            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
+            valueDiffKey = Currencies.toCurrencies(
+                Math.abs(valueDiff),
+                Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
+            ).toString();
         }
 
         let partnerAvatar: string;
@@ -1235,11 +1270,17 @@ export = class MyHandler extends Handler {
                             '\n\n__Offer Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? ')\n📈***Profit from overpay***: ' + valueDiffRef + ' ref'
+                                ? '\n📈***Profit from overpay***: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? ')\n📉***Loss from underpay***: ' + valueDiffRef + ' ref'
+                                ? '\n📉***Loss from underpay***: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\nKey rate: ' +
+                            '\n🔑Key rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
@@ -1271,15 +1312,21 @@ export = class MyHandler extends Handler {
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         let valueDiff: number;
-        let valueDiffRef: string;
+        let valueDiffRef: number;
+        let valueDiffKey: string;
         if (!value) {
             valueDiff = 0;
-            valueDiffRef = '';
+            valueDiffRef = 0;
+            valueDiffKey = '';
         } else {
             valueDiff =
                 new Currencies(value.their).toValue(keyPrice.sell.metal) -
                 new Currencies(value.our).toValue(keyPrice.sell.metal);
-            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
+            valueDiffKey = Currencies.toCurrencies(
+                Math.abs(valueDiff),
+                Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
+            ).toString();
         }
 
         let tradesTotal = 0;
@@ -1344,11 +1391,17 @@ export = class MyHandler extends Handler {
                             'has been marked as accepted.\n__Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? ')\n📈***Profit from overpay***: ' + valueDiffRef + ' ref'
+                                ? '\n📈***Profit from overpay***: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? ')\n📉***Loss from underpay***: ' + valueDiffRef + ' ref'
+                                ? '\n📉***Loss from underpay***: ' +
+                                  valueDiffRef +
+                                  ' ref' +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\nKey rate: ' +
+                            '\n🔑Key rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
