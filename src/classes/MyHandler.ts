@@ -5,6 +5,7 @@ import Commands from './Commands';
 import CartQueue from './CartQueue';
 import Inventory from './Inventory';
 import { UnknownDictionary } from '../types/common';
+import { Currency } from '../types/TeamFortress2';
 
 import SteamUser from 'steam-user';
 import TradeOfferManager, { TradeOffer, PollData } from 'steam-tradeoffer-manager';
@@ -768,8 +769,23 @@ export = class MyHandler extends Handler {
                 offer.data('isAccepted', true);
 
                 offer.log('trade', 'has been accepted.');
-                const keyPrice = this.bot.pricelist.getKeyPrices();
+
                 const pureStock = this.pureStock();
+
+                const keyPrice = this.bot.pricelist.getKeyPrices();
+                const value: { our: Currency; their: Currency } = offer.data('value');
+
+                let valueDiff: number;
+                let valueDiffRef: string;
+                if (!value) {
+                    valueDiff = 0;
+                    valueDiffRef = '';
+                } else {
+                    valueDiff =
+                        new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                        new Currencies(value.our).toValue(keyPrice.sell.metal);
+                    valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+                }
 
                 if (
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
@@ -784,10 +800,12 @@ export = class MyHandler extends Handler {
                             ' with ' +
                             offer.partner.getSteamID64() +
                             ' is accepted. Summary:\n' +
-                            offer
-                                .summarize(this.bot.schema)
-                                .replace(/Profit from overpay/g, '📈 Profit from overpay')
-                                .replace(/Loss from underpay/g, '📉 Loss from underpay') +
+                            offer.summarize(this.bot.schema) +
+                            (valueDiff > 0
+                                ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                                : valueDiff < 0
+                                ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                                : '') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -832,7 +850,21 @@ export = class MyHandler extends Handler {
         meta: UnknownDictionary<any>
     ): void {
         const notify = offer.data('notify') === true;
+
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const value: { our: Currency; their: Currency } = offer.data('value');
+
+        let valueDiff: number;
+        let valueDiffRef: string;
+        if (!value) {
+            valueDiff = 0;
+            valueDiffRef = '';
+        } else {
+            valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+        }
 
         if (!notify) {
             return;
@@ -877,11 +909,7 @@ export = class MyHandler extends Handler {
                 'Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
-                    offer
-                        .summarize(this.bot.schema)
-                        .replace(/Profit from overpay/g, '')
-                        .replace(/Loss from /g, '')
-                        .replace(/\bunderpay\b:\s(0|([1-9]\d*))(\.\d+)?\s\bref\b/, '') +
+                    offer.summarize(this.bot.schema) +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false' ? '\nNote:\n' + reviewReasons.join('\n') : '') +
                     (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
             );
@@ -899,10 +927,12 @@ export = class MyHandler extends Handler {
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\nOffer Summary:\n' +
-                        offer
-                            .summarize(this.bot.schema)
-                            .replace(/Profit from overpay/g, '📈 Profit from overpay')
-                            .replace(/Loss from underpay/g, '📉 Loss from underpay') +
+                        offer.summarize(this.bot.schema) +
+                        (valueDiff > 0
+                            ? ')\n📈Profit from overpay: ' + valueDiffRef + ' ref'
+                            : valueDiff < 0
+                            ? ')\n📉Loss from underpay: ' + valueDiffRef + ' ref'
+                            : '') +
                         '\nKey rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
@@ -1141,7 +1171,21 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const value: { our: Currency; their: Currency } = offer.data('value');
+
+        let valueDiff: number;
+        let valueDiffRef: string;
+        if (!value) {
+            valueDiff = 0;
+            valueDiffRef = '';
+        } else {
+            valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+        }
 
         let partnerAvatar: string;
         let partnerName: string;
@@ -1189,11 +1233,12 @@ export = class MyHandler extends Handler {
                             'is waiting for review, reason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
-                            tradeSummary
-                                .replace('Asked:', '**Asked:**')
-                                .replace('Offered:', '**Offered:**')
-                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
-                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
+                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
+                            (valueDiff > 0
+                                ? ')\n📈***Profit from overpay***: ' + valueDiffRef + ' ref'
+                                : valueDiff < 0
+                                ? ')\n📉***Loss from underpay***: ' + valueDiffRef + ' ref'
+                                : '') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
@@ -1216,12 +1261,26 @@ export = class MyHandler extends Handler {
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
-        const keyPrice = this.bot.pricelist.getKeyPrices();
         const pureStock = this.pureStock();
         const mentionOwner =
             process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true'
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
+
+        const keyPrice = this.bot.pricelist.getKeyPrices();
+        const value: { our: Currency; their: Currency } = offer.data('value');
+
+        let valueDiff: number;
+        let valueDiffRef: string;
+        if (!value) {
+            valueDiff = 0;
+            valueDiffRef = '';
+        } else {
+            valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
+            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
+        }
 
         let tradesTotal = 0;
         const offerData = this.bot.manager.pollData.offerData;
@@ -1283,11 +1342,12 @@ export = class MyHandler extends Handler {
                             'A trade with ' +
                             personaName +
                             'has been marked as accepted.\n__Summary__:\n' +
-                            tradeSummary
-                                .replace('Asked:', '**Asked:**')
-                                .replace('Offered:', '**Offered:**')
-                                .replace(/Profit from overpay/g, '📈***Profit from overpay***')
-                                .replace(/Loss from underpay/g, '📉***Loss from underpay***') +
+                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
+                            (valueDiff > 0
+                                ? ')\n📈***Profit from overpay***: ' + valueDiffRef + ' ref'
+                                : valueDiff < 0
+                                ? ')\n📉***Loss from underpay***: ' + valueDiffRef + ' ref'
+                                : '') +
                             '\nKey rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +

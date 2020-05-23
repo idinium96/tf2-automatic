@@ -1584,6 +1584,7 @@ export = class Commands {
             offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
+        const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offerData.value;
 
         const items: {
@@ -1598,7 +1599,9 @@ export = class Commands {
                 '\nOffered: ' +
                 summarizeItems(items.their, this.bot.schema);
         } else {
-            const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+            const valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
             const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
             reply +=
                 'Asked: ' +
