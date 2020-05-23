@@ -1450,9 +1450,10 @@ export = class Commands {
 
         const pollData = this.bot.manager.pollData;
         const oldestId = pollData.offerData === undefined ? undefined : Object.keys(pollData.offerData)[0];
-        const timeSince = process.env.TRADING_STARTING_TIME_UNIX
-            ? +process.env.TRADING_STARTING_TIME_UNIX
-            : pollData.timestamps[oldestId];
+        const timeSince =
+            +process.env.TRADING_STARTING_TIME_UNIX === 0
+                ? pollData.timestamps[oldestId]
+                : +process.env.TRADING_STARTING_TIME_UNIX;
         const totalDays = !timeSince ? 0 : now.diff(moment.unix(timeSince), 'days');
 
         const offerData = this.bot.manager.pollData.offerData;
