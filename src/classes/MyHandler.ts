@@ -891,11 +891,18 @@ export = class MyHandler extends Handler {
         if (action === 'skip') {
             const reviewReasons: string[] = [];
             let note: string;
+            const missingPure: string[] = [];
+            let notePure: string;
             if (meta.uniqueReasons.includes('INVALID_VALUE')) {
                 note = process.env.INVALID_VALUE_NOTE
                     ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
                     : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
                 reviewReasons.push(note);
+                notePure =
+                    "\n[You're missing: " +
+                    valueDiffRef +
+                    (valueDiffRef >= keyPrice.sell.metal ? ' ref (' + valueDiffKey + ')]' : ' ref]');
+                missingPure.push(notePure);
             }
             if (meta.uniqueReasons.includes('INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
@@ -931,7 +938,9 @@ export = class MyHandler extends Handler {
                         .summarize(this.bot.schema)
                         .replace('Asked', 'My side')
                         .replace('Offered', 'Your side') +
-                    (meta.uniqueReasons.includes('INVALID_VALUE') ? "\n(You're missing: " + valueDiffKey + ')' : '') +
+                    (meta.uniqueReasons.includes('INVALID_VALUE') && !meta.uniqueReasons.includes('INVALID_ITEMS')
+                        ? missingPure
+                        : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
                         : '') +
