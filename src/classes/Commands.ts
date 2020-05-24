@@ -1680,7 +1680,7 @@ export = class Commands {
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
             const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
-            const reply = offerIdAndMessage.substr(offerId.length);
+            const reply = offerIdAndMessage.substr(offerIdString.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('accept', 'MANUAL', {}, offer).asCallback(err => {
