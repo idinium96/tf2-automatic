@@ -311,6 +311,7 @@ export = class TF2GC {
             job.callback(err);
         }
 
+        this.bot.client.gamesPlayed('tf2-automatic');
         this.processingQueue = false;
 
         this.handleJobQueue();
