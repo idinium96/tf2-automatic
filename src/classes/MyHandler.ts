@@ -808,21 +808,21 @@ export = class MyHandler extends Handler {
                             ' is accepted. ✅\n\nSummary:\n' +
                             offer.summarize(this.bot.schema) +
                             (valueDiff > 0
-                                ? '\n\n📈Profit from overpay: ' +
+                                ? '\n\n📈 Profit from overpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? '\n\n📉Loss from underpay: ' +
+                                ? '\n\n📉 Loss from underpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\n🔑Key rate: ' +
+                            '\n🔑 Key rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
-                            ' ref | 💰Pure stock: ' +
+                            ' ref | 💰 Pure stock: ' +
                             pureStock.join(', ').toString() +
                             ' ref',
                         []
@@ -936,7 +936,7 @@ export = class MyHandler extends Handler {
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
-                '⚠ Your offer is waiting for review, reason: ' +
+                '⚠️ Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer
@@ -964,7 +964,7 @@ export = class MyHandler extends Handler {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
-                    '⚠ Offer #' +
+                    '⚠️ Offer #' +
                         offer.id +
                         ' from ' +
                         offer.partner +
@@ -973,17 +973,17 @@ export = class MyHandler extends Handler {
                         '\n\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
                         (valueDiff > 0
-                            ? '\n\n📈Profit from overpay: ' +
+                            ? '\n\n📈 Profit from overpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : valueDiff < 0
-                            ? '\n\n📉Loss from underpay: ' +
+                            ? '\n\n📉 Loss from underpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : '') +
-                        '\n🔑Key rate: ' +
+                        '\n🔑 Key rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
                         keyPrice.sell.metal.toString() +
@@ -1286,7 +1286,7 @@ export = class MyHandler extends Handler {
                         description:
                             'An offer sent by ' +
                             partnerName +
-                            'is waiting for review, reason: ' +
+                            ' is waiting for review, reason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
@@ -1409,7 +1409,7 @@ export = class MyHandler extends Handler {
                         description:
                             'A trade with ' +
                             personaName +
-                            'has been marked as accepted.\n__Summary__:\n' +
+                            ' has been marked as accepted.\n__Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? '\n📈***Profit from overpay:*** ' +
