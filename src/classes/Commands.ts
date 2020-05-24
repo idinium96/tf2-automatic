@@ -1627,14 +1627,16 @@ export = class Commands {
 
     private acceptCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!accepttrade 3957959294"');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!accept 3957959294"');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, '❌ Offer does not exist.');
@@ -1647,14 +1649,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1665,7 +1667,7 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
             const reply = offerIdAndMessage.substr(offerId.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
@@ -1690,14 +1692,16 @@ export = class Commands {
 
     private declineCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!declinetrade 3957959294"');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!decline 3957959294"');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, '❌ Offer does not exist.');
@@ -1710,14 +1714,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1728,8 +1732,8 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Declining offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = offerIdAndMessage.substr(offerId.length);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
+            const reply = offerIdAndMessage.substr(offerIdString.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
