@@ -866,6 +866,7 @@ export = class MyHandler extends Handler {
             return;
         }
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const pureStock = this.pureStock();
         const items: { our: {}; their: {} } = offer.data('dict');
         const value: { our: Currency; their: Currency } = offer.data('value');
 
@@ -948,7 +949,13 @@ export = class MyHandler extends Handler {
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
                         : '') +
-                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
+                    (process.env.ADDITIONAL_NOTE
+                        ? '\n' +
+                          process.env.ADDITIONAL_NOTE.replace(
+                              /%keyRate%/g,
+                              keyPrice.sell.metal.toString() + ' ref'
+                          ).replace(/%pureStock%/g, pureStock.join(', ').toString())
+                        : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
