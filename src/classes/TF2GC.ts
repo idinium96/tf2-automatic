@@ -173,7 +173,7 @@ export = class TF2GC {
             () => {
                 this.bot.inventoryManager.getInventory().removeItem(job.assetid);
 
-                this.bot.client.gamesPlayed('tf2-automatic');
+                this.bot.client.gamesPlayed('tf2-automatic-using-item');
                 this.finishedProcessingJob();
             },
             err => {
