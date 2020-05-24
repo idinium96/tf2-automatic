@@ -906,7 +906,7 @@ export = class MyHandler extends Handler {
                     : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
                 reviewReasons.push(note);
                 missingPureNote =
-                    "\n[You're missing: " + itemsList.includes('5021;6') ? valueDiffKey : valueDiffRef + ' ref';
+                    "\n[You're missing: " + (itemsList.includes('5021;6') ? valueDiffKey : valueDiffRef + ' ref');
             }
             if (meta.uniqueReasons.includes('INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
