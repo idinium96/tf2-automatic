@@ -805,15 +805,15 @@ export = class MyHandler extends Handler {
                             offer.id +
                             ' with ' +
                             offer.partner.getSteamID64() +
-                            ' is accepted. Summary:\n' +
+                            ' is accepted. ✅\n\nSummary:\n' +
                             offer.summarize(this.bot.schema) +
                             (valueDiff > 0
-                                ? '\n📈Profit from overpay: ' +
+                                ? '\n\n📈Profit from overpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? '\n📉Loss from underpay: ' +
+                                ? '\n\n📉Loss from underpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
@@ -822,7 +822,7 @@ export = class MyHandler extends Handler {
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
-                            ' ref | Pure stock: ' +
+                            ' ref | 💰Pure stock: ' +
                             pureStock.join(', ').toString() +
                             ' ref',
                         []
@@ -935,7 +935,7 @@ export = class MyHandler extends Handler {
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
-                'Your offer is waiting for review, reason: ' +
+                '⚠ Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer
@@ -948,10 +948,7 @@ export = class MyHandler extends Handler {
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? '\n\nNote:\n' + reviewReasons.join('\n')
                         : '') +
-                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '') +
-                    '\n🔑Key rate: ' +
-                    keyPrice.sell.metal.toString() +
-                    ' ref/key'
+                    (process.env.ADDITIONAL_NOTE ? '\n' + process.env.ADDITIONAL_NOTE : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
@@ -960,21 +957,21 @@ export = class MyHandler extends Handler {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
-                    'Offer #' +
+                    '⚠ Offer #' +
                         offer.id +
                         ' from ' +
                         offer.partner +
                         ' is waiting for review, reason: ' +
                         meta.uniqueReasons.join(', ') +
-                        '\nOffer Summary:\n' +
+                        '\n\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
                         (valueDiff > 0
-                            ? '\n📈Profit from overpay: ' +
+                            ? '\n\n📈Profit from overpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : valueDiff < 0
-                            ? '\n📉Loss from underpay: ' +
+                            ? '\n\n📉Loss from underpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
@@ -1287,12 +1284,12 @@ export = class MyHandler extends Handler {
                             '\n\n__Offer Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? '\n📈***Profit from overpay***: ' +
+                                ? '\n📈***Profit from overpay:*** ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? '\n📉***Loss from underpay***: ' +
+                                ? '\n📉***Loss from underpay:*** ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
@@ -1408,12 +1405,12 @@ export = class MyHandler extends Handler {
                             'has been marked as accepted.\n__Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? '\n📈***Profit from overpay***: ' +
+                                ? '\n📈***Profit from overpay:*** ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? '\n📉***Loss from underpay***: ' +
+                                ? '\n📉***Loss from underpay:*** ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
@@ -1422,7 +1419,7 @@ export = class MyHandler extends Handler {
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
-                            ' ref | Pure stock: ' +
+                            ' ref | 💰Pure stock: ' +
                             pureStock.join(', ').toString() +
                             ' ref\n' +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
