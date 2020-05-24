@@ -436,7 +436,19 @@ export = class Commands {
                     adminDetails.avatar_url_full
                 );
             } else {
-                this.bot.messageAdmins("💬 You've got a message from # " + steamID + ' : ' + msg, []);
+                this.bot.messageAdmins(
+                    "💬 You've got a message from #" +
+                        steamID +
+                        ' (' +
+                        adminDetails.player_name +
+                        '): "' +
+                        msg +
+                        '"\n\nSteam: https://steamcommunity.com/profiles/' +
+                        steamID +
+                        '\nBackpack.tf: https://backpack.tf/profiles/' +
+                        steamID,
+                    []
+                );
             }
             this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
