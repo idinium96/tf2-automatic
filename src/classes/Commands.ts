@@ -82,8 +82,6 @@ export = class Commands {
 
         const isAdmin = this.bot.isAdmin(steamID);
 
-        message = removeLinkProtocol(message);
-
         if (command === 'help') {
             this.helpCommand(steamID);
         } else if (command === 'how2trade') {
@@ -409,7 +407,7 @@ export = class Commands {
             );
 
             // Send confirmation message to admin
-            this.bot.sendMessage(steamID, 'Your message has been sent.');
+            this.bot.sendMessage(steamID, '✅ Your message has been sent.');
 
             // Send message to all other wadmins that an admin replied
             this.bot.messageAdmins(
@@ -421,13 +419,13 @@ export = class Commands {
             const admins = this.bot.getAdmins();
             if (!admins || admins.length === 0) {
                 // Just default to same message as if it was disabled
-                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                this.bot.sendMessage(steamID, '❌ The owner has disabled messages.');
                 return;
             }
 
             const msg = message.substr(message.toLowerCase().indexOf('message') + 8);
             if (!msg) {
-                this.bot.sendMessage(steamID, 'Please include a message. Here\'s an example: "!message Hi"');
+                this.bot.sendMessage(steamID, '❌ Please include a message. Here\'s an example: "!message Hi"');
                 return;
             }
 
@@ -442,9 +440,9 @@ export = class Commands {
                     adminDetails.avatar_url_full
                 );
             } else {
-                this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+                this.bot.messageAdmins("💬 You've got a message from # " + steamID + ' : ' + msg, []);
             }
-            this.bot.sendMessage(steamID, 'Your message has been sent.');
+            this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
     }
 
@@ -838,7 +836,7 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
@@ -909,7 +907,7 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
@@ -962,6 +960,7 @@ export = class Commands {
     }
 
     private getCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.item !== undefined) {
@@ -1021,6 +1020,7 @@ export = class Commands {
     }
 
     private addCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message)) as any;
 
         if (params.enabled === undefined) {
@@ -1083,6 +1083,7 @@ export = class Commands {
     }
 
     private updateCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (typeof params.intent === 'string') {
@@ -1157,7 +1158,7 @@ export = class Commands {
                 return;
             }
 
-            this.bot.sendMessage(steamID, 'Updating prices...');
+            this.bot.sendMessage(steamID, '⌛ Updating prices...');
 
             this.bot.pricelist
                 .setupPricelist()
@@ -1271,6 +1272,7 @@ export = class Commands {
     }
 
     private pricecheckCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.sku === undefined) {
@@ -1303,7 +1305,7 @@ export = class Commands {
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (typeof params.craftable !== 'boolean') {
-            this.bot.sendMessage(steamID, 'Missing `craftable=true|false`');
+            this.bot.sendMessage(steamID, '⚠️ Missing `craftable=true|false`');
             return;
         }
 
@@ -1330,12 +1332,12 @@ export = class Commands {
                 return;
             }
 
-            this.bot.sendMessage(steamID, 'Used ' + name + '!');
+            this.bot.sendMessage(steamID, '✅ Used ' + name + '!');
         });
     }
 
     private stopCommand(steamID: SteamID): void {
-        this.bot.sendMessage(steamID, 'Stopping...');
+        this.bot.sendMessage(steamID, '⌛ Stopping...');
 
         this.bot.botManager.stopProcess().catch(err => {
             log.warn('Error occurred while trying to stop: ', err);
@@ -1344,7 +1346,7 @@ export = class Commands {
     }
 
     private restartCommand(steamID: SteamID): void {
-        this.bot.sendMessage(steamID, 'Restarting...');
+        this.bot.sendMessage(steamID, '⌛ Restarting...');
 
         this.bot.botManager
             .restartProcess()
@@ -1376,7 +1378,7 @@ export = class Commands {
                 } else if (this.bot.lastNotifiedVersion === latestVersion) {
                     this.bot.sendMessage(
                         steamID,
-                        `❇Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`
+                        `⚠️ Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`
                     );
                 }
             })
@@ -1450,9 +1452,10 @@ export = class Commands {
 
         const pollData = this.bot.manager.pollData;
         const oldestId = pollData.offerData === undefined ? undefined : Object.keys(pollData.offerData)[0];
-        const timeSince = process.env.TRADING_STARTING_TIME_UNIX
-            ? +process.env.TRADING_STARTING_TIME_UNIX
-            : pollData.timestamps[oldestId];
+        const timeSince =
+            +process.env.TRADING_STARTING_TIME_UNIX === 0
+                ? pollData.timestamps[oldestId]
+                : +process.env.TRADING_STARTING_TIME_UNIX;
         const totalDays = !timeSince ? 0 : now.diff(moment.unix(timeSince), 'days');
 
         const offerData = this.bot.manager.pollData.offerData;
@@ -1481,7 +1484,7 @@ export = class Commands {
             steamID,
             'All trades are recorded from ' +
                 pluralize('day', totalDays, true) +
-                ' ago ✅\n\n Total: ' +
+                ' ago 📊\n\n Total: ' +
                 (process.env.LAST_TOTAL_TRADES ? +process.env.LAST_TOTAL_TRADES + tradesTotal : tradesTotal) +
                 ' \n Last 24 hours: ' +
                 trades24Hours +
@@ -1584,7 +1587,7 @@ export = class Commands {
         // TODO: Create static class for trade offer related functions?
 
         let reply =
-            'Offer #' +
+            '⚠️ Offer #' +
             offerId +
             ' from ' +
             offerData.partner +
@@ -1592,6 +1595,7 @@ export = class Commands {
             offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
+        const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offerData.value;
 
         const items: {
@@ -1606,7 +1610,9 @@ export = class Commands {
                 '\nOffered: ' +
                 summarizeItems(items.their, this.bot.schema);
         } else {
-            const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+            const valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
             const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
             reply +=
                 'Asked: ' +
@@ -1629,14 +1635,16 @@ export = class Commands {
 
     private accepttradeCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accepttrade 3957959294" ❌');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!accept 3957959294" ⚠️');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, 'Offer does not exist. ❌');
@@ -1649,14 +1657,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "Offer can't be reviewed. ❌");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1667,8 +1675,8 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = offerIdAndMessage.substr(offerId.length);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
+            const reply = offerIdAndMessage.substr(offerIdString.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('accept', 'MANUAL', {}, offer).asCallback(err => {
@@ -1692,14 +1700,16 @@ export = class Commands {
 
     private declinetradeCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!declinetrade 3957959294" ❌');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, 'Missing offer id. Example: "!decline 3957959294" ⚠️');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, 'Offer does not exist. ❌');
@@ -1712,14 +1722,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "Offer can't be reviewed. ❌");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1730,8 +1740,8 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Declining offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = offerIdAndMessage.substr(offerId.length);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
+            const reply = offerIdAndMessage.substr(offerIdString.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
@@ -1754,6 +1764,7 @@ export = class Commands {
     }
 
     private removeCommand(steamID: SteamID, message: string): void {
+        message = removeLinkProtocol(message);
         const params = CommandParser.parseParams(CommandParser.removeCommand(message));
 
         if (params.all === true) {
@@ -1768,7 +1779,7 @@ export = class Commands {
             if (params.i_am_sure !== 'yes_i_am') {
                 this.bot.sendMessage(
                     steamID,
-                    '⁉Are you sure that you want to remove ' +
+                    '⚠️ Are you sure that you want to remove ' +
                         pluralize('item', pricelistLength, true) +
                         '? Try again with i_am_sure=yes_i_am'
                 );
@@ -1839,6 +1850,7 @@ export = class Commands {
     }
 
     private getItemAndAmount(steamID: SteamID, message: string): { match: Entry; amount: number } | null {
+        message = removeLinkProtocol(message);
         let name = message;
         let amount = 1;
 
@@ -1853,7 +1865,7 @@ export = class Commands {
         }
 
         if (!name) {
-            this.bot.sendMessage(steamID, '❗ You forgot to add a name. Here\'s an example: "!price Team Captain"');
+            this.bot.sendMessage(steamID, '⚠️ You forgot to add a name. Here\'s an example: "!price Team Captain"');
             return null;
         }
 
@@ -1863,7 +1875,14 @@ export = class Commands {
                 steamID,
                 '❌ I could not find any items in my pricelist that contains "' +
                     name +
-                    '", I might not be trading the item you are looking for.'
+                    '", I might not be trading the item you are looking for, or try:' +
+                    '\n• remove "The"' +
+                    '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
+                    '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
+                    `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +
+                    '\n• check for dot (.) like "Lucky No. 42" or "B.A.S.E. Jumper"' +
+                    '\n• check for exclamation mark (!) like "Bonk! Atomic Punch"' +
+                    `\n• if you're looking for uncraftable items, do it like "Non-Craftable Crit-a-Cola"`
             );
             return null;
         } else if (Array.isArray(match)) {
@@ -1957,7 +1976,7 @@ export = class Commands {
         }
 
         if (!foundSomething) {
-            this.bot.sendMessage(steamID, '❌ Missing item properties.');
+            this.bot.sendMessage(steamID, '⚠️ Missing item properties.');
             return null;
         }
 

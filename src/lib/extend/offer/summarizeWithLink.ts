@@ -25,8 +25,6 @@ export = function(schema: SchemaManager.Schema): string {
             summarizeItemsWithLink(items.their, schema)
         );
     } else {
-        const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
-        const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
         return (
             'Asked: ' +
             new Currencies(value.our).toString() +
@@ -36,11 +34,7 @@ export = function(schema: SchemaManager.Schema): string {
             new Currencies(value.their).toString() +
             ' (' +
             summarizeItemsWithLink(items.their, schema) +
-            (valueDiff > 0
-                ? ')\nProfit from overpay: ' + valueDiffRef + ' ref'
-                : valueDiff < 0
-                ? ')\nLoss from underpay: ' + valueDiffRef + ' ref'
-                : ')')
+            ')'
         );
     }
 };
