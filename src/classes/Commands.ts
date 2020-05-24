@@ -692,10 +692,11 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            pluralize(name, Math.abs(amount), true) +
+            '✅ ' +
+                pluralize(name, Math.abs(amount), true) +
                 ' has been ' +
                 (amount >= 0 ? 'added to' : 'removed from') +
-                ' your cart. 🛒'
+                ' your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
         );
     }
 
@@ -759,15 +760,16 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart 🛒.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
-                pluralize(name, Math.abs(amount), true) +
+                '✅ ' +
+                    pluralize(name, Math.abs(amount), true) +
                     ' has been ' +
                     (amount >= 0 ? 'added to' : 'removed from') +
-                    ' your cart. 🛒'
+                    ' your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -834,14 +836,14 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart.'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
                 '✅ ' +
                     pluralize(name, Math.abs(amount), true) +
-                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
+                    ' has been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -905,14 +907,14 @@ export = class Commands {
                     pluralize(name, amount, true) +
                     '. ' +
                     (amount > 1 ? 'They have' : 'It has') +
-                    ' been added to your cart. 🛒'
+                    ' been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         } else {
             this.bot.sendMessage(
                 steamID,
                 '✅ ' +
                     pluralize(name, Math.abs(amount), true) +
-                    ' has been added to your cart. Type !cart to view your cart summary or !checkout to checkout. 🛒'
+                    ' has been added to your cart. Type "!cart" to view your cart summary or "!checkout" to checkout. 🛒'
             );
         }
 
@@ -1450,9 +1452,10 @@ export = class Commands {
 
         const pollData = this.bot.manager.pollData;
         const oldestId = pollData.offerData === undefined ? undefined : Object.keys(pollData.offerData)[0];
-        const timeSince = process.env.TRADING_STARTING_TIME_UNIX
-            ? +process.env.TRADING_STARTING_TIME_UNIX
-            : pollData.timestamps[oldestId];
+        const timeSince =
+            +process.env.TRADING_STARTING_TIME_UNIX === 0
+                ? pollData.timestamps[oldestId]
+                : +process.env.TRADING_STARTING_TIME_UNIX;
         const totalDays = !timeSince ? 0 : now.diff(moment.unix(timeSince), 'days');
 
         const offerData = this.bot.manager.pollData.offerData;
@@ -1584,6 +1587,7 @@ export = class Commands {
             offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
+        const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offerData.value;
 
         const items: {
@@ -1598,7 +1602,9 @@ export = class Commands {
                 '\nOffered: ' +
                 summarizeItems(items.their, this.bot.schema);
         } else {
-            const valueDiff = new Currencies(value.their).toValue() - new Currencies(value.our).toValue();
+            const valueDiff =
+                new Currencies(value.their).toValue(keyPrice.sell.metal) -
+                new Currencies(value.our).toValue(keyPrice.sell.metal);
             const valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9)))).toString();
             reply +=
                 'Asked: ' +
@@ -1621,14 +1627,16 @@ export = class Commands {
 
     private acceptCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!accepttrade 3957959294"');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!accept 3957959294"');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, '❌ Offer does not exist.');
@@ -1641,14 +1649,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1659,7 +1667,7 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Accepting offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
             const reply = offerIdAndMessage.substr(offerId.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
@@ -1684,14 +1692,16 @@ export = class Commands {
 
     private declineCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
-        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage).toString();
-
-        if (!offerId) {
-            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!declinetrade 3957959294"');
+        const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
+        let offerIdString: string;
+        if (isNaN(+offerId) || !offerId) {
+            this.bot.sendMessage(steamID, '⚠️ Missing offer id. Example: "!decline 3957959294"');
             return;
+        } else {
+            offerIdString = offerId.toString();
         }
 
-        const state = this.bot.manager.pollData.received[offerId];
+        const state = this.bot.manager.pollData.received[offerIdString];
 
         if (state === undefined) {
             this.bot.sendMessage(steamID, '❌ Offer does not exist.');
@@ -1704,14 +1714,14 @@ export = class Commands {
             return;
         }
 
-        const offerData = this.bot.manager.pollData.offerData[offerId];
+        const offerData = this.bot.manager.pollData.offerData[offerIdString];
 
         if (offerData?.action.action !== 'skip') {
             this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
             return;
         }
 
-        this.bot.trades.getOffer(offerId).asCallback((err, offer) => {
+        this.bot.trades.getOffer(offerIdString).asCallback((err, offer) => {
             if (err) {
                 this.bot.sendMessage(
                     steamID,
@@ -1722,8 +1732,8 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, 'Declining offer...');
 
-            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerId].partner);
-            const reply = offerIdAndMessage.substr(offerId.length);
+            const partnerId = new SteamID(this.bot.manager.pollData.offerData[offerIdString].partner);
+            const reply = offerIdAndMessage.substr(offerIdString.length);
             const adminDetails = this.bot.friends.getFriend(steamID);
 
             this.bot.trades.applyActionToOffer('decline', 'MANUAL', {}, offer).asCallback(err => {
@@ -1857,7 +1867,14 @@ export = class Commands {
                 steamID,
                 '❌ I could not find any items in my pricelist that contains "' +
                     name +
-                    '", I might not be trading the item you are looking for.'
+                    '", I might not be trading the item you are looking for, or try:' +
+                    '\n• remove "The"' +
+                    '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
+                    '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
+                    `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +
+                    '\n• check for dot (.) like "Lucky No. 42" or "B.A.S.E. Jumper"' +
+                    '\n• check for exclamation mark (!) like "Bonk! Atomic Punch"' +
+                    `\n• if you're looking for uncraftable items, do it like "Non-Craftable Crit-a-Cola"`
             );
             return null;
         } else if (Array.isArray(match)) {
