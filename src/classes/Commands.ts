@@ -30,7 +30,7 @@ const COMMANDS: string[] = [
     '!how2trade - Guide on how to use and trade with the bot',
     '!price [amount] <name> - Get the price and stock of an item',
     '!stock - Get a list of items that the bot has',
-    '!rate - Get current key prices',
+    '!rate - Get current key prices 🔑',
     '!message <your message> - Send a message to the owner of the bot 💬',
     '!buy [amount] <name> - Instantly buy an item',
     '!sell [amount] <name> - Instantly sell an item',
