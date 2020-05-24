@@ -30,10 +30,10 @@ const COMMANDS: string[] = [
     '!how2trade - Guide on how to use and trade with the bot',
     '!price [amount] <name> - Get the price and stock of an item',
     '!stock - Get a list of items that the bot has',
-    '!rate - Get current key prices',
+    '!rate - Get current key prices 🔑',
     '!message <your message> - Send a message to the owner of the bot 💬',
-    '!buy [amount] <name> - Instantly buy an item',
-    '!sell [amount] <name> - Instantly sell an item',
+    '!buy [amount] <name> - Instantly buy an item 💲',
+    '!sell [amount] <name> - Instantly sell an item 💲',
     '!buycart [amount] <name> - Adds an item you want to buy to the cart 🛒',
     '!sellcart [amount] <name> - Adds an item you want to sell to the cart 🛒',
     '!cart - See current cart 🛒',
@@ -53,15 +53,15 @@ const ADMIN_COMMANDS: string[] = [
     '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF',
     '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit',
     '!stop - Stop the bot 🔴',
-    '!restart - Restart the bot 🔁',
+    '!restart - Restart the bot 🔄',
     '!version - Get version that the bot is running',
     '!avatar <image_URL> - Change avatar',
     '!name <new_name>- Change name',
     '!stats - Get statistics for accepted trades 📊',
-    '!trades - Get a list of offers pending for manual review',
+    '!trades - Get a list of offers pending for manual review 🔍',
     '!trade <offerID> - Get info about a trade',
-    '!accept <offerID> [Your Message] - Manually accept an active offer ✅',
-    '!decline <offerID> [Your Message] - Manually decline an active offer ❌',
+    '!accept <offerID> [Your Message] - Manually accept an active offer ✅🔍',
+    '!decline <offerID> [Your Message] - Manually decline an active offer ❌🔍',
     '!message <steamid> <your message> - Send a message to a user 💬'
 ];
 
@@ -338,7 +338,7 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            'I value 🗝Mann Co. Supply Crate Keys at ' +
+            'I value 🔑 Mann Co. Supply Crate Keys at ' +
                 keyPrice +
                 '. This means that one key is the same as ' +
                 keyPrice +
@@ -436,7 +436,7 @@ export = class Commands {
                     adminDetails.avatar_url_full
                 );
             } else {
-                this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+                this.bot.messageAdmins("💬 You've got a message from # " + steamID + ' : ' + msg, []);
             }
             this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
@@ -529,7 +529,7 @@ export = class Commands {
             if (cart.isMade()) {
                 this.bot.sendMessage(
                     steamID,
-                    '⌛ Your offer is already being sent! Please try again when the offer is active.'
+                    '⚠️ Your offer is already being sent! Please try again when the offer is active.'
                 );
                 return;
             } else if (cart.isCanceled()) {
@@ -1557,20 +1557,20 @@ export = class Commands {
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, '❌ Offer does not exist.');
+            this.bot.sendMessage(steamID, 'Offer does not exist. ❌');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, '❌ Offer is not active.');
+            this.bot.sendMessage(steamID, 'Offer is not active. ❌');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action?.action !== 'skip') {
-            this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed. ❌");
             return;
         }
 
@@ -1579,11 +1579,11 @@ export = class Commands {
         // TODO: Create static class for trade offer related functions?
 
         let reply =
-            '⚠️ Offer #' +
+            'Offer #' +
             offerId +
             ' from ' +
             offerData.partner +
-            ' is pending for review (reason: ' +
+            ' is pending for review ⚠️ (reason: ' +
             offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
