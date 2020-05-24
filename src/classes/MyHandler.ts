@@ -1286,7 +1286,7 @@ export = class MyHandler extends Handler {
                         description:
                             'An offer sent by ' +
                             partnerName +
-                            'is waiting for review, reason: ' +
+                            ' is waiting for review, reason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
@@ -1409,7 +1409,7 @@ export = class MyHandler extends Handler {
                         description:
                             'A trade with ' +
                             personaName +
-                            'has been marked as accepted.\n__Summary__:\n' +
+                            ' has been marked as accepted.\n__Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? '\n📈***Profit from overpay:*** ' +
