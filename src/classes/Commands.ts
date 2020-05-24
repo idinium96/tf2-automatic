@@ -338,7 +338,7 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            'I value 🗝Mann Co. Supply Crate Keys at ' +
+            'I value 🔑 Mann Co. Supply Crate Keys at ' +
                 keyPrice +
                 '. This means that one key is the same as ' +
                 keyPrice +
@@ -436,7 +436,7 @@ export = class Commands {
                     adminDetails.avatar_url_full
                 );
             } else {
-                this.bot.messageAdmins("You've got a message from # " + steamID + ' : ' + msg, []);
+                this.bot.messageAdmins("💬 You've got a message from # " + steamID + ' : ' + msg, []);
             }
             this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
@@ -529,7 +529,7 @@ export = class Commands {
             if (cart.isMade()) {
                 this.bot.sendMessage(
                     steamID,
-                    '⌛ Your offer is already being sent! Please try again when the offer is active.'
+                    '⚠️ Your offer is already being sent! Please try again when the offer is active.'
                 );
                 return;
             } else if (cart.isCanceled()) {

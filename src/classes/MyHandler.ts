@@ -936,7 +936,7 @@ export = class MyHandler extends Handler {
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
-                '⚠ Your offer is waiting for review, reason: ' +
+                '⚠️ Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer
@@ -964,7 +964,7 @@ export = class MyHandler extends Handler {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
-                    '⚠ Offer #' +
+                    '⚠️ Offer #' +
                         offer.id +
                         ' from ' +
                         offer.partner +
