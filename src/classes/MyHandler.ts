@@ -808,21 +808,21 @@ export = class MyHandler extends Handler {
                             ' is accepted. ✅\n\nSummary:\n' +
                             offer.summarize(this.bot.schema) +
                             (valueDiff > 0
-                                ? '\n\n📈Profit from overpay: ' +
+                                ? '\n\n📈 Profit from overpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : valueDiff < 0
-                                ? '\n\n📉Loss from underpay: ' +
+                                ? '\n\n📉 Loss from underpay: ' +
                                   valueDiffRef +
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\n🔑Key rate: ' +
+                            '\n🔑 Key rate: ' +
                             keyPrice.buy.metal.toString() +
                             '/' +
                             keyPrice.sell.metal.toString() +
-                            ' ref | 💰Pure stock: ' +
+                            ' ref | 💰 Pure stock: ' +
                             pureStock.join(', ').toString() +
                             ' ref',
                         []
@@ -973,17 +973,17 @@ export = class MyHandler extends Handler {
                         '\n\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
                         (valueDiff > 0
-                            ? '\n\n📈Profit from overpay: ' +
+                            ? '\n\n📈 Profit from overpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : valueDiff < 0
-                            ? '\n\n📉Loss from underpay: ' +
+                            ? '\n\n📉 Loss from underpay: ' +
                               valueDiffRef +
                               ' ref' +
                               (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                             : '') +
-                        '\n🔑Key rate: ' +
+                        '\n🔑 Key rate: ' +
                         keyPrice.buy.metal.toString() +
                         '/' +
                         keyPrice.sell.metal.toString() +
