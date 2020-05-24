@@ -903,54 +903,55 @@ export = class MyHandler extends Handler {
             let missingPureNote: string;
             if (meta.uniqueReasons.includes('INVALID_VALUE')) {
                 note = process.env.INVALID_VALUE_NOTE
-                    ? 'INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
-                    : 'INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
+                    ? '⚠️ INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
+                    : '⚠️ INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
                 reviewReasons.push(note);
                 missingPureNote =
-                    "\n[You're missing: " + (itemsList.includes('5021;6') ? valueDiffKey : valueDiffRef + ' ref');
+                    "\n💥[You're missing: " +
+                    (itemsList.includes('5021;6') ? valueDiffKey + ']💥' : valueDiffRef + ' ref]💥');
             }
             if (meta.uniqueReasons.includes('INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
-                    ? 'INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
-                    : 'INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.';
+                    ? '⚠️ INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
+                    : '⚠️ INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.';
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('OVERSTOCKED')) {
                 note = process.env.OVERSTOCKED_NOTE
-                    ? 'OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
-                    : "OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.";
+                    ? '⚠️ OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                    : "⚠️ OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.";
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('DUPE_ITEMS')) {
                 note = process.env.DUPE_ITEMS_NOTE
-                    ? 'DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
-                    : 'DUPE_ITEMS - The item(s) you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
+                    ? '⚠️ DUPE_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
+                    : '⚠️ DUPE_ITEMS - The item(s) you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('DUPE_CHECK_FAILED')) {
                 note = process.env.DUPE_CHECK_FAILED_NOTE
-                    ? 'DUPE_CHECK_FAILED - ' + process.env.DUPE_CHECK_FAILED_NOTE
-                    : 'DUPE_CHECK_FAILED - Backpack.tf still does not recognize your item(s) Original ID to check for the duped item. You can try again later. Check it yourself by going to your item history page. Thank you.';
+                    ? '⚠️ DUPE_CHECK_FAILED - ' + process.env.DUPE_CHECK_FAILED_NOTE
+                    : '⚠️ DUPE_CHECK_FAILED - Backpack.tf still does not recognize your item(s) Original ID to check for the duped item. You can try again later. Check it yourself by going to your item history page. Thank you.';
                 reviewReasons.push(note);
             }
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
-                '⚠ Your offer is waiting for review, reason: ' +
+                '⚠️ Your offer is waiting for review, reason: ' +
                     meta.uniqueReasons.join(', ') +
                     '\n\nYour offer summary:\n' +
                     offer
                         .summarize(this.bot.schema)
-                        .replace('Asked', 'My side')
-                        .replace('Offered', 'Your side') +
+                        .replace('Asked', '🤖My side')
+                        .replace('Offered', '🧐Your side') +
                     (meta.uniqueReasons.includes('INVALID_VALUE') && !meta.uniqueReasons.includes('INVALID_ITEMS')
                         ? missingPureNote
                         : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
-                        ? '\n\nNote:\n' + reviewReasons.join('\n')
+                        ? '\n\n📝Note📝\n' + reviewReasons.join('\n')
                         : '') +
                     (process.env.ADDITIONAL_NOTE
-                        ? '\n' +
+                        ? '\n\n' +
                           process.env.ADDITIONAL_NOTE.replace(
                               /%keyRate%/g,
                               keyPrice.sell.metal.toString() + ' ref'
@@ -964,7 +965,7 @@ export = class MyHandler extends Handler {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
-                    '⚠ Offer #' +
+                    '⚠️ Offer #' +
                         offer.id +
                         ' from ' +
                         offer.partner +
@@ -1284,7 +1285,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            'An offer sent by ' +
+                            '⚠️An offer sent by ' +
                             partnerName +
                             ' is waiting for review, reason: ' +
                             reason +
@@ -1409,7 +1410,7 @@ export = class MyHandler extends Handler {
                         description:
                             'A trade with ' +
                             personaName +
-                            ' has been marked as accepted.\n__Summary__:\n' +
+                            ' has been marked as accepted.✅\n__Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? '\n📈***Profit from overpay:*** ' +
