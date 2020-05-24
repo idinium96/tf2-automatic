@@ -1557,20 +1557,20 @@ export = class Commands {
         const state = this.bot.manager.pollData.received[offerId];
 
         if (state === undefined) {
-            this.bot.sendMessage(steamID, '❌ Offer does not exist.');
+            this.bot.sendMessage(steamID, 'Offer does not exist. ❌');
             return;
         }
 
         if (state !== TradeOfferManager.ETradeOfferState.Active) {
             // TODO: Add what the offer is now, accepted / declined and why
-            this.bot.sendMessage(steamID, '❌ Offer is not active.');
+            this.bot.sendMessage(steamID, 'Offer is not active. ❌');
             return;
         }
 
         const offerData = this.bot.manager.pollData.offerData[offerId];
 
         if (offerData?.action?.action !== 'skip') {
-            this.bot.sendMessage(steamID, "❌ Offer can't be reviewed.");
+            this.bot.sendMessage(steamID, "Offer can't be reviewed. ❌");
             return;
         }
 
@@ -1579,11 +1579,11 @@ export = class Commands {
         // TODO: Create static class for trade offer related functions?
 
         let reply =
-            '⚠️ Offer #' +
+            'Offer #' +
             offerId +
             ' from ' +
             offerData.partner +
-            ' is pending for review (reason: ' +
+            ' is pending for review ⚠️ (reason: ' +
             offerData.action.meta.uniqueReasons.join(', ') +
             '). Summary:\n';
 
