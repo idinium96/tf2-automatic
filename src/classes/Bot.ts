@@ -249,7 +249,7 @@ export = class Bot {
 
                 this.messageAdmins(
                     'version',
-                    `Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`,
+                    `/code Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nSee the wiki for help: https://github.com/Nicklason/tf2-automatic/wiki/Updating`,
                     []
                 );
             }

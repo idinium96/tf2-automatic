@@ -26,44 +26,44 @@ import SchemaManager from 'tf2-schema';
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
 
 const COMMANDS: string[] = [
-    '!help - Get list of commands 📜',
+    '!help      - Get list of commands 📜',
     '!how2trade - Guide on how to use and trade with the bot 📋',
-    '!price [amount] <name> - Get the price and stock of an item 💱',
-    '!stock - Get a list of items that the bot has 📊',
-    '!rate - Get current key prices 🔑',
-    '!message <Your Messages> - Send a message to the owner of the bot 💬',
-    '!buy [amount] <name> - Instantly buy an item 📥',
-    '!sell [amount] <name> - Instantly sell an item 📤',
-    '!buycart [amount] <name> - Adds an item you want to buy to the cart ➡🛒',
+    '!stock     - Get a list of items that the bot has 📊',
+    '!rate      - Get current key prices 🔑',
+    '!price [amount] <name>    - Get the price and stock of an item 💱',
+    '!message <Your Messages>  - Send a message to the owner of the bot 💬',
+    '!buy [amount] <name>      - Instantly buy an item 📥',
+    '!sell [amount] <name>     - Instantly sell an item 📤',
+    '!buycart [amount] <name>  - Adds an item you want to buy to the cart ➡🛒',
     '!sellcart [amount] <name> - Adds an item you want to sell to the cart ⬅🛒',
-    '!cart - See current cart 🛒',
+    '!cart      - See current cart 🛒',
     '!clearcart - Clears the current cart 🛒❎',
-    '!checkout - Make the bot send an offer the items in the cart 🛒✅',
-    '!queue - See your position in the queue 🚶🏻‍♂️🚶🏻‍♂️',
-    '!cancel - Cancel an already made offer, or cancel offer being made ❌'
+    '!checkout  - Make the bot send an offer the items in the cart 🛒✅',
+    '!queue     - See your position in the queue 🚶🏻‍♂️🚶🏻‍♂️',
+    '!cancel    - Cancel an already made offer, or cancel offer being made ❌'
 ];
 
 const ADMIN_COMMANDS: string[] = [
-    '!deposit <name=>&<amount=> - Used to deposit items 📥',
-    '!withdraw <name=>&<amount=> - Used to withdraw items 📤',
-    '!add - Add a pricelist entry 📝',
-    '!update - Update a pricelist entry 🔆',
-    '!remove <sku=> OR <item=> - Remove a pricelist entry ✂',
-    '!get <sku=> OR <item=> - Get raw information about a pricelist entry 📜',
-    '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF ♻',
-    '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit 🎒',
-    '!stop - Stop the bot 🛑',
+    '!add <param>    - Add a pricelist entry 📝 `{<sku=>[&other]}`',
+    '!update <param> - Update a pricelist entry 🔆 `{<sku=><&other>}`',
+    '!remove <param> - Remove a pricelist entry ✂ `{<sku=>}`',
+    '!get <param>    - Get raw information about a pricelist entry 📜 `{<sku=>}`',
+    '!expand <param> - Uses Backpack Expanders 🎒 `{<craftable=true|false>}`',
+    '!deposit <param>    - Used to deposit items `{<name=>&<amount=>}` 📥',
+    '!withdraw <param>   - Used to withdraw items `{<name=>&<amount=>}` 📤',
+    '!pricecheck <param> - Requests an item to be priced by PricesTF ♻ `{<sku=>}`',
+    '!avatar <imageURL>  - Change avatar 🛃',
+    '!name <newName>     - Change name 🆕',
+    '!craftweapon        - get a list of craft weapon stock 🔫',
+    '!trades             - Get a list of offers pending for manual review 🧾💱',
+    '!trade <offerID>    - Get info about a trade 🧐💱',
+    '!accepttrade <offerID> [Your Message]  - Manually accept an active offer ✅💱',
+    '!declinetrade <offerID> [Your Message] - Manually decline an active offer ❌💱',
+    '!message <steamid> <your message>      - Send a message to a user 💬',
+    '!stop    - Stop the bot 🛑',
     '!restart - Restart the bot 🔁',
     '!version - Get version that the bot is running 🌐',
-    '!avatar <image_URL> - Change avatar 🛃',
-    '!name <new_name>- Change name 🆕',
-    '!craftweapon - get a list of craft weapon stock 🔫',
-    '!stats - Get statistics for accepted trades 🔢',
-    '!trades - Get a list of offers pending for manual review 🧾💱',
-    '!trade <offerID> - Get info about a trade 🧐💱',
-    '!accepttrade <offerID> [Your Message] - Manually accept an active offer ✅💱',
-    '!declinetrade <offerID> [Your Message] - Manually decline an active offer ❌💱',
-    '!message <steamid> <your message> - Send a message to a user 💬'
+    '!stats   - Get statistics for accepted trades 🔢'
 ];
 
 export = class Commands {
@@ -161,7 +161,7 @@ export = class Commands {
     }
 
     private helpCommand(steamID: SteamID): void {
-        let reply = "👨🏻‍💻 Here's a list of all my commands:\n- " + COMMANDS.join('\n- ');
+        let reply = "/pre 👨🏻‍💻 Here's a list of all my commands:\n- " + COMMANDS.join('\n- ');
 
         if (this.bot.isAdmin(steamID)) {
             reply += '\n\nAdmin commands:\n- ' + ADMIN_COMMANDS.join('\n- ');
@@ -175,7 +175,7 @@ export = class Commands {
             steamID,
             process.env.CUSTOM_HOW2TRADE_MESSAGE
                 ? process.env.CUSTOM_HOW2TRADE_MESSAGE
-                : '✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
+                : '/quote ✅You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
                       '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
@@ -328,7 +328,7 @@ export = class Commands {
             }
         }
 
-        let reply = "📃 Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
+        let reply = "/pre 📃 Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
         if (left > 0) {
             reply += ',\nand ' + left + ' other ' + pluralize('item', left);
         }
@@ -367,10 +367,10 @@ export = class Commands {
             if (isAdmin) {
                 this.bot.sendMessage(
                     steamID,
-                    'The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
+                    '⚠️ The message command is disabled. Enable it in the config with `DISABLE_MESSAGES=false`.'
                 );
             } else {
-                this.bot.sendMessage(steamID, 'The owner has disabled messages.');
+                this.bot.sendMessage(steamID, '⚠️ The owner has disabled messages.');
             }
             return;
         }
@@ -381,7 +381,7 @@ export = class Commands {
             if (parts.length < 3) {
                 this.bot.sendMessage(
                     steamID,
-                    'Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
+                    '⚠️ Your syntax is wrong. Here\'s an example: "!message 76561198120070906 Hi"'
                 );
                 return;
             }
@@ -391,10 +391,10 @@ export = class Commands {
             const recipientSteamID = new SteamID(recipient);
 
             if (!recipientSteamID.isValid()) {
-                this.bot.sendMessage(steamID, '"' + recipient + '" is not a valid steamid.');
+                this.bot.sendMessage(steamID, '❌ "' + recipient + '" is not a valid steamid.');
                 return;
             } else if (!this.bot.friends.isFriend(recipientSteamID)) {
-                this.bot.sendMessage(steamID, 'I am not friends with the user.');
+                this.bot.sendMessage(steamID, '❌ I am not friends with the user.');
                 return;
             }
 
@@ -403,7 +403,7 @@ export = class Commands {
             // Send message to recipient
             this.bot.sendMessage(
                 recipient,
-                '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'owner') + ': ' + reply
+                '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'owner') + ': ' + reply
             );
 
             // Send confirmation message to admin
@@ -419,13 +419,13 @@ export = class Commands {
             const admins = this.bot.getAdmins();
             if (!admins || admins.length === 0) {
                 // Just default to same message as if it was disabled
-                this.bot.sendMessage(steamID, '❌ The owner has disabled messages.');
+                this.bot.sendMessage(steamID, '⚠️ The owner has disabled messages.');
                 return;
             }
 
             const msg = message.substr(message.toLowerCase().indexOf('message') + 8);
             if (!msg) {
-                this.bot.sendMessage(steamID, '❌ Please include a message. Here\'s an example: "!message Hi"');
+                this.bot.sendMessage(steamID, '⚠️ Please include a message. Here\'s an example: "!message Hi"');
                 return;
             }
 
@@ -440,7 +440,7 @@ export = class Commands {
                     adminDetails.avatar_url_full
                 );
             } else {
-                this.bot.messageAdmins("💬 You've got a message from # " + steamID + ' : ' + msg, []);
+                this.bot.messageAdmins("/quote 💬 You've got a message from # " + steamID + ' : ' + msg, []);
             }
             this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
@@ -1691,7 +1691,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1756,7 +1756,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1779,7 +1779,7 @@ export = class Commands {
             if (params.i_am_sure !== 'yes_i_am') {
                 this.bot.sendMessage(
                     steamID,
-                    '⚠️ Are you sure that you want to remove ' +
+                    '/pre ⚠️ Are you sure that you want to remove ' +
                         pluralize('item', pricelistLength, true) +
                         '? Try again with i_am_sure=yes_i_am'
                 );
@@ -2710,7 +2710,7 @@ export = class Commands {
             craftWeaponsStock.push(
                 craftWeapons[i].name +
                     ': ' +
-                    (craftWeapons[i].amount < 3 ? craftWeapons[i].amount + ' ❗❗' : craftWeapons[i].amount + ' ✅')
+                    (craftWeapons[i].amount <= 6 ? craftWeapons[i].amount + ' ❗❗' : craftWeapons[i].amount + ' ✅')
             );
         }
         return craftWeaponsStock;
