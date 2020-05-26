@@ -146,9 +146,9 @@ export = class Commands {
             this.tradesCommand(steamID);
         } else if (command === 'trade' && isAdmin) {
             this.tradeCommand(steamID, message);
-        } else if (command === 'accepttrade' && isAdmin) {
+        } else if ((command === 'accepttrade' || command === 'accept') && isAdmin) {
             this.accepttradeCommand(steamID, message);
-        } else if (command === 'declinetrade' && isAdmin) {
+        } else if ((command === 'declinetrade' || command === 'decline') && isAdmin) {
             this.declinetradeCommand(steamID, message);
         } else {
             this.bot.sendMessage(
