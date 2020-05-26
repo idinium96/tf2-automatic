@@ -355,24 +355,24 @@ export = class MyHandler extends Handler {
         if (
             offer.itemsToGive.length === 0 &&
             (offerMessage.includes('gift') ||
-                offerMessage.includes('donat') ||
-                offerMessage.includes('tip') ||
-                offerMessage.includes('tribute') ||
-                offerMessage.includes('souvenir') ||
-                offerMessage.includes('favor') ||
-                offerMessage.includes('giveaway') ||
-                offerMessage.includes('bonus') ||
-                offerMessage.includes('grant') ||
-                offerMessage.includes('bounty') ||
-                offerMessage.includes('goodie') ||
-                offerMessage.includes('present') ||
-                offerMessage.includes('contribution') ||
-                offerMessage.includes('award') ||
-                offerMessage.includes('nice') ||
-                offerMessage.includes('happy') ||
+            offerMessage.includes('donat') || // So that 'donate' or 'donation' will also be accepted
+            offerMessage.includes('tip') || // All others are synonyms
+            offerMessage.includes('tribute') ||
+            offerMessage.includes('souvenir') ||
+            offerMessage.includes('favor') ||
+            offerMessage.includes('giveaway') ||
+            offerMessage.includes('bonus') ||
+            offerMessage.includes('grant') ||
+            offerMessage.includes('bounty') ||
+            offerMessage.includes('goodie') ||
+            offerMessage.includes('present') ||
+            offerMessage.includes('contribution') ||
+            offerMessage.includes('award') ||
+            offerMessage.includes('nice') || // Up until here actually
+            offerMessage.includes('happy') || // All below people might also use
                 offerMessage.includes('thank') ||
                 offerMessage.includes('good') ||
-                offerMessage.includes('cute'))
+                offerMessage.includes('cute')) // right?
         ) {
             offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'GIFT' };
