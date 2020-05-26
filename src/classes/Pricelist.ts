@@ -559,12 +559,14 @@ export default class Pricelist extends EventEmitter {
                 'cUxADWBXhsAdEh8TiMv6NGucF1Ypg4ZNWgG9qyAB5YOfjaTRmJweaB_cPCaNjpAq9CnVgvZI1UNTn8bhIOVK4UnPgIXo/'
         };
 
+        const regexAustralium = RegExp(';11;australium', 'g');
+
         let itemImageUrlPrint: string;
         if (!itemImageUrl) {
             itemImageUrlPrint = 'https://jberlife.com/wp-content/uploads/2019/07/sorry-image-not-available.jpg';
         } else if (Object.keys(paintCan.canColor).includes(newSku)) {
             itemImageUrlPrint = 'https://backpack.tf/images/440/cans/Paint_Can_' + paintCan.canColor[newSku] + '.png';
-        } else if (sku.includes(';11;australium')) {
+        } else if (regexAustralium.test(sku)) {
             const australiumSKU = parts[0] + ';11;australium';
             itemImageUrlPrint =
                 'https://steamcommunity-a.akamaihd.net/economy/image/fWFc82js0fmoRAP-qOIPu5THSWqfSmTELLqcUywGkijVjZULUrsm1j-9xgE' +
