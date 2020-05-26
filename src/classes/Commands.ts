@@ -26,44 +26,44 @@ import SchemaManager from 'tf2-schema';
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
 
 const COMMANDS: string[] = [
-    '!help      - Get list of commands 📜',
+    '!help - Get list of commands 📜',
     '!how2trade - Guide on how to use and trade with the bot 📋',
-    '!stock     - Get a list of items that the bot has 📊',
-    '!rate      - Get current key prices 🔑',
-    '!price [amount] <name>    - Get the price and stock of an item 💱',
-    '!message <Your Messages>  - Send a message to the owner of the bot 💬',
-    '!buy [amount] <name>      - Instantly buy an item 📥',
-    '!sell [amount] <name>     - Instantly sell an item 📤',
-    '!buycart [amount] <name>  - Adds an item you want to buy to the cart ➡🛒',
+    '!stock - Get a list of items that the bot has 📊',
+    '!rate - Get current key prices 🔑',
+    '!price [amount] <name> - Get the price and stock of an item 💱',
+    '!message <Your Messages> - Send a message to the owner of the bot 💬',
+    '!buy [amount] <name> - Instantly buy an item 📥',
+    '!sell [amount] <name> - Instantly sell an item 📤',
+    '!buycart [amount] <name> - Adds an item you want to buy to the cart ➡🛒',
     '!sellcart [amount] <name> - Adds an item you want to sell to the cart ⬅🛒',
-    '!cart      - See current cart 🛒',
+    '!cart - See current cart 🛒',
     '!clearcart - Clears the current cart 🛒❎',
-    '!checkout  - Make the bot send an offer the items in the cart 🛒✅',
-    '!queue     - See your position in the queue 🚶🏻‍♂️🚶🏻‍♂️',
-    '!cancel    - Cancel an already made offer, or cancel offer being made ❌'
+    '!checkout - Make the bot send an offer the items in the cart 🛒✅',
+    '!queue - See your position in the queue 🚶🏻‍♂️🚶🏻‍♂️',
+    '!cancel - Cancel an already made offer, or cancel offer being made ❌'
 ];
 
 const ADMIN_COMMANDS: string[] = [
-    '!add <param>    - Add a pricelist entry 📝 `{<sku=>[&other]}`',
-    '!update <param> - Update a pricelist entry 🔆 `{<sku=><&other>}`',
-    '!remove <param> - Remove a pricelist entry ✂ `{<sku=>}`',
-    '!get <param>    - Get raw information about a pricelist entry 📜 `{<sku=>}`',
-    '!expand <param> - Uses Backpack Expanders 🎒 `{<craftable=true|false>}`',
-    '!deposit <param>    - Used to deposit items `{<name=>&<amount=>}` 📥',
-    '!withdraw <param>   - Used to withdraw items `{<name=>&<amount=>}` 📤',
-    '!pricecheck <param> - Requests an item to be priced by PricesTF ♻ `{<sku=>}`',
-    '!avatar <imageURL>  - Change avatar 🛃',
-    '!name <newName>     - Change name 🆕',
-    '!craftweapon        - get a list of craft weapon stock 🔫',
-    '!trades             - Get a list of offers pending for manual review 🧾💱',
-    '!trade <offerID>    - Get info about a trade 🧐💱',
-    '!accepttrade <offerID> [Your Message]  - Manually accept an active offer ✅💱',
+    '!add <param> - Add a pricelist entry 📝',
+    '!update <param> - Update a pricelist entry 🔆',
+    '!remove <param> - Remove a pricelist entry ✂',
+    '!get <param> - Get raw information about a pricelist entry 📜',
+    '!expand <param> - Uses Backpack Expanders 🎒',
+    '!deposit <param> - Used to deposit items 📥',
+    '!withdraw <param> - Used to withdraw items 📤',
+    '!pricecheck <param> - Requests an item to be priced by PricesTF ♻',
+    '!avatar <imageURL> - Change avatar 🛃',
+    '!name <newName> - Change name 🆕',
+    '!craftweapon - get a list of craft weapon stock 🔫',
+    '!trades - Get a list of offers pending for manual review 🧾💱',
+    '!trade <offerID> - Get info about a trade 🧐💱',
+    '!accepttrade <offerID> [Your Message] - Manually accept an active offer ✅💱',
     '!declinetrade <offerID> [Your Message] - Manually decline an active offer ❌💱',
-    '!message <steamid> <your message>      - Send a message to a user 💬',
-    '!stop    - Stop the bot 🛑',
+    '!message <steamid> <your message> - Send a message to a user 💬',
+    '!stop - Stop the bot 🛑',
     '!restart - Restart the bot 🔁',
     '!version - Get version that the bot is running 🌐',
-    '!stats   - Get statistics for accepted trades 🔢'
+    '!stats - Get statistics for accepted trades 🔢'
 ];
 
 export = class Commands {
