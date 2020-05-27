@@ -967,7 +967,7 @@ export = class MyHandler extends Handler {
                     '\n\nYour offer summary:\n' +
                     offer
                         .summarize(this.bot.schema)
-                        .replace('Asked', 'My side')
+                        .replace('Asked', '  My side')
                         .replace('Offered', 'Your side') +
                     (meta.uniqueReasons.includes('🟥INVALID_VALUE') && !meta.uniqueReasons.includes('🟨INVALID_ITEMS')
                         ? missingPureNote
