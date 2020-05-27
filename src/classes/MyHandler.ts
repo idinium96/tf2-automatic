@@ -350,7 +350,32 @@ export = class MyHandler extends Handler {
 
         const itemsDiff = offer.getDiff();
 
-        if (offer.itemsToGive.length === 0 && ['donate', 'gift'].includes(offer.message.toLowerCase())) {
+        const offerMessage = offer.message.toLowerCase();
+
+        if (
+            offer.itemsToGive.length === 0 &&
+            (offerMessage.includes('gift') ||
+            offerMessage.includes('donat') || // So that 'donate' or 'donation' will also be accepted
+            offerMessage.includes('tip') || // All others are synonyms
+            offerMessage.includes('tribute') ||
+            offerMessage.includes('souvenir') ||
+            offerMessage.includes('favor') ||
+            offerMessage.includes('giveaway') ||
+            offerMessage.includes('bonus') ||
+            offerMessage.includes('grant') ||
+            offerMessage.includes('bounty') ||
+            offerMessage.includes('present') ||
+            offerMessage.includes('contribution') ||
+            offerMessage.includes('award') ||
+            offerMessage.includes('nice') || // Up until here actually
+            offerMessage.includes('happy') || // All below people might also use
+            offerMessage.includes('thank') ||
+            offerMessage.includes('goo') || // For 'good', 'goodie' or anything else
+                offerMessage.includes('awesome') ||
+                offerMessage.includes('rep') ||
+                offerMessage.includes('joy') ||
+                offerMessage.includes('cute')) // right?
+        ) {
             offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
             return { action: 'accept', reason: 'GIFT' };
         } else if (offer.itemsToReceive.length === 0 || offer.itemsToGive.length === 0) {
