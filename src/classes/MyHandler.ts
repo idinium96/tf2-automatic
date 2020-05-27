@@ -994,7 +994,7 @@ export = class MyHandler extends Handler {
                         offer.id +
                         ' from ' +
                         offer.partner +
-                        ' is waiting for review, reason: ' +
+                        ' is waiting for review.\nReason: ' +
                         meta.uniqueReasons.join(', ') +
                         '\n\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
@@ -1312,7 +1312,7 @@ export = class MyHandler extends Handler {
                         description:
                             '⚠️An offer sent by ' +
                             partnerName +
-                            ' is waiting for review, reason: ' +
+                            ' is waiting for review.\nReason: ' +
                             reason +
                             '\n\n__Offer Summary__:\n' +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
