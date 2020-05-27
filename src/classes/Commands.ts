@@ -172,7 +172,7 @@ export = class Commands {
             steamID,
             process.env.CUSTOM_HOW2TRADE_MESSAGE
                 ? process.env.CUSTOM_HOW2TRADE_MESSAGE
-                : 'You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
+                : '/quote You can either send me an offer yourself, or use one of my commands to request a trade. Say you want to buy a Team Captain, just type "!buy Team Captain". Type "!help" for all the commands.' +
                       '\nYou can also buy or sell multiple items by using "!buycart" or "!sellcart" commands.'
         );
     }
@@ -325,7 +325,7 @@ export = class Commands {
             }
         }
 
-        let reply = "📜 Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
+        let reply = "/pre 📜 Here's a list of all the items that I have in my inventory:\n" + stock.join(', \n');
         if (left > 0) {
             reply += ',\nand ' + left + ' other ' + pluralize('item', left);
         }
@@ -394,7 +394,7 @@ export = class Commands {
             // Send message to recipient
             this.bot.sendMessage(
                 recipient,
-                '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
             );
 
             // Send confirmation message to admin
@@ -437,7 +437,7 @@ export = class Commands {
                 );
             } else {
                 this.bot.messageAdmins(
-                    "💬 You've got a message from #" +
+                    "/quote 💬 You've got a message from #" +
                         steamID +
                         ' (' +
                         adminDetails.player_name +
@@ -1695,7 +1695,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1760,7 +1760,7 @@ export = class Commands {
                 if (reply) {
                     this.bot.sendMessage(
                         partnerId,
-                        '💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
+                        '/quote 💬 Message from ' + (adminDetails ? adminDetails.player_name : 'admin') + ': ' + reply
                     );
                 }
             });
@@ -1783,7 +1783,7 @@ export = class Commands {
             if (params.i_am_sure !== 'yes_i_am') {
                 this.bot.sendMessage(
                     steamID,
-                    '⚠️ Are you sure that you want to remove ' +
+                    '/pre ⚠️ Are you sure that you want to remove ' +
                         pluralize('item', pricelistLength, true) +
                         '? Try again with i_am_sure=yes_i_am'
                 );

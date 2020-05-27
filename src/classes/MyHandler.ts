@@ -168,7 +168,7 @@ export = class MyHandler extends Handler {
 
             this.bot.listings.removeAll().asCallback(function(err) {
                 if (err) {
-                    log.warn('Failed to r emove all listings: ', err);
+                    log.warn('Failed to remove all listings: ', err);
                 }
 
                 resolve();
@@ -754,14 +754,14 @@ export = class MyHandler extends Handler {
                         offer.partner,
                         process.env.CUSTOM_SUCCESS_MESSAGE
                             ? process.env.CUSTOM_SUCCESS_MESSAGE
-                            : '✅ Success! The offer went through successfully.'
+                            : '/pre ✅ Success! The offer went through successfully.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Declined) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_DECLINED_MESSAGE
                             ? process.env.CUSTOM_DECLINED_MESSAGE
-                            : '❌ Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
+                            : '/pre ❌ Ohh nooooes! The offer is no longer available. Reason: The offer has been declined.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.Canceled) {
                     let reason: string;
@@ -776,14 +776,14 @@ export = class MyHandler extends Handler {
 
                     this.bot.sendMessage(
                         offer.partner,
-                        '❌ Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
+                        '/pre ❌ Ohh nooooes! The offer is no longer available. Reason: ' + reason + '.'
                     );
                 } else if (offer.state === TradeOfferManager.ETradeOfferState.InvalidItems) {
                     this.bot.sendMessage(
                         offer.partner,
                         process.env.CUSTOM_TRADED_AWAY_MESSAGE
                             ? process.env.CUSTOM_TRADED_AWAY_MESSAGE
-                            : '❌ Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
+                            : '/pre ❌ Ohh nooooes! Your offer is no longer available. Reason: Items not available (traded away in a different trade).'
                     );
                 }
             }
@@ -1232,7 +1232,7 @@ export = class MyHandler extends Handler {
                     element.steamID,
                     process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
                         ? process.env.CUSTOM_CLEARING_FRIENDS_MESSAGE
-                        : 'I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
+                        : '/quote I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
                 );
                 this.bot.client.removeFriend(element.steamID);
             });
