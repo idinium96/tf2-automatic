@@ -39,6 +39,10 @@ export = class MyHandler extends Handler {
 
     private combineThreshold = 9;
 
+    private minimumRefined = 55;
+
+    private maximumRefined = 125;
+
     private dupeCheckEnabled = false;
 
     private minimumKeysDupeCheck = 0;
@@ -54,6 +58,8 @@ export = class MyHandler extends Handler {
         const minimumScrap = parseInt(process.env.MINIMUM_SCRAP);
         const minimumReclaimed = parseInt(process.env.MINIMUM_RECLAIMED);
         const combineThreshold = parseInt(process.env.METAL_THRESHOLD);
+        const minimumRefined = parseInt(process.env.MINIMUM_REFINED);
+        const maximumRefined = parseInt(process.env.MAXIMUM_REFINED);
 
         if (!isNaN(minimumScrap)) {
             this.minimumScrap = minimumScrap;
@@ -65,6 +71,14 @@ export = class MyHandler extends Handler {
 
         if (!isNaN(combineThreshold)) {
             this.combineThreshold = combineThreshold;
+        }
+
+        if (!isNaN(minimumRefined)) {
+            this.minimumRefined = minimumRefined;
+        }
+
+        if (!isNaN(maximumRefined)) {
+            this.maximumRefined = maximumRefined;
         }
 
         if (process.env.ENABLE_DUPE_CHECK === 'true') {
@@ -997,12 +1011,14 @@ export = class MyHandler extends Handler {
     private keepMetalSupply(): void {
         const currencies = this.bot.inventoryManager.getInventory().getCurrencies();
 
-        // let refined = currencies['5002;6'].length;
+        let refined = currencies['5002;6'].length;
         let reclaimed = currencies['5001;6'].length;
         let scrap = currencies['5000;6'].length;
 
+        const maxRefined = this.maximumRefined;
         const maxReclaimed = this.minimumReclaimed + this.combineThreshold;
         const maxScrap = this.minimumScrap + this.combineThreshold;
+        const minRefined = this.minimumRefined;
         const minReclaimed = this.minimumReclaimed;
         const minScrap = this.minimumScrap;
 
@@ -1010,6 +1026,12 @@ export = class MyHandler extends Handler {
         let smeltRefined = 0;
         let combineScrap = 0;
         let combineReclaimed = 0;
+
+		if (refined < minRefined) {
+            key intent = sell
+        } else if (refined > maxRefined) {
+            key intent = buy
+		}
 
         if (reclaimed > maxReclaimed) {
             combineReclaimed = Math.ceil((reclaimed - maxReclaimed) / 3);

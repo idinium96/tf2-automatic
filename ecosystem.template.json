@@ -27,6 +27,9 @@
                 "MINIMUM_RECLAIMED": 9,
                 "METAL_THRESHOLD": 9,
 
+                "MINIMUM_REFINED": 50,
+                "MAXIMUM_REFINED": 125,
+
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
                 "DISABLE_MESSAGES": false,
