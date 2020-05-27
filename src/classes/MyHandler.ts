@@ -364,14 +364,16 @@ export = class MyHandler extends Handler {
             offerMessage.includes('bonus') ||
             offerMessage.includes('grant') ||
             offerMessage.includes('bounty') ||
-            offerMessage.includes('goodie') ||
             offerMessage.includes('present') ||
             offerMessage.includes('contribution') ||
             offerMessage.includes('award') ||
             offerMessage.includes('nice') || // Up until here actually
             offerMessage.includes('happy') || // All below people might also use
-                offerMessage.includes('thank') ||
-                offerMessage.includes('good') ||
+            offerMessage.includes('thank') ||
+            offerMessage.includes('goo') || // For 'good', 'goodie' or anything else
+                offerMessage.includes('awesome') ||
+                offerMessage.includes('rep') ||
+                offerMessage.includes('joy') ||
                 offerMessage.includes('cute')) // right?
         ) {
             offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
