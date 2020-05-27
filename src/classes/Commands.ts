@@ -143,10 +143,10 @@ export = class Commands {
             this.tradesCommand(steamID);
         } else if (command === 'trade' && isAdmin) {
             this.tradeCommand(steamID, message);
-        } else if (command === 'accept' && isAdmin) {
-            this.acceptCommand(steamID, message);
-        } else if (command === 'decline' && isAdmin) {
-            this.declineCommand(steamID, message);
+        } else if ((command === 'accepttrade' || command === 'accept') && isAdmin) {
+            this.accepttradeCommand(steamID, message);
+        } else if ((command === 'declinetrade' || command === 'decline') && isAdmin) {
+            this.declinetradeCommand(steamID, message);
         } else {
             this.bot.sendMessage(
                 steamID,
@@ -1637,7 +1637,7 @@ export = class Commands {
         this.bot.sendMessage(steamID, reply);
     }
 
-    private acceptCommand(steamID: SteamID, message: string): void {
+    private accepttradeCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
         let offerIdString: string;
@@ -1702,7 +1702,7 @@ export = class Commands {
         });
     }
 
-    private declineCommand(steamID: SteamID, message: string): void {
+    private declinetradeCommand(steamID: SteamID, message: string): void {
         const offerIdAndMessage = CommandParser.removeCommand(message);
         const offerId = new RegExp(/\d+/).exec(offerIdAndMessage);
         let offerIdString: string;
