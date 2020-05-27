@@ -241,7 +241,7 @@ export = class Commands {
             }
         }
 
-        reply += '. I have ' + this.bot.inventoryManager.getInventory().getAmount(match.sku);
+        reply += '.\nI have ' + this.bot.inventoryManager.getInventory().getAmount(match.sku) + ' 📦';
 
         if (match.max !== -1 && isBuying) {
             reply += ' / ' + match.max;
