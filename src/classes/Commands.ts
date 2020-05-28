@@ -199,7 +199,7 @@ export = class Commands {
         const isKey = match.sku === '5021;6';
 
         if (isBuying) {
-            reply = 'I am buying ';
+            reply = '💲 I am buying ';
 
             if (amount !== 1) {
                 reply += amount + ' ';
@@ -227,7 +227,7 @@ export = class Commands {
                       );
 
             if (reply === '') {
-                reply = 'I am selling ';
+                reply = '💲 I am selling ';
 
                 if (amount !== 1) {
                     reply += amount + ' ';
@@ -241,7 +241,7 @@ export = class Commands {
             }
         }
 
-        reply += '.\nI have ' + this.bot.inventoryManager.getInventory().getAmount(match.sku) + ' 📦';
+        reply += '.\n📦 I have ' + this.bot.inventoryManager.getInventory().getAmount(match.sku);
 
         if (match.max !== -1 && isBuying) {
             reply += ' / ' + match.max;
@@ -251,11 +251,11 @@ export = class Commands {
             reply += ' and I can sell ' + this.bot.inventoryManager.amountCanTrade(match.sku, false);
         }
 
-        if (match.autoprice && isAdmin) {
-            reply += ' (price last updated ' + moment.unix(match.time).fromNow() + ')';
-        }
+        reply += '. ';
 
-        reply += '.';
+        if (match.autoprice && isAdmin) {
+            reply += '(price last updated ' + moment.unix(match.time).fromNow() + ')';
+        }
 
         this.bot.sendMessage(steamID, reply);
     }
