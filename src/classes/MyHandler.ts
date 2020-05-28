@@ -1448,15 +1448,22 @@ export = class MyHandler extends Handler {
                                   ' ref' +
                                   (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
                                 : '') +
-                            '\n🔑Key rate: ' +
-                            keyPrice.buy.metal.toString() +
-                            '/' +
-                            keyPrice.sell.metal.toString() +
-                            ' ref | 💰Pure stock: ' +
-                            pureStock.join(', ').toString() +
-                            ' ref\n' +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
+                                ? '\n🔑Key rate: ' +
+                                  keyPrice.buy.metal.toString() +
+                                  '/' +
+                                  keyPrice.sell.metal.toString() +
+                                  ' ref'
+                                : '') +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true' &&
+                            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
+                                ? ' | '
+                                : '') +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
+                                ? '💰Pure stock: ' + pureStock.join(', ').toString() + ' ref'
+                                : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
-                                ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                                ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
