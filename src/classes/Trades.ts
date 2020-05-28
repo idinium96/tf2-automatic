@@ -317,7 +317,7 @@ export = class Trades {
 
         return actionFunc()
             .catch(err => {
-                log.warn('Failed to ' + action + ' the offer: ', err);
+                log.warn('Failed to ' + action + ' the offer #' + offer.id + ':', err);
             })
             .finally(() => {
                 offer.log('debug', 'done doing action on offer', {
