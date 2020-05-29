@@ -1350,14 +1350,11 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
 
         const skuSummary = offer.summarizeSKU();
-        log.debug(skuSummary);
         const skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
         const mentionOwner =
             process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
-
-        log.debug(mentionOwner);
 
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const pureStock = this.pureStock();
