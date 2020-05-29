@@ -29,6 +29,7 @@
 
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
+                "DISABLE_CRAFTING": false,
                 "DISABLE_MESSAGES": false,
                 "DISABLE_QUEUE_ALERT": false,
 
