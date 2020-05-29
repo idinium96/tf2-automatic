@@ -1351,13 +1351,19 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
-        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
-        const pureStock = this.pureStock();
+
+        const skuSummary = offer.summarizeSKU();
+        const skuToMention: string =
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU === undefined
+                ? ';'
+                : JSON.parse(process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU).join(', ');
         const mentionOwner =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true'
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuToMention.includes(skuSummary)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
 
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const pureStock = this.pureStock();
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
 

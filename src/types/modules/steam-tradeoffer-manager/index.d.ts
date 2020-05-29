@@ -265,6 +265,9 @@ declare module 'steam-tradeoffer-manager' {
             summarizeWithLink(schema: SchemaManager.Schema): string;
 
             // Custom function added to prototype
+            summarizeSKU(): string;
+
+            // Custom function added to prototype
             getDiff(): UnknownKeys<any> | null;
         }
 
