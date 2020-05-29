@@ -1351,21 +1351,9 @@ export = class MyHandler extends Handler {
 
         const skuSummary = offer.summarizeSKU();
         log.debug(skuSummary);
-        const skuFromEnv = JSON.parse(process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU);
-        log.debug(skuFromEnv);
-
-        let skuToMention: string;
-        if (skuFromEnv === undefined) {
-            skuToMention = ';';
-        } else {
-            skuFromEnv.forEach(function(skuFromEnvEach: string) {
-                skuToMention += skuFromEnvEach + ' + ';
-            });
-        }
-        log.debug(skuToMention);
-
+        const skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
         const mentionOwner =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuToMention.includes(skuSummary)
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
 

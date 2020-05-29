@@ -79,9 +79,7 @@
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=74079494&token=Fjv0LdTs) | [View my backpack](https://backpack.tf/profiles/76561198034345222)",
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER": false,
-                "DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU": [
-                    "<put item SKU to mentioned, if unusual just ;5;u or leave empty [] to mention all>"
-                ],
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU": "<Only support 1 sku at the moment>",
 
                 "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
                 "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
