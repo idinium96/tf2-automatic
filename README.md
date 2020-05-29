@@ -2,9 +2,9 @@
 
 A free and open source fully automated TF2 trading bot advertising on www.backpack.tf using prices from www.prices.tf
 
-![GitHub package version](https://img.shields.io/github/package-json/v/Nicklason/tf2-automatic.svg)
+![GitHub package version](https://img.shields.io/github/package-json/v/idinium96/tf2-automatic.svg)
 [![Build Status](https://img.shields.io/github/workflow/status/nicklason/tf2-automatic/CI/development)](https://github.com/Nicklason/tf2-automatic/actions)
-[![GitHub issues](https://img.shields.io/github/issues/Nicklason/tf2-automatic.svg)](https://github.com/Nicklason/tf2-automatic/issues)
+[![GitHub issues](https://img.shields.io/github/issues/idinium96/tf2-automatic.svg)](https://github.com/idinium96/tf2-automatic/issues)
 [![GitHub forks](https://img.shields.io/github/forks/Nicklason/tf2-automatic.svg)](https://github.com/Nicklason/tf2-automatic/network)
 [![GitHub stars](https://img.shields.io/github/stars/Nicklason/tf2-automatic.svg)](https://github.com/Nicklason/tf2-automatic/stargazers)
 [![Discord](https://img.shields.io/discord/445215464386330644.svg)](https://tf2automatic.com/discord)
