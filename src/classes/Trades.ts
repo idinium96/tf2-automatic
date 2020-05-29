@@ -453,7 +453,7 @@ export = class Trades {
                 offer.data('confirmationTime', confirmationTime);
 
                 if (err) {
-                    log.debug('Error while trying to accept mobile confirmation: ', err);
+                    log.debug('Error while trying to accept mobile confirmation on offer #' + offer.id + ': ', err);
                     return reject(err);
                 }
 
