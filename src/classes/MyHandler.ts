@@ -1350,7 +1350,9 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
 
         const skuSummary = offer.summarizeSKU();
+        log.debug(skuSummary);
         const skuFromEnv = JSON.parse(process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU);
+        log.debug(skuFromEnv);
 
         let skuToMention: string;
         if (skuFromEnv === undefined) {
@@ -1360,11 +1362,14 @@ export = class MyHandler extends Handler {
                 skuToMention += skuFromEnvEach + ' + ';
             });
         }
+        log.debug(skuToMention);
 
         const mentionOwner =
             process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuToMention.includes(skuSummary)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
+
+        log.debug(mentionOwner);
 
         const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
         const pureStock = this.pureStock();
