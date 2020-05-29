@@ -1353,12 +1353,12 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
 
         const skuSummary = offer.summarizeSKU();
-        const skuToMention: string =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU === undefined
-                ? ';'
-                : JSON.parse(process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU).join(', ');
+        let skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
+        if (skuFromEnv === '') {
+            skuFromEnv = ';';
+        }
         const mentionOwner =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuToMention.includes(skuSummary)
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
                 : '';
 
