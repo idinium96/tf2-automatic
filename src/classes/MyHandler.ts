@@ -1354,7 +1354,7 @@ export = class MyHandler extends Handler {
 
         const skuSummary = offer.summarizeSKU();
         let skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
-        if (skuFromEnv === '') {
+        if (!skuFromEnv || skuFromEnv === '') {
             skuFromEnv = ';';
         }
         const mentionOwner =
