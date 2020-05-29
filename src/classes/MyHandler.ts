@@ -1350,7 +1350,10 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
 
         const skuSummary = offer.summarizeSKU();
-        const skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
+        let skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
+        if (skuFromEnv === '') {
+            skuFromEnv = ';';
+        }
         const mentionOwner =
             process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
                 ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
