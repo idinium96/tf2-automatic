@@ -424,28 +424,6 @@ export = class MyHandler extends Handler {
 
         let assetidsToCheck = [];
 
-        // Doing this so that the prices will always be displayed as only metal
-        if (process.env.ENABLE_SHOW_ONLY_METAL === 'true') {
-            exchange.our.scrap += exchange.our.keys * keyPrice.toValue();
-            exchange.our.keys = 0;
-            exchange.their.scrap += exchange.their.keys * keyPrice.toValue();
-            exchange.their.keys = 0;
-        }
-
-        offer.data('value', {
-            our: {
-                total: exchange.our.value,
-                keys: exchange.our.keys,
-                metal: Currencies.toRefined(exchange.our.scrap)
-            },
-            their: {
-                total: exchange.their.value,
-                keys: exchange.their.keys,
-                metal: Currencies.toRefined(exchange.their.scrap)
-            },
-            rate: keyPrice.metal
-        });
-
         offer.data('prices', itemPrices);
 
         for (let i = 0; i < states.length; i++) {
@@ -538,6 +516,28 @@ export = class MyHandler extends Handler {
                 }
             }
         }
+
+        // Doing this so that the prices will always be displayed as only metal
+        if (process.env.ENABLE_SHOW_ONLY_METAL === 'true') {
+            exchange.our.scrap += exchange.our.keys * keyPrice.toValue();
+            exchange.our.keys = 0;
+            exchange.their.scrap += exchange.their.keys * keyPrice.toValue();
+            exchange.their.keys = 0;
+        }
+
+        offer.data('value', {
+            our: {
+                total: exchange.our.value,
+                keys: exchange.our.keys,
+                metal: Currencies.toRefined(exchange.our.scrap)
+            },
+            their: {
+                total: exchange.their.value,
+                keys: exchange.their.keys,
+                metal: Currencies.toRefined(exchange.their.scrap)
+            },
+            rate: keyPrice.metal
+        });
 
         if (exchange.contains.metal && !exchange.contains.keys && !exchange.contains.items) {
             // Offer only contains metal
