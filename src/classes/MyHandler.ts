@@ -424,6 +424,30 @@ export = class MyHandler extends Handler {
 
         let assetidsToCheck = [];
 
+        // Doing this so that the prices will always be displayed as only metal
+        if (process.env.ENABLE_SHOW_ONLY_METAL === 'true') {
+            exchange.our.scrap += exchange.our.keys * keyPrice.toValue();
+            exchange.our.keys = 0;
+            exchange.their.scrap += exchange.their.keys * keyPrice.toValue();
+            exchange.their.keys = 0;
+        }
+
+        offer.data('value', {
+            our: {
+                total: exchange.our.value,
+                keys: exchange.our.keys,
+                metal: Currencies.toRefined(exchange.our.scrap)
+            },
+            their: {
+                total: exchange.their.value,
+                keys: exchange.their.keys,
+                metal: Currencies.toRefined(exchange.their.scrap)
+            },
+            rate: keyPrice.metal
+        });
+
+        offer.data('prices', itemPrices);
+
         for (let i = 0; i < states.length; i++) {
             const buying = states[i];
             const which = buying ? 'their' : 'our';
@@ -450,6 +474,9 @@ export = class MyHandler extends Handler {
                     exchange[which].scrap += value;
                 } else {
                     const match = this.bot.pricelist.getPrice(sku, true);
+                    const value: { our: Currency; their: Currency } = offer.data('value');
+                    const theirValue = new Currencies(value.their).toValue(keyPrice.metal);
+                    const ourValue = new Currencies(value.our).toValue(keyPrice.metal);
 
                     // TODO: Go through all assetids and check if the item is being sold for a specific price
 
@@ -472,7 +499,7 @@ export = class MyHandler extends Handler {
                         const buyingOverstockCheck = diff > 0;
                         const amountCanTrade = this.bot.inventoryManager.amountCanTrade(sku, buyingOverstockCheck);
 
-                        if (diff !== 0 && amountCanTrade < diff) {
+                        if (diff !== 0 && amountCanTrade < diff && theirValue < ourValue) {
                             // User is taking too many / offering too many
                             hasOverstock = true;
 
@@ -497,7 +524,7 @@ export = class MyHandler extends Handler {
                         // Offer contains keys and we are not trading keys, add key value
                         exchange[which].value += keyPrice.toValue() * amount;
                         exchange[which].keys += amount;
-                    } else if (match === null || match.intent === (buying ? 1 : 0)) {
+                    } else if ((match === null || match.intent === (buying ? 1 : 0)) && theirValue < ourValue) {
                         // Offer contains an item that we are not trading
                         hasInvalidItems = true;
 
@@ -511,30 +538,6 @@ export = class MyHandler extends Handler {
                 }
             }
         }
-
-        // Doing this so that the prices will always be displayed as only metal
-        if (process.env.ENABLE_SHOW_ONLY_METAL === 'true') {
-            exchange.our.scrap += exchange.our.keys * keyPrice.toValue();
-            exchange.our.keys = 0;
-            exchange.their.scrap += exchange.their.keys * keyPrice.toValue();
-            exchange.their.keys = 0;
-        }
-
-        offer.data('value', {
-            our: {
-                total: exchange.our.value,
-                keys: exchange.our.keys,
-                metal: Currencies.toRefined(exchange.our.scrap)
-            },
-            their: {
-                total: exchange.their.value,
-                keys: exchange.their.keys,
-                metal: Currencies.toRefined(exchange.their.scrap)
-            },
-            rate: keyPrice.metal
-        });
-
-        offer.data('prices', itemPrices);
 
         if (exchange.contains.metal && !exchange.contains.keys && !exchange.contains.items) {
             // Offer only contains metal
