@@ -452,9 +452,6 @@ export = class MyHandler extends Handler {
                     exchange[which].scrap += value;
                 } else {
                     const match = this.bot.pricelist.getPrice(sku, true);
-                    const value: { our: Currency; their: Currency } = offer.data('value');
-                    const theirValue = new Currencies(value.their).toValue(keyPrice.metal);
-                    const ourValue = new Currencies(value.our).toValue(keyPrice.metal);
 
                     // TODO: Go through all assetids and check if the item is being sold for a specific price
 
@@ -477,7 +474,7 @@ export = class MyHandler extends Handler {
                         const buyingOverstockCheck = diff > 0;
                         const amountCanTrade = this.bot.inventoryManager.amountCanTrade(sku, buyingOverstockCheck);
 
-                        if (diff !== 0 && amountCanTrade < diff && theirValue < ourValue) {
+                        if (diff !== 0 && amountCanTrade < diff) {
                             // User is taking too many / offering too many
                             hasOverstock = true;
 
@@ -502,7 +499,7 @@ export = class MyHandler extends Handler {
                         // Offer contains keys and we are not trading keys, add key value
                         exchange[which].value += keyPrice.toValue() * amount;
                         exchange[which].keys += amount;
-                    } else if ((match === null || match.intent === (buying ? 1 : 0)) && theirValue < ourValue) {
+                    } else if (match === null || match.intent === (buying ? 1 : 0)) {
                         // Offer contains an item that we are not trading
                         hasInvalidItems = true;
 
