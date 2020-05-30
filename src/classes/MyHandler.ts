@@ -926,15 +926,7 @@ export = class MyHandler extends Handler {
             const reviewReasons: string[] = [];
             let note: string;
             let missingPureNote: string;
-            if (meta.uniqueReasons.includes('🟥INVALID_VALUE')) {
-                note = process.env.INVALID_VALUE_NOTE
-                    ? '🟥INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
-                    : '🟥INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
-                reviewReasons.push(note);
-                missingPureNote =
-                    "\n💥[You're missing: " +
-                    (itemsList.includes('5021;6') ? valueDiffKey + ']💥' : valueDiffRef + ' ref]💥');
-            }
+
             if (meta.uniqueReasons.includes('🟨INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
                     ? '🟨INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
@@ -946,6 +938,15 @@ export = class MyHandler extends Handler {
                     ? '🟦OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
                     : "🟦OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.";
                 reviewReasons.push(note);
+            }
+            if (meta.uniqueReasons.includes('🟥INVALID_VALUE')) {
+                note = process.env.INVALID_VALUE_NOTE
+                    ? '🟥INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
+                    : '🟥INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
+                reviewReasons.push(note);
+                missingPureNote =
+                    "\n💥[You're missing: " +
+                    (itemsList.includes('5021;6') ? valueDiffKey + ']💥' : valueDiffRef + ' ref]💥');
             }
             if (meta.uniqueReasons.includes('🟫DUPED_ITEMS')) {
                 note = process.env.DUPE_ITEMS_NOTE
