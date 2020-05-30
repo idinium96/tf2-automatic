@@ -85,7 +85,7 @@ ON_DEATH({ uncaughtException: true })(function(signal, err) {
 
         if (botReady) {
             log.error(
-                'Create an issue here: https://github.com/Nicklason/tf2-automatic/issues/new?template=bug_report.md'
+                'Create an issue here: https://github.com/idinium96/tf2-automatic/issues/new?assignees=&labels=bug&template=bug_report.md&title='
             );
         }
     } else {
