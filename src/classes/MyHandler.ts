@@ -474,7 +474,7 @@ export = class MyHandler extends Handler {
                         const buyingOverstockCheck = diff > 0;
                         const amountCanTrade = this.bot.inventoryManager.amountCanTrade(sku, buyingOverstockCheck);
 
-                        if (diff !== 0 && amountCanTrade < diff && exchange.our.value < exchange.their.value) {
+                        if (diff !== 0 && amountCanTrade < diff && exchange.our.value > exchange.their.value) {
                             // User is taking too many / offering too many
                             hasOverstock = true;
 
@@ -501,7 +501,7 @@ export = class MyHandler extends Handler {
                         exchange[which].keys += amount;
                     } else if (
                         (match === null || match.intent === (buying ? 1 : 0)) &&
-                        exchange.our.value <= exchange.their.value
+                        exchange.our.value >= exchange.their.value
                     ) {
                         // Offer contains an item that we are not trading
                         hasInvalidItems = true;
