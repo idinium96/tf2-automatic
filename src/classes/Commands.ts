@@ -730,7 +730,10 @@ export = class Commands {
 
         // Correct trade if needed
         if (amountCanTrade <= 0) {
-            this.bot.sendMessage(steamID, `❌ I don't have any ${ourAmount > 0 ? 'more ' : ''} ${pluralize(name, 0)}.`);
+            this.bot.sendMessage(
+                steamID,
+                `❌ I don't have any ${(ourAmount > 0 ? 'more ' : '') + pluralize(name, 0)}.`
+            );
             amount = 0;
         } else if (amount > amountCanTrade) {
             amount = amountCanTrade;
@@ -738,7 +741,7 @@ export = class Commands {
             if (amount === cartAmount && cartAmount > 0) {
                 this.bot.sendMessage(
                     steamID,
-                    `❌ I don't have any ${ourAmount > 0 ? 'more ' : ''} ${pluralize(name, 0)}.`
+                    `❌ I don't have any ${(ourAmount > 0 ? 'more ' : '') + pluralize(name, 0)}.`
                 );
                 return;
             }
@@ -796,7 +799,7 @@ export = class Commands {
                 steamID,
                 '😣 I ' +
                     (ourAmount > 0 ? "can't sell" : "don't have") +
-                    ` any ${cartAmount > 0 ? 'more ' : ''} ${pluralize(name, 0)}.`
+                    ` any ${(cartAmount > 0 ? 'more ' : '') + pluralize(name, 0)}.`
             );
             return;
         }
