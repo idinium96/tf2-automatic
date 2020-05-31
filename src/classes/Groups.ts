@@ -21,7 +21,7 @@ export = class Groups {
         groups.forEach(groupID64 => {
             this.bot.community.inviteUserToGroup(steamID, groupID64, err => {
                 if (err && err.message !== 'HTTP error 400') {
-                    log.warn('Failed to invite ' + steamID.toString() + ' to group ' + groupID64 + ': ', err);
+                    log.warn(`Failed to invite ${steamID.toString()} to group ${groupID64}: `, err);
                 }
             });
         });
