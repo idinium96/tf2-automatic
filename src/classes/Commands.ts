@@ -56,7 +56,7 @@ const ADMIN_COMMANDS: string[] = [
     '!restart - Restart the bot 🔄',
     '!version - Get version that the bot is running',
     '!avatar <image_URL> - Change avatar',
-    '!name <new_name>- Change name',
+    '!name <new_name> - Change name',
     '!stats - Get statistics for accepted trades 📊',
     '!trades - Get a list of offers pending for manual review 🔍',
     '!trade <offerID> - Get info about a trade',
