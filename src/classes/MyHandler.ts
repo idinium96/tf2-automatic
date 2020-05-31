@@ -1290,7 +1290,7 @@ export = class MyHandler extends Handler {
             const webhookReview = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
                 avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-                content: '<@!' + process.env.DISCORD_OWNER_ID + '>, check this!',
+                content: `<@!${process.env.DISCORD_OWNER_ID}>, check this! - ${offer.id}`,
                 embeds: [
                     {
                         author: {

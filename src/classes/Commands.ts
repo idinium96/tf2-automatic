@@ -465,7 +465,7 @@ export = class Commands {
         const discordPartnerMsg = JSON.stringify({
             username: process.env.DISCORD_WEBHOOK_USERNAME,
             avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: '<@!' + process.env.DISCORD_OWNER_ID + '>, new message!',
+            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! ${steamID}`,
             embeds: [
                 {
                     author: {
