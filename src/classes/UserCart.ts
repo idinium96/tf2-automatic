@@ -508,10 +508,15 @@ class UserCart extends Cart {
 
         // We now know who the buyer is, now get their inventory
         const buyerInventory = isBuyer ? this.bot.inventoryManager.getInventory() : theirInventory;
+        const pureStock = this.pureStock();
 
         if (this.bot.inventoryManager.amountCanAfford(this.canUseKeys(), currencies, buyerInventory) < 1) {
             // Buyer can't afford the items
-            return Promise.reject((isBuyer ? 'I' : 'You') + " don't have enough pure for this trade");
+            return Promise.reject(
+                (isBuyer ? 'I' : 'You') +
+                    " don't have enough pure for this trade." +
+                    (isBuyer ? '\n💰 Current pure stock: ' + pureStock.join(', ').toString() : '')
+            );
         }
 
         const keyPrice = this.bot.pricelist.getKeyPrice();
@@ -680,7 +685,7 @@ class UserCart extends Cart {
             }
 
             if (change !== 0) {
-                return Promise.reject('I am missing ' + Currencies.toRefined(change) + ' ref as change');
+                return Promise.reject(`I am missing ${Currencies.toRefined(change)} ref as change`);
             }
         }
 
@@ -784,6 +789,28 @@ class UserCart extends Cart {
         return alteredMessages.length === 0 ? undefined : alteredMessages.join(', ');
     }
 
+    private pureStock(): string[] {
+        const pureStock: string[] = [];
+        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
+        const pure = [
+            {
+                name: 'Key',
+                amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
+            },
+            {
+                name: 'Ref',
+                amount: Currencies.toRefined(pureScrapTotal)
+            }
+        ];
+        for (let i = 0; i < pure.length; i++) {
+            pureStock.push(`${pure[i].name}: ${pure[i].amount}`);
+        }
+        return pureStock;
+    }
+
     // We Override the toString function so that the currencies are added
     toString(): string {
         if (this.isEmpty()) {
@@ -801,7 +828,7 @@ class UserCart extends Cart {
             }
 
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
-            str += '\n- ' + this.our[sku] + 'x ' + name;
+            str += `\n- ${this.our[sku]}x ${name}`;
         }
 
         if (isBuyer) {
@@ -816,7 +843,7 @@ class UserCart extends Cart {
             }
 
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
-            str += '\n- ' + this.their[sku] + 'x ' + name;
+            str += `\n- ${this.their[sku]}x ${name}`;
         }
 
         if (!isBuyer) {

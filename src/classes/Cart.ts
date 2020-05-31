@@ -174,7 +174,7 @@ abstract class Cart {
             theirSummaryString = theirSummary.join(', ');
         }
 
-        return 'You will be offered ' + ourSummaryString + ' for ' + theirSummaryString;
+        return `You will be offered ${ourSummaryString} for ${theirSummaryString}`;
     }
 
     summarizeOur(): string[] {
@@ -243,7 +243,7 @@ abstract class Cart {
         }
 
         if (this.offer === null) {
-            return Promise.reject(new Error('Offer has not yet been constructed'));
+            return Promise.reject(new Error('❌ Offer has not yet been constructed'));
         }
 
         if (this.offer.data('dict') === undefined) {
@@ -312,7 +312,7 @@ abstract class Cart {
                     );
                 } else if (error.eresult !== undefined) {
                     return Promise.reject(
-                        'An error occurred while sending the offer (' + TradeOfferManager.EResult[error.eresult] + ')'
+                        `An error occurred while sending the offer (${TradeOfferManager.EResult[error.eresult]})`
                     );
                 }
 
@@ -334,7 +334,7 @@ abstract class Cart {
             }
 
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
-            str += '\n- ' + this.our[sku] + 'x ' + name;
+            str += `\n- ${this.our[sku]}x ${name}`;
         }
 
         str += '\n\n📤 Your side (items you will lose): 📤';
@@ -344,7 +344,7 @@ abstract class Cart {
             }
 
             const name = this.bot.schema.getName(SKU.fromString(sku), false);
-            str += '\n- ' + this.their[sku] + 'x ' + name;
+            str += `\n- ${this.their[sku]}x ${name}`;
         }
         str += '\n\nType !checkout to checkout and proceed trade, or !clearcart to cancel.';
 

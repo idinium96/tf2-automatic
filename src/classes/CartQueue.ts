@@ -94,10 +94,10 @@ class CartQueue {
             .then(alteredMessage => {
                 log.debug('Constructed offer');
                 if (alteredMessage) {
-                    cart.sendNotification('🔃Your offer has been altered. Reason: ' + alteredMessage + '.');
+                    cart.sendNotification(`🔃 Your offer has been altered. Reason: ${alteredMessage}.`);
                 }
 
-                cart.sendNotification('⚠Please wait while I process your offer! ' + cart.summarize() + '.');
+                cart.sendNotification(`⌛ Please wait while I process your offer! ${cart.summarize()}.`);
 
                 log.debug('Sending offer...');
                 return cart.sendOffer();
@@ -117,7 +117,7 @@ class CartQueue {
             })
             .catch(err => {
                 if (!(err instanceof Error)) {
-                    cart.sendNotification('❌ I failed to make the offer! Reason: ' + err + '.');
+                    cart.sendNotification(`❌ I failed to make the offer! Reason: ${err}.`);
                 } else {
                     log.warn('Failed to make offer');
                     log.error(require('util').inspect(err));
@@ -126,7 +126,7 @@ class CartQueue {
                 }
             })
             .finally(() => {
-                log.debug('Done handling cart ' + cart.partner.getSteamID64());
+                log.debug(`Done handling cart ${cart.partner.getSteamID64()}`);
 
                 // Remove cart from the queue
                 this.carts.shift();

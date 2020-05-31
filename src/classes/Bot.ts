@@ -751,9 +751,9 @@ export = class Bot {
         this.client.chatMessage(steamID, message);
 
         if (friend === null) {
-            log.info('Message sent to ' + steamID + ': ' + message);
+            log.info(`Message sent to ${steamID}: ${message}`);
         } else {
-            log.info('Message sent to ' + friend.player_name + ' (' + steamID64 + '): ' + message);
+            log.info(`Message sent to ${friend.player_name} (${steamID64}): ${message}`);
         }
     }
 
