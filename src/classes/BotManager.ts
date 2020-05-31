@@ -77,7 +77,7 @@ export = class BotManager {
         return new Promise((resolve, reject) => {
             REQUIRED_OPTS.forEach(function(optName) {
                 if (!process.env[optName]) {
-                    return reject(new Error('Missing required environment variable "' + optName + '"'));
+                    return reject(new Error(`Missing required environment variable "${optName}"`));
                 }
             });
 

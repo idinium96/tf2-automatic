@@ -317,7 +317,7 @@ export = class Trades {
 
         return actionFunc()
             .catch(err => {
-                log.warn('Failed to ' + action + ' the offer #' + offer.id + ':', err);
+                log.warn(`Failed to ${action} on the offer #${offer.id}: `, err);
             })
             .finally(() => {
                 offer.log('debug', 'done doing action on offer', {
@@ -343,11 +343,11 @@ export = class Trades {
 
         const offerId = this.receivedOffers[0];
 
-        log.verbose('Handling offer #' + offerId + '...');
+        log.verbose(`Handling offer #${offerId}...`);
 
         this.getOffer(offerId).asCallback((err, offer) => {
             if (err) {
-                log.warn('Failed to get offer #' + offerId + ': ', err);
+                log.warn(`Failed to get offer #${offerId}: `, err);
                 // After many retries we could not get the offer data
 
                 if (this.receivedOffers.length !== 1) {
@@ -453,7 +453,7 @@ export = class Trades {
                 offer.data('confirmationTime', confirmationTime);
 
                 if (err) {
-                    log.debug('Error while trying to accept mobile confirmation on offer #' + offer.id + ': ', err);
+                    log.debug(`Error while trying to accept mobile confirmation on offer #${offer.id}: `, err);
                     return reject(err);
                 }
 
