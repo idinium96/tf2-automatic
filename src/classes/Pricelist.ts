@@ -566,13 +566,10 @@ export default class Pricelist extends EventEmitter {
         if (!itemImageUrl) {
             itemImageUrlPrint = 'https://jberlife.com/wp-content/uploads/2019/07/sorry-image-not-available.jpg';
         } else if (Object.keys(paintCan.canColor).includes(newSku)) {
-            itemImageUrlPrint = 'https://backpack.tf/images/440/cans/Paint_Can_' + paintCan.canColor[newSku] + '.png';
+            itemImageUrlPrint = `https://backpack.tf/images/440/cans/Paint_Can_${paintCan.canColor[newSku]}.png`;
         } else if (sku.includes(';11;australium')) {
             const australiumSKU = parts[0] + ';11;australium';
-            itemImageUrlPrint =
-                'https://steamcommunity-a.akamaihd.net/economy/image/fWFc82js0fmoRAP-qOIPu5THSWqfSmTELLqcUywGkijVjZULUrsm1j-9xgE' +
-                australiumImageURL[australiumSKU] +
-                '512fx512f';
+            itemImageUrlPrint = `https://steamcommunity-a.akamaihd.net/economy/image/fWFc82js0fmoRAP-qOIPu5THSWqfSmTELLqcUywGkijVjZULUrsm1j-9xgE${australiumImageURL[australiumSKU]}512fx512f`;
         } else {
             itemImageUrlPrint = itemImageUrl.image_url_large;
         }
@@ -586,7 +583,7 @@ export default class Pricelist extends EventEmitter {
         if (!effectsId) {
             effectURL = '';
         } else {
-            effectURL = 'https://backpack.tf/images/440/particles/' + effectsId + '_94x94.png';
+            effectURL = `https://backpack.tf/images/440/particles/${effectsId}_94x94.png`;
         }
 
         const qualityItem = parts[1];
@@ -616,12 +613,12 @@ export default class Pricelist extends EventEmitter {
                 {
                     author: {
                         name: itemName,
-                        url: 'https://www.prices.tf/items/' + sku,
+                        url: `https://www.prices.tf/items/${sku}`,
                         icon_url:
                             'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg'
                     },
                     footer: {
-                        text: "Item's SKU: " + sku + '• ' + moment.utc().format()
+                        text: `Item's SKU: ${sku} • ${moment.utc().format()}`
                     },
                     thumbnail: {
                         url: itemImageUrlPrint
@@ -631,11 +628,7 @@ export default class Pricelist extends EventEmitter {
                     },
                     title: '',
                     description:
-                        '**※Buying for:** ' +
-                        buyPrice +
-                        '\n **※Selling for:** ' +
-                        sellPrice +
-                        '\n' +
+                        `**※Buying for:** ${buyPrice}\n**※Selling for:** ${sellPrice}\n` +
                         (process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
                             ? process.env.DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE
                             : ''),

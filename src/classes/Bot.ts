@@ -249,7 +249,7 @@ export = class Bot {
 
                 this.messageAdmins(
                     'version',
-                    `Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nPlease run [git checkout Public && git pull && npm install && npm run build] and then restart your bot.` +
+                    `Update available! Current: v${process.env.BOT_VERSION}, Latest: v${latestVersion}.\nNavigate to your bot folder and run [git stash && git checkout Public && git pull && npm install && npm run build] and then restart your bot.` +
                         '\n Contact IdiNium if you have any other problem. Thank you.',
                     []
                 );
@@ -752,9 +752,9 @@ export = class Bot {
         this.client.chatMessage(steamID, message);
 
         if (friend === null) {
-            log.info('Message sent to ' + steamID + ': ' + message);
+            log.info(`Message sent to ${steamID}: ${message}`);
         } else {
-            log.info('Message sent to ' + friend.player_name + ' (' + steamID64 + '): ' + message);
+            log.info(`Message sent to ${friend.player_name} (${steamID64}): ${message}`);
         }
     }
 

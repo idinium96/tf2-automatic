@@ -80,7 +80,7 @@ export = class MyHandler extends Handler {
         if (groups !== null && Array.isArray(groups)) {
             groups.forEach(function(groupID64) {
                 if (!new SteamID(groupID64).isValid()) {
-                    throw new Error('Invalid group SteamID64 "' + groupID64 + '"');
+                    throw new Error(`Invalid group SteamID64 "${groupID64}"`);
                 }
             });
 
@@ -91,7 +91,7 @@ export = class MyHandler extends Handler {
         if (friendsToKeep !== null && Array.isArray(friendsToKeep)) {
             friendsToKeep.forEach(function(steamID64) {
                 if (!new SteamID(steamID64).isValid()) {
-                    throw new Error('Invalid SteamID64 "' + steamID64 + '"');
+                    throw new Error(`Invalid SteamID64 "${steamID64}"`);
                 }
             });
 
@@ -193,9 +193,9 @@ export = class MyHandler extends Handler {
         const friend = this.bot.friends.getFriend(steamID64);
 
         if (friend === null) {
-            log.info('Message from ' + steamID64 + ': ' + message);
+            log.info(`Message from ${steamID64}: ${message}`);
         } else {
-            log.info('Message from ' + friend.player_name + ' (' + steamID64 + '): ' + message);
+            log.info(`Message from ${friend.player_name} (${steamID64}): ${message}`);
         }
 
         if (this.recentlySentMessage[steamID64] !== undefined && this.recentlySentMessage[steamID64] >= 1) {
@@ -244,12 +244,10 @@ export = class MyHandler extends Handler {
         if (relationship === SteamUser.EClanRelationship.Invited) {
             const join = !this.groups.includes(groupID.getSteamID64());
 
-            log.info(
-                'Got invited to group ' + groupID.getSteamID64() + ', ' + (join ? 'accepting...' : 'declining...')
-            );
+            log.info(`Got invited to group ${groupID.getSteamID64()}, ${join ? 'accepting...' : 'declining...'}`);
             this.bot.client.respondToGroupInvite(groupID, !this.groups.includes(groupID.getSteamID64()));
         } else if (relationship === SteamUser.EClanRelationship.Member) {
-            log.info('Joined group ' + groupID.getSteamID64());
+            log.info(`Joined group ${groupID.getSteamID64()}`);
         }
     }
 
@@ -338,7 +336,7 @@ export = class MyHandler extends Handler {
 
         // Check if the offer is from an admin
         if (this.bot.isAdmin(offer.partner)) {
-            offer.log('trade', 'is from an admin, accepting. Summary:\n' + offer.summarize(this.bot.schema));
+            offer.log('trade', `is from an admin, accepting. Summary:\n${offer.summarize(this.bot.schema)}`);
             return { action: 'accept', reason: 'ADMIN' };
         }
 
@@ -376,7 +374,7 @@ export = class MyHandler extends Handler {
                 offerMessage.includes('joy') ||
                 offerMessage.includes('cute')) // right?
         ) {
-            offer.log('trade', 'is a gift offer, accepting. Summary:\n' + offer.summarize(this.bot.schema));
+            offer.log('trade', `is a gift offer, accepting. Summary:\n${offer.summarize(this.bot.schema)}`);
             return { action: 'accept', reason: 'GIFT' };
         } else if (offer.itemsToReceive.length === 0 || offer.itemsToGive.length === 0) {
             offer.log('info', 'is a gift offer, declining...');
@@ -720,7 +718,7 @@ export = class MyHandler extends Handler {
             const reasons = wrongAboutOffer.map(wrong => wrong.reason);
             const uniqueReasons = reasons.filter(reason => reasons.includes(reason));
 
-            offer.log('info', 'offer needs review (' + uniqueReasons.join(', ') + '), skipping...');
+            offer.log('info', `offer needs review (${uniqueReasons.join(', ')}), skipping...`);
             return {
                 action: 'skip',
                 reason: 'REVIEW',
@@ -731,7 +729,7 @@ export = class MyHandler extends Handler {
             };
         }
 
-        offer.log('trade', 'accepting. Summary:\n' + offer.summarize(this.bot.schema));
+        offer.log('trade', `accepting. Summary:\n${offer.summarize(this.bot.schema)}`);
 
         return { action: 'accept', reason: 'VALID' };
     }
@@ -826,30 +824,18 @@ export = class MyHandler extends Handler {
                 } else {
                     this.bot.messageAdmins(
                         'trade',
-                        'Trade #' +
-                            offer.id +
-                            ' with ' +
-                            offer.partner.getSteamID64() +
-                            ' is accepted. ✅\n\nSummary:\n' +
+                        `/me Trade #${offer.id} with ${offer.partner.getSteamID64()} is accepted. ✅\n\nSummary:\n` +
                             offer.summarize(this.bot.schema) +
                             (valueDiff > 0
-                                ? '\n\n📈 Profit from overpay: ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? '\n\n📉 Loss from underpay: ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            '\n🔑 Key rate: ' +
-                            keyPrice.buy.metal.toString() +
-                            '/' +
-                            keyPrice.sell.metal.toString() +
-                            ' ref | 💰 Pure stock: ' +
-                            pureStock.join(', ').toString() +
-                            ' ref',
+                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref | 💰 Pure stock: ${pureStock
+                                .join(', ')
+                                .toString()} ref`,
                         []
                     );
                 }
@@ -926,44 +912,43 @@ export = class MyHandler extends Handler {
             const reviewReasons: string[] = [];
             let note: string;
             let missingPureNote: string;
-            if (meta.uniqueReasons.includes('🟥INVALID_VALUE')) {
-                note = process.env.INVALID_VALUE_NOTE
-                    ? '🟥INVALID_VALUE - ' + process.env.INVALID_VALUE_NOTE
-                    : '🟥INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
-                reviewReasons.push(note);
-                missingPureNote =
-                    "\n[You're missing: " +
-                    (itemsList.includes('5021;6') ? valueDiffKey + ']' : valueDiffRef + ' ref]');
-            }
             if (meta.uniqueReasons.includes('🟨INVALID_ITEMS')) {
                 note = process.env.INVALID_ITEMS_NOTE
-                    ? '🟨INVALID_ITEMS - ' + process.env.INVALID_ITEMS_NOTE
+                    ? `🟨INVALID_ITEMS - ${process.env.INVALID_ITEMS_NOTE}`
                     : '🟨INVALID_ITEMS - Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.';
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('🟦OVERSTOCKED')) {
                 note = process.env.OVERSTOCKED_NOTE
-                    ? '🟦OVERSTOCKED - ' + process.env.OVERSTOCKED_NOTE
+                    ? `🟦OVERSTOCKED - ${process.env.OVERSTOCKED_NOTE}`
                     : "🟦OVERSTOCKED - Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.";
                 reviewReasons.push(note);
             }
+            if (meta.uniqueReasons.includes('🟥INVALID_VALUE')) {
+                note = process.env.INVALID_VALUE_NOTE
+                    ? `🟥INVALID_VALUE - ${process.env.INVALID_VALUE_NOTE}`
+                    : '🟥INVALID_VALUE - Your offer will be ignored. Please cancel it and make another offer with correct value.';
+                reviewReasons.push(note);
+                missingPureNote =
+                    "\n[You're missing: " +
+                    (itemsList.includes('5021;6') ? `${valueDiffKey}]` : `${valueDiffRef} ref]`);
+            }
             if (meta.uniqueReasons.includes('🟫DUPED_ITEMS')) {
                 note = process.env.DUPE_ITEMS_NOTE
-                    ? '🟫DUPED_ITEMS - ' + process.env.DUPE_ITEMS_NOTE
+                    ? `🟫DUPED_ITEMS - ${process.env.DUPE_ITEMS_NOTE}`
                     : '🟫DUPED_ITEMS - The item(s) you offered is appeared to be duped. Please wait for my owner to review it. Thank you.';
                 reviewReasons.push(note);
             }
             if (meta.uniqueReasons.includes('🟪DUPE_CHECK_FAILED')) {
                 note = process.env.DUPE_CHECK_FAILED_NOTE
-                    ? '🟪DUPE_CHECK_FAILED - ' + process.env.DUPE_CHECK_FAILED_NOTE
+                    ? `🟪DUPE_CHECK_FAILED - ${process.env.DUPE_CHECK_FAILED_NOTE}`
                     : '🟪DUPE_CHECK_FAILED - Backpack.tf still does not recognize your item(s) Original ID to check for the duped item. You can try again later. Check it yourself by going to your item history page. Thank you.';
                 reviewReasons.push(note);
             }
             // Notify partner and admin that the offer is waiting for manual review
             this.bot.sendMessage(
                 offer.partner,
-                '/pre ⚠️ Your offer is waiting for review.\nReason: ' +
-                    meta.uniqueReasons.join(', ') +
+                `/pre ⚠️ Your offer is waiting for review.\nReason: ${meta.uniqueReasons.join(', ')}` +
                     '\n\nYour offer summary:\n' +
                     offer
                         .summarize(this.bot.schema)
@@ -973,13 +958,13 @@ export = class MyHandler extends Handler {
                         ? missingPureNote
                         : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
-                        ? '\n\nNote:\n' + reviewReasons.join('\n')
+                        ? `\n\nNote:\n${reviewReasons.join('\n')}`
                         : '') +
                     (process.env.ADDITIONAL_NOTE
-                        ? '\n' +
+                        ? '\n\n' +
                           process.env.ADDITIONAL_NOTE.replace(
                               /%keyRate%/g,
-                              keyPrice.sell.metal.toString() + ' ref'
+                              `${keyPrice.sell.metal.toString()} ref`
                           ).replace(/%pureStock%/g, pureStock.join(', ').toString())
                         : '')
             );
@@ -990,30 +975,18 @@ export = class MyHandler extends Handler {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
                 this.bot.messageAdmins(
-                    '/pre ⚠️ Offer #' +
-                        offer.id +
-                        ' from ' +
-                        offer.partner +
-                        ' is waiting for review.\nReason: ' +
+                    `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.\nReason: ` +
                         meta.uniqueReasons.join(', ') +
                         '\n\nOffer Summary:\n' +
                         offer.summarize(this.bot.schema) +
                         (valueDiff > 0
-                            ? '\n\n📈 Profit from overpay: ' +
-                              valueDiffRef +
-                              ' ref' +
-                              (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                            ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                              (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                             : valueDiff < 0
-                            ? '\n\n📉 Loss from underpay: ' +
-                              valueDiffRef +
-                              ' ref' +
-                              (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                            ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
+                              (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                             : '') +
-                        '\n🔑 Key rate: ' +
-                        keyPrice.buy.metal.toString() +
-                        '/' +
-                        keyPrice.sell.metal.toString() +
-                        ' ref',
+                        `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
                     []
                 );
             }
@@ -1021,6 +994,9 @@ export = class MyHandler extends Handler {
     }
 
     private keepMetalSupply(): void {
+        if (process.env.DISABLE_CRAFTING === 'true') {
+            return;
+        }
         const currencies = this.bot.inventoryManager.getInventory().getCurrencies();
 
         // let refined = currencies['5002;6'].length;
@@ -1106,7 +1082,7 @@ export = class MyHandler extends Handler {
 
         this.bot.getAdmins().forEach(steamID => {
             if (!this.bot.friends.isFriend(steamID)) {
-                log.info('Not friends with admin ' + steamID + ', sending friend request...');
+                log.info(`Not friends with admin ${steamID}, sending friend request...`);
                 this.bot.client.addFriend(steamID, function(err) {
                     if (err) {
                         log.warn('Failed to send friend request: ', err);
@@ -1119,11 +1095,11 @@ export = class MyHandler extends Handler {
     private respondToFriendRequest(steamID: SteamID | string): void {
         const steamID64 = typeof steamID === 'string' ? steamID : steamID.getSteamID64();
 
-        log.debug('Sending friend request to ' + steamID64 + '...');
+        log.debug(`Sending friend request to ${steamID64}...`);
 
         this.bot.client.addFriend(steamID, function(err) {
             if (err) {
-                log.warn('Failed to send friend request to ' + steamID64 + ': ', err);
+                log.warn(`Failed to send friend request to ${steamID64}: `, err);
                 return;
             }
 
@@ -1133,7 +1109,7 @@ export = class MyHandler extends Handler {
 
     private onNewFriend(steamID: SteamID, tries = 0): void {
         if (tries === 0) {
-            log.debug('Now friends with ' + steamID.getSteamID64());
+            log.debug(`Now friends with ${steamID.getSteamID64()}`);
         }
 
         const isAdmin = this.bot.isAdmin(steamID);
@@ -1149,13 +1125,13 @@ export = class MyHandler extends Handler {
                 tries++;
 
                 if (tries >= 5) {
-                    log.info('I am now friends with ' + steamID.getSteamID64());
+                    log.info(`I am now friends with ${steamID.getSteamID64()}`);
 
                     this.bot.sendMessage(
                         steamID,
                         process.env.CUSTOM_WELCOME_MESSAGE
                             ? process.env.CUSTOM_WELCOME_MESSAGE
-                            : 'Hi! If you don\'t know how things work, please type "!' +
+                            : `Hi! If you don't know how things work, please type "!` +
                                   (isAdmin ? 'help' : 'how2trade') +
                                   '"'
                     );
@@ -1171,15 +1147,13 @@ export = class MyHandler extends Handler {
                 return;
             }
 
-            log.info('I am now friends with ' + friend.player_name + ' (' + steamID.getSteamID64() + ')');
+            log.info(`I am now friends with ${friend.player_name} (${steamID.getSteamID64()})`);
 
             this.bot.sendMessage(
                 steamID,
                 process.env.CUSTOM_WELCOME_MESSAGE
                     ? process.env.CUSTOM_WELCOME_MESSAGE
-                    : 'Hi ' +
-                          friend.player_name +
-                          '! If you don\'t know how things work, please type "!' +
+                    : `Hi ${friend.player_name}! If you don't know how things work, please type "!` +
                           (isAdmin ? 'help' : 'how2trade') +
                           '"'
             );
@@ -1194,7 +1168,7 @@ export = class MyHandler extends Handler {
 
         const friendsToRemoveCount = friends.length + friendslistBuffer - this.bot.friends.maxFriends;
 
-        log.debug('Friends to remove: ' + friendsToRemoveCount);
+        log.debug(`Friends to remove: ${friendsToRemoveCount}`);
 
         if (friendsToRemoveCount > 0) {
             // We have friends to remove, find people with fewest trades and remove them
@@ -1225,7 +1199,7 @@ export = class MyHandler extends Handler {
                 .sort((a, b) => a.trades - b.trades)
                 .splice(0, friendsToRemoveCount);
 
-            log.info('Cleaning up friendslist, removing ' + friendsToRemove.length + ' people...');
+            log.info(`Cleaning up friendslist, removing ${friendsToRemove.length} people...`);
 
             friendsToRemove.forEach(element => {
                 this.bot.sendMessage(
@@ -1287,51 +1261,34 @@ export = class MyHandler extends Handler {
             const webhookReview = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
                 avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-                content: '<@!' + process.env.DISCORD_OWNER_ID + '>, check this!',
+                content: `<@!${process.env.DISCORD_OWNER_ID}>, check this! - ${offer.id}`,
                 embeds: [
                     {
                         author: {
-                            name: 'Offer from: ' + partnerName,
-                            url: 'https://steamcommunity.com/profiles/' + partnerSteamID,
+                            name: `Offer from: ${partnerName}`,
+                            url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
                             icon_url: partnerAvatar
                         },
                         footer: {
-                            text:
-                                'Offer #' +
-                                offer.id +
-                                '• SteamID: ' +
-                                partnerSteamID +
-                                ' • ' +
-                                moment().format('MMMM Do YYYY, HH:mm:ss ') +
-                                timeZone
+                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${moment().format(
+                                'MMMM Do YYYY, HH:mm:ss '
+                            ) + timeZone}`
                         },
                         thumbnail: {
                             url: ''
                         },
                         title: '',
                         description:
-                            'An offer sent by ' +
-                            partnerName +
-                            ' is waiting for review.\nReason: ' +
-                            reason +
-                            '\n\n__Offer Summary__:\n' +
+                            `An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? '\n📈***Profit from overpay:*** ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n📈***Profit from overpay:*** ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? '\n📉***Loss from underpay:*** ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n📉***Loss from underpay:*** ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            '\n🔑Key rate: ' +
-                            keyPrice.buy.metal.toString() +
-                            '/' +
-                            keyPrice.sell.metal.toString() +
-                            ' ref',
+                            `\n🔑Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]
@@ -1348,13 +1305,19 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
-        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
-        const pureStock = this.pureStock();
+
+        const skuSummary = offer.summarizeSKU();
+        let skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
+        if (!skuFromEnv || skuFromEnv === '') {
+            skuFromEnv = ';';
+        }
         const mentionOwner =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true'
-                ? '<@!' + process.env.DISCORD_OWNER_ID + '>'
+            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
+                ? `<@!${process.env.DISCORD_OWNER_ID}>`
                 : '';
 
+        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const pureStock = this.pureStock();
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
 
@@ -1414,49 +1377,41 @@ export = class MyHandler extends Handler {
                 embeds: [
                     {
                         author: {
-                            name: 'Trade from: ' + personaName + ' #' + tradesMade.toString(),
-                            url: 'https://steamcommunity.com/profiles/' + partnerSteamID,
+                            name: `Trade from: ${personaName} #${tradesMade.toString()}`,
+                            url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
                             icon_url: avatarFull
                         },
                         footer: {
-                            text:
-                                'Offer #' +
-                                offer.id +
-                                '• SteamID: ' +
-                                partnerSteamID +
-                                '• ' +
-                                moment().format('MMMM Do YYYY, HH:mm:ss ') +
-                                timeZone
+                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${moment().format(
+                                'MMMM Do YYYY, HH:mm:ss '
+                            ) + timeZone}`
                         },
                         thumbnail: {
                             url: ''
                         },
                         title: '',
                         description:
-                            'A trade with ' +
-                            personaName +
-                            ' has been marked as accepted.\n__Summary__:\n' +
+                            `A trade with ${personaName} has been marked as accepted.\n__Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? '\n📈***Profit from overpay:*** ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n📈***Profit from overpay:*** ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? '\n📉***Loss from underpay:*** ' +
-                                  valueDiffRef +
-                                  ' ref' +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ' (' + valueDiffKey + ')' : '')
+                                ? `\n📉***Loss from underpay:*** ${valueDiffRef} ref` +
+                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            '\n🔑Key rate: ' +
-                            keyPrice.buy.metal.toString() +
-                            '/' +
-                            keyPrice.sell.metal.toString() +
-                            ' ref | 💰Pure stock: ' +
-                            pureStock.join(', ').toString() +
-                            ' ref\n' +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
+                                ? `\n🔑Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
+                                : '') +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true' &&
+                            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
+                                ? ' | '
+                                : '') +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
+                                ? `💰Pure stock: ${pureStock.join(', ').toString()} ref`
+                                : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
-                                ? process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                                ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
@@ -1508,7 +1463,7 @@ export = class MyHandler extends Handler {
             }
         ];
         for (let i = 0; i < pure.length; i++) {
-            pureStock.push(pure[i].name + ': ' + pure[i].amount);
+            pureStock.push(`${pure[i].name}: ${pure[i].amount}`);
         }
         return pureStock;
     }
@@ -1539,7 +1494,7 @@ export = class MyHandler extends Handler {
                         return;
                     }
 
-                    log.info('Not member of group "' + group.name + ' ("' + steamID + '"), joining...');
+                    log.info(`Not member of group ${group.name} ("${steamID}"), joining...`);
                     group.join(function(err) {
                         if (err) {
                             log.warn('Failed to join group: ', err);
