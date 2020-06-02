@@ -1280,17 +1280,17 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
+                            `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (valueDiff > 0
-                                ? `\n📈***Profit from overpay:*** ${valueDiffRef} ref` +
+                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n📉***Loss from underpay:*** ${valueDiffRef} ref` +
+                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n🔑Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]
@@ -1396,21 +1396,21 @@ export = class MyHandler extends Handler {
                             `A trade with ${personaName} has been marked as accepted.\n__Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? `\n📈***Profit from overpay:*** ${valueDiffRef} ref` +
+                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n📉***Loss from underpay:*** ${valueDiffRef} ref` +
+                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
-                                ? `\n🔑Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
+                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
                                 : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true' &&
                             process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
                                 ? ' | '
                                 : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
-                                ? `💰Pure stock: ${pureStock.join(', ').toString()} ref`
+                                ? `💰 Pure stock: ${pureStock.join(', ').toString()} ref`
                                 : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
