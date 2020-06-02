@@ -92,7 +92,7 @@ You can run your bot without this first, which then on the first run, it will pr
 - DISCORD_WEBHOOK_USERNAME - Your Discord Webhook name, example: ※Fumino⚡
 - DISCORD_WEBHOOK_AVATAR_URL - Your Discord Webhook Avatar, must be in URL form.
 - DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX - Embed color, you can found yours at [spycolor.com](https://www.spycolor.com/) and copy the one that said "has decimal index of: `take the value here`"
-- TIMEZONE - Just a text, make sure it's the same with your system time.
+- TIMEZONE - Please only use these [Timezone Format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), for example "Asia/Kuala_Lumpur".
 
 - DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT: [true or false] - Same as `DISABLE_QUEUE_ALERT`, but if set to false, it will be sent to Discord Webhook instead of Steam Chat.
 - DISCORD_WEBHOOK_QUEUE_ALERT_URL - Discord Webhook URL for QUEUE_ALERT.
