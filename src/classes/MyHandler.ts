@@ -974,11 +974,11 @@ export = class MyHandler extends Handler {
             ) {
                 this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
             } else {
+                const offerMessage = offer.message;
                 this.bot.messageAdmins(
                     `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.\nReason: ` +
-                        meta.uniqueReasons.join(', ') +
-                        '\n\nOffer Summary:\n' +
-                        offer.summarize(this.bot.schema) +
+                        `${meta.uniqueReasons.join(', ')}\n\nOffer Summary:\n${offer.summarize(this.bot.schema)}` +
+                        (offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : '') +
                         (valueDiff > 0
                             ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
                               (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
@@ -1224,6 +1224,7 @@ export = class MyHandler extends Handler {
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
             .format('MMMM Do YYYY, HH:mm:ss ZZ');
 
+        const offerMessage = offer.message;
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
 
@@ -1281,6 +1282,7 @@ export = class MyHandler extends Handler {
                         description:
                             `An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
+                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (valueDiff > 0
                                 ? `\n📈***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
