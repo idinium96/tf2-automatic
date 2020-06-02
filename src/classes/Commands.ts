@@ -1,7 +1,7 @@
 import SteamID from 'steamid';
 import SKU from 'tf2-sku';
 import pluralize from 'pluralize';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Currencies from 'tf2-currencies';
 import validUrl from 'valid-url';
 import TradeOfferManager from 'steam-tradeoffer-manager';
@@ -449,7 +449,9 @@ export = class Commands {
         request.open('POST', process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL);
         request.setRequestHeader('Content-type', 'application/json');
 
-        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
 
         /*eslint-disable */
         const discordPartnerMsg = JSON.stringify({
@@ -464,7 +466,7 @@ export = class Commands {
                         icon_url: theirAvatar
                     },
                     footer: {
-                        text: `Partner SteamID: ${steamID} • ${moment().format('MMMM Do YYYY, HH:mm:ss ') + timeZone}`
+                        text: `Partner SteamID: ${steamID} • ${time}`
                     },
                     title: '',
                     description: `💬 ${msg}`,
@@ -635,11 +637,14 @@ export = class Commands {
         request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
         request.setRequestHeader('Content-type', 'application/json');
         const ownerID = process.env.DISCORD_OWNER_ID;
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
         /*eslint-disable */
         const discordQueue = {
             username: process.env.DISCORD_WEBHOOK_USERNAME,
             avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${ownerID}> [Queue alert] Current position: ${position}`
+            content: `<@!${ownerID}> [Queue alert] Current position: ${position} - ${time}`
         };
         /*eslint-enable */
         request.send(JSON.stringify(discordQueue));

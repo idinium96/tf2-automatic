@@ -16,7 +16,7 @@ import SKU from 'tf2-sku';
 import async from 'async';
 
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import log from '../lib/logger';
 import * as files from '../lib/files';
@@ -1220,7 +1220,9 @@ export = class MyHandler extends Handler {
 
         const partnerSteamID = offer.partner.toString();
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
-        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
 
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
@@ -1270,9 +1272,7 @@ export = class MyHandler extends Handler {
                             icon_url: partnerAvatar
                         },
                         footer: {
-                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${moment().format(
-                                'MMMM Do YYYY, HH:mm:ss '
-                            ) + timeZone}`
+                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${time}`
                         },
                         thumbnail: {
                             url: ''
@@ -1316,7 +1316,9 @@ export = class MyHandler extends Handler {
                 ? `<@!${process.env.DISCORD_OWNER_ID}>`
                 : '';
 
-        const timeZone = process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC';
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
         const pureStock = this.pureStock();
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
@@ -1382,9 +1384,7 @@ export = class MyHandler extends Handler {
                             icon_url: avatarFull
                         },
                         footer: {
-                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${moment().format(
-                                'MMMM Do YYYY, HH:mm:ss '
-                            ) + timeZone}`
+                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${time}`
                         },
                         thumbnail: {
                             url: ''
