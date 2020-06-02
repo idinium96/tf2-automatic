@@ -39,6 +39,7 @@
         "isobject": "^4.0.0",
         "jsonschema": "^1.2.6",
         "moment": "^2.26.0",
+        "moment-timezone": "^0.5.31",
         "pjson": "^1.0.9",
         "pluralize": "^8.0.0",
         "pm2": "^4.4.0",
