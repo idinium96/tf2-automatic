@@ -27,8 +27,10 @@
                 "MINIMUM_RECLAIMED": 9,
                 "METAL_THRESHOLD": 9,
 
-                "MINIMUM_REFINED": 50,
-                "MAXIMUM_REFINED": 125,
+                "ENABLE_AUTO_SELL_KEYS": false,
+                "MINIMUM_KEYS": 3,
+                "MINIMUM_REFINED_TO_START_SELL_KEYS": 30,
+                "MAXIMUM_REFINED_TO_STOP_SELL_KEYS": 150,
 
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
@@ -135,8 +137,10 @@
                 "MINIMUM_RECLAIMED": 9,
                 "METAL_THRESHOLD": 9,
 
-                "MINIMUM_REFINED": 50,
-                "MAXIMUM_REFINED": 125,
+                "ENABLE_AUTO_SELL_KEYS": false,
+                "MINIMUM_KEYS": 3,
+                "MINIMUM_REFINED_TO_START_SELL_KEYS": 30,
+                "MAXIMUM_REFINED_TO_STOP_SELL_KEYS": 150,
 
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,

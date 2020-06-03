@@ -39,13 +39,13 @@ export = class MyHandler extends Handler {
 
     private combineThreshold = 9;
 
-    private minimumRefined = 55;
-
-    private maximumRefined = 125;
-
     private dupeCheckEnabled = false;
 
     private minimumKeysDupeCheck = 0;
+
+    private autoSellKeysEnabled = false;
+
+    private checkMetalSupplyStatus = false;
 
     recentlySentMessage: UnknownDictionary<number> = {};
 
@@ -58,8 +58,6 @@ export = class MyHandler extends Handler {
         const minimumScrap = parseInt(process.env.MINIMUM_SCRAP);
         const minimumReclaimed = parseInt(process.env.MINIMUM_RECLAIMED);
         const combineThreshold = parseInt(process.env.METAL_THRESHOLD);
-        const minimumRefined = parseInt(process.env.MINIMUM_REFINED);
-        const maximumRefined = parseInt(process.env.MAXIMUM_REFINED);
 
         if (!isNaN(minimumScrap)) {
             this.minimumScrap = minimumScrap;
@@ -73,14 +71,6 @@ export = class MyHandler extends Handler {
             this.combineThreshold = combineThreshold;
         }
 
-        if (!isNaN(minimumRefined)) {
-            this.minimumRefined = minimumRefined;
-        }
-
-        if (!isNaN(maximumRefined)) {
-            this.maximumRefined = maximumRefined;
-        }
-
         if (process.env.ENABLE_DUPE_CHECK === 'true') {
             this.dupeCheckEnabled = true;
         }
@@ -88,6 +78,10 @@ export = class MyHandler extends Handler {
         const minimumKeysDupeCheck = parseInt(process.env.MINIMUM_KEYS_DUPE_CHECK);
         if (!isNaN(minimumKeysDupeCheck)) {
             this.minimumKeysDupeCheck = minimumKeysDupeCheck;
+        }
+
+        if (process.env.ENABLE_AUTO_SELL_KEYS === 'true') {
+            this.autoSellKeysEnabled = true;
         }
 
         const groups = parseJSON(process.env.GROUPS);
@@ -851,6 +845,9 @@ export = class MyHandler extends Handler {
             // Smelt / combine metal
             this.keepMetalSupply();
 
+            // Auto sell keys if ref < minimum
+            this.autoSellKeys();
+
             // Sort inventory
             this.sortInventory();
 
@@ -1008,17 +1005,98 @@ export = class MyHandler extends Handler {
         }
     }
 
+    private autoSellKeys(): void {
+        if (this.autoSellKeysEnabled === false) {
+            return;
+        }
+        const CurrPureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const CurrPureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const CurrPureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const CurrPureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const CurrPureTotaltoScrap = Currencies.toScrap(CurrPureRef + CurrPureRec + CurrPureScrap);
+
+        const userMinKeys = parseInt(process.env.MINIMUM_KEYS);
+        const userMinRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
+        const userMaxRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
+
+        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key');
+
+        if (isNaN(userMinKeys) || isNaN(userMinRefinedtoScrap) || isNaN(userMaxRefinedtoScrap)) {
+            log.warn(
+                "You've entered a non-number on either your MINIMUM_KEYS/MINIMUM_REFINED/MAXIMUM_REFINED variables, please correct it. Autosell keys is disabled until you correct it."
+            );
+            return;
+        }
+
+        if (checkKeysAlreadyExist !== null) {
+            log.warn(
+                'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell keys is disabled until remove it.'
+            );
+            return;
+        }
+
+        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkMetalSupplyStatus === true) {
+            // remove autosell key if ref in inventory > user defined minimum ref
+            this.removeAutoSellKeys();
+        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkMetalSupplyStatus === false) {
+            if (CurrPureKeys > userMinKeys) {
+                // add to sell key if ref in inventory < user defined minimum ref
+                this.createAutoSellKeys(userMinKeys);
+            } else if (!CurrPureKeys || CurrPureKeys < userMinKeys) {
+                // remove autosell key if key in inventory < user defined minimum key
+                this.removeAutoSellKeys();
+            }
+        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkMetalSupplyStatus === true) {
+            // remove autosell ref if ref in inventory > user defined maximum ref
+            this.removeAutoSellKeys();
+        }
+    }
+
+    private createAutoSellKeys(userMinKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enable: true,
+            autoprice: true,
+            max: userMinKeys + 1,
+            min: 0,
+            intent: 1
+        } as any;
+        this.bot.pricelist
+            .addPrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
+                this.checkMetalSupplyStatus = true;
+            })
+            .catch(err => {
+                log.info(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
+                this.checkMetalSupplyStatus = false;
+            });
+    }
+
+    private removeAutoSellKeys(): void {
+        this.bot.pricelist
+            .removePrice('5021;6', true)
+            .then(() => {
+                log.info(`✅ Automatically remove Mann Co. Supply Crate Key.`);
+                this.checkMetalSupplyStatus = false;
+            })
+            .catch(err => {
+                log.info(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
+                this.checkMetalSupplyStatus = true;
+            });
+    }
+
     private keepMetalSupply(): void {
         const currencies = this.bot.inventoryManager.getInventory().getCurrencies();
 
-        let refined = currencies['5002;6'].length;
+        // let refined = currencies['5002;6'].length;
         let reclaimed = currencies['5001;6'].length;
         let scrap = currencies['5000;6'].length;
 
-        const maxRefined = this.maximumRefined;
+        // const maxRefined = this.maximumRefined;
         const maxReclaimed = this.minimumReclaimed + this.combineThreshold;
         const maxScrap = this.minimumScrap + this.combineThreshold;
-        const minRefined = this.minimumRefined;
+        // const minRefined = this.minimumRefined;
         const minReclaimed = this.minimumReclaimed;
         const minScrap = this.minimumScrap;
 
@@ -1026,12 +1104,6 @@ export = class MyHandler extends Handler {
         let smeltRefined = 0;
         let combineScrap = 0;
         let combineReclaimed = 0;
-
-		if (refined < minRefined) {
-            key intent = sell
-        } else if (refined > maxRefined) {
-            key intent = buy
-		}
 
         if (reclaimed > maxReclaimed) {
             combineReclaimed = Math.ceil((reclaimed - maxReclaimed) / 3);
