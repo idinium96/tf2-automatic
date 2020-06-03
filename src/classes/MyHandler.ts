@@ -1076,7 +1076,7 @@ export = class MyHandler extends Handler {
     private createAutoSellKeys(userMinKeys: number): void {
         const entry = {
             sku: '5021;6',
-            enable: true,
+            enabled: true,
             autoprice: true,
             max: userMinKeys + 1,
             min: 0,
@@ -1097,7 +1097,7 @@ export = class MyHandler extends Handler {
     private createAutoBuyKeys(userMaxKeys: number): void {
         const entry = {
             sku: '5021;6',
-            enable: true,
+            enabled: true,
             autoprice: true,
             max: userMaxKeys,
             min: 0,
