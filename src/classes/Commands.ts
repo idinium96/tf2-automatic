@@ -150,6 +150,38 @@ export = class Commands {
             this.accepttradeCommand(steamID, message);
         } else if ((command === 'declinetrade' || command === 'decline') && isAdmin) {
             this.declinetradeCommand(steamID, message);
+        } else if (
+            message.startsWith('I') || // tf2-automatic bots
+            message.startsWith('❌') ||
+            message.startsWith('Hi') ||
+            message.startsWith('🙋🏻‍♀️Hi') ||
+            message.startsWith('⚠') ||
+            message.startsWith('⚠️') ||
+            message.startsWith('✅') ||
+            message.startsWith('⌛') ||
+            message.startsWith('💲') ||
+            message.startsWith('📜') ||
+            message.startsWith('🛒') ||
+            message.startsWith('Here') ||
+            message.startsWith('The') || // or 'There'
+            message.startsWith('Please') ||
+            message.startsWith('You') || // Or 'Your'
+            message.startsWith('/quote') ||
+            message.startsWith('/pre') ||
+            message.startsWith('/me') ||
+            message.startsWith('/code') ||
+            message.startsWith('Oh') || // If errors occured
+            message.startsWith('Success!') ||
+            message.endsWith('cart.') ||
+            message.endsWith('checkout.') ||
+            message.endsWith('✅') ||
+            message.startsWith('Hey') || // Other bots possible messages
+            message.startsWith('Unfortunately') ||
+            message.startsWith('==') ||
+            message.startsWith('💬') ||
+            message.startsWith('⇌')
+        ) {
+            return null;
         } else {
             this.bot.sendMessage(
                 steamID,
