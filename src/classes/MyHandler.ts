@@ -1285,7 +1285,7 @@ export = class MyHandler extends Handler {
                             `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            `\n\n🔍 ${partnerName}'s info: [Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [rep.tf](${repTF})` +
+                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [rep.tf](${repTF})` +
                             (valueDiff > 0
                                 ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
