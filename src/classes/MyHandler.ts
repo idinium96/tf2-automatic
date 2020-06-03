@@ -1062,7 +1062,7 @@ export = class MyHandler extends Handler {
                 // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
                 this.removeAutoKeys();
             }
-        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === true) {
+        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
             if (CurrPureKeys < userMaxKeys) {
                 // add autobuy keys if ref in inventory > user defined max ref AND keys in inv < user defined max keys
                 this.createAutoBuyKeys(userMaxKeys);
