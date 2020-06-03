@@ -1043,7 +1043,7 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (checkKeysAlreadyExist !== null) {
+        if (checkKeysAlreadyExist !== null && this.checkAutoSellAndBuyKeysStatus === false) {
             log.warn(
                 'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell/buy keys is disabled until remove it.'
             );
