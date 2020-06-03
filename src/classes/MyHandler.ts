@@ -154,6 +154,9 @@ export = class MyHandler extends Handler {
         // Smelt / combine metal if needed
         this.keepMetalSupply();
 
+        // Auto sell and buy keys if ref < minimum
+        this.autoSellAndBuyKeys();
+
         // Sort the inventory after crafting / combining metal
         this.sortInventory();
 
@@ -845,7 +848,7 @@ export = class MyHandler extends Handler {
             // Smelt / combine metal
             this.keepMetalSupply();
 
-            // Auto sell keys if ref < minimum
+            // Auto sell and buy keys if ref < minimum
             this.autoSellAndBuyKeys();
 
             // Sort inventory
