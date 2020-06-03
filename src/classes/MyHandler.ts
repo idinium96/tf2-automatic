@@ -177,6 +177,18 @@ export = class MyHandler extends Handler {
                 return resolve();
             }
 
+            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+                log.info('Removing autobuy/sell keys from pricelist');
+                this.bot.pricelist
+                    .removePrice('5021;6', true)
+                    .then(() => {
+                        log.info(`✅ Successfully remove Mann Co. Supply Crate Key.`);
+                    })
+                    .catch(err => {
+                        log.warn(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
+                    });
+            }
+
             this.bot.listings.removeAll().asCallback(function(err) {
                 if (err) {
                     log.warn('Failed to remove all listings: ', err);
