@@ -175,11 +175,14 @@ export = class Commands {
             message.endsWith('cart.') ||
             message.endsWith('checkout.') ||
             message.endsWith('✅') ||
-            message.startsWith('Hey') || // Other bots possible messages
+            message.startsWith('Hey') || // Other bots possible messages - Bot.tf
             message.startsWith('Unfortunately') ||
             message.startsWith('==') ||
             message.startsWith('💬') ||
-            message.startsWith('⇌')
+            message.startsWith('⇌') ||
+            message.startsWith('Command') || // Other custom bots
+            message.startsWith('Hello')
+            // TODO: Find more possible messages from any other custom bots
         ) {
             return null;
         } else {
