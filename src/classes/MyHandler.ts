@@ -1024,14 +1024,14 @@ export = class MyHandler extends Handler {
 
         if (isNaN(userMinKeys) || isNaN(userMinRefinedtoScrap) || isNaN(userMaxRefinedtoScrap)) {
             log.warn(
-                "You've entered a non-number on either your MINIMUM_KEYS/MINIMUM_REFINED/MAXIMUM_REFINED variables, please correct it. Autosell keys is disabled until you correct it."
+                "You've entered a non-number on either your MINIMUM_KEYS/MINIMUM_REFINED/MAXIMUM_REFINED variables, please correct it. Autosell/buy keys is disabled until you correct it."
             );
             return;
         }
 
         if (checkKeysAlreadyExist !== null) {
             log.warn(
-                'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell keys is disabled until remove it.'
+                'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell/buy keys is disabled until remove it.'
             );
             return;
         }
