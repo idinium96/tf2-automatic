@@ -1224,6 +1224,7 @@ export = class MyHandler extends Handler {
 
         const offerMessage = offer.message;
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const pureStock = this.pureStock();
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
@@ -1286,18 +1287,18 @@ export = class MyHandler extends Handler {
                         description:
                             `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
-                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
                             (valueDiff > 0
-                                ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
+                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
+                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `${
-                                valueDiff === 0 ? '\n\n' : '\n'
-                            }🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
+                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
+                            `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
+                                .join(', ')
+                                .toString()} ref\n`,
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]
