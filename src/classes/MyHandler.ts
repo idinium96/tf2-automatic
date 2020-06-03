@@ -45,7 +45,7 @@ export = class MyHandler extends Handler {
 
     private autoSellKeysEnabled = false;
 
-    private checkMetalSupplyStatus = false;
+    private checkAutoSellKeysStatus = false;
 
     recentlySentMessage: UnknownDictionary<number> = {};
 
@@ -1035,10 +1035,10 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkMetalSupplyStatus === true) {
+        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkAutoSellKeysStatus === true) {
             // remove autosell key if ref in inventory > user defined minimum ref
             this.removeAutoSellKeys();
-        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkMetalSupplyStatus === false) {
+        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellKeysStatus === false) {
             if (CurrPureKeys > userMinKeys) {
                 // add to sell key if ref in inventory < user defined minimum ref
                 this.createAutoSellKeys(userMinKeys);
@@ -1046,7 +1046,7 @@ export = class MyHandler extends Handler {
                 // remove autosell key if key in inventory < user defined minimum key
                 this.removeAutoSellKeys();
             }
-        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkMetalSupplyStatus === true) {
+        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellKeysStatus === true) {
             // remove autosell ref if ref in inventory > user defined maximum ref
             this.removeAutoSellKeys();
         }
@@ -1065,11 +1065,11 @@ export = class MyHandler extends Handler {
             .addPrice(entry as EntryData, true)
             .then(() => {
                 log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
-                this.checkMetalSupplyStatus = true;
+                this.checkAutoSellKeysStatus = true;
             })
             .catch(err => {
                 log.info(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
-                this.checkMetalSupplyStatus = false;
+                this.checkAutoSellKeysStatus = false;
             });
     }
 
@@ -1078,11 +1078,11 @@ export = class MyHandler extends Handler {
             .removePrice('5021;6', true)
             .then(() => {
                 log.info(`✅ Automatically remove Mann Co. Supply Crate Key.`);
-                this.checkMetalSupplyStatus = false;
+                this.checkAutoSellKeysStatus = false;
             })
             .catch(err => {
                 log.info(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
-                this.checkMetalSupplyStatus = true;
+                this.checkAutoSellKeysStatus = true;
             });
     }
 
