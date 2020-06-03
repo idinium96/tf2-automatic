@@ -1076,7 +1076,7 @@ export = class MyHandler extends Handler {
                 this.checkAutoSellAndBuyKeysStatus = true;
             })
             .catch(err => {
-                log.info(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
@@ -1097,7 +1097,7 @@ export = class MyHandler extends Handler {
                 this.checkAutoSellAndBuyKeysStatus = true;
             })
             .catch(err => {
-                log.info(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
@@ -1110,7 +1110,7 @@ export = class MyHandler extends Handler {
                 this.checkAutoSellAndBuyKeysStatus = false;
             })
             .catch(err => {
-                log.info(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
+                log.warn(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = true;
             });
     }
