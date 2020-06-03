@@ -43,9 +43,9 @@ export = class MyHandler extends Handler {
 
     private minimumKeysDupeCheck = 0;
 
-    private autoSellKeysEnabled = false;
+    private autoSellAndBuyKeysEnabled = false;
 
-    private checkAutoSellKeysStatus = false;
+    private checkAutoSellAndBuyKeysStatus = false;
 
     recentlySentMessage: UnknownDictionary<number> = {};
 
@@ -80,8 +80,8 @@ export = class MyHandler extends Handler {
             this.minimumKeysDupeCheck = minimumKeysDupeCheck;
         }
 
-        if (process.env.ENABLE_AUTO_SELL_KEYS === 'true') {
-            this.autoSellKeysEnabled = true;
+        if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+            this.autoSellAndBuyKeysEnabled = true;
         }
 
         const groups = parseJSON(process.env.GROUPS);
@@ -846,7 +846,7 @@ export = class MyHandler extends Handler {
             this.keepMetalSupply();
 
             // Auto sell keys if ref < minimum
-            this.autoSellKeys();
+            this.autoSellAndBuyKeys();
 
             // Sort inventory
             this.sortInventory();
@@ -1005,8 +1005,8 @@ export = class MyHandler extends Handler {
         }
     }
 
-    private autoSellKeys(): void {
-        if (this.autoSellKeysEnabled === false) {
+    private autoSellAndBuyKeys(): void {
+        if (this.autoSellAndBuyKeysEnabled === false) {
             return;
         }
         const CurrPureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
@@ -1016,6 +1016,7 @@ export = class MyHandler extends Handler {
         const CurrPureTotaltoScrap = Currencies.toScrap(CurrPureRef + CurrPureRec + CurrPureScrap);
 
         const userMinKeys = parseInt(process.env.MINIMUM_KEYS);
+        const userMaxKeys = parseInt(process.env.MAXIMUM_KEYS);
         const userMinRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
         const userMaxRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
 
@@ -1035,20 +1036,25 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkAutoSellKeysStatus === true) {
-            // remove autosell key if ref in inventory > user defined minimum ref
-            this.removeAutoSellKeys();
-        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellKeysStatus === false) {
+        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === true) {
+            // remove autosell key if ref in inventory > user defined min ref
+            this.removeAutoKeys();
+        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
             if (CurrPureKeys > userMinKeys) {
-                // add to sell key if ref in inventory < user defined minimum ref
+                // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
                 this.createAutoSellKeys(userMinKeys);
             } else if (!CurrPureKeys || CurrPureKeys < userMinKeys) {
-                // remove autosell key if key in inventory < user defined minimum key
-                this.removeAutoSellKeys();
+                // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
+                this.removeAutoKeys();
             }
-        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellKeysStatus === true) {
-            // remove autosell ref if ref in inventory > user defined maximum ref
-            this.removeAutoSellKeys();
+        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === true) {
+            if (CurrPureKeys < userMaxKeys) {
+                // add autobuy keys if ref in inventory > user defined max ref AND keys in inv < user defined max keys
+                this.createAutoBuyKeys(userMaxKeys);
+            } else if (CurrPureKeys > userMaxKeys) {
+                // remove autobuy keys if ref in inventory > user defined max AND and keys in inv > user defined max keys
+                this.removeAutoKeys();
+            }
         }
     }
 
@@ -1065,24 +1071,45 @@ export = class MyHandler extends Handler {
             .addPrice(entry as EntryData, true)
             .then(() => {
                 log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
-                this.checkAutoSellKeysStatus = true;
+                this.checkAutoSellAndBuyKeysStatus = true;
             })
             .catch(err => {
                 log.info(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
-                this.checkAutoSellKeysStatus = false;
+                this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
 
-    private removeAutoSellKeys(): void {
+    private createAutoBuyKeys(userMaxKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enable: true,
+            autoprice: true,
+            max: userMaxKeys,
+            min: 0,
+            intent: 0
+        } as any;
+        this.bot.pricelist
+            .addPrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.info(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private removeAutoKeys(): void {
         this.bot.pricelist
             .removePrice('5021;6', true)
             .then(() => {
                 log.info(`✅ Automatically remove Mann Co. Supply Crate Key.`);
-                this.checkAutoSellKeysStatus = false;
+                this.checkAutoSellAndBuyKeysStatus = false;
             })
             .catch(err => {
                 log.info(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
-                this.checkAutoSellKeysStatus = true;
+                this.checkAutoSellAndBuyKeysStatus = true;
             });
     }
 
