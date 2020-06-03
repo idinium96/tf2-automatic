@@ -1050,7 +1050,11 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (CurrPureTotaltoScrap > userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === true) {
+        if (
+            CurrPureTotaltoScrap > userMinRefinedtoScrap &&
+            CurrPureKeys > userMaxKeys &&
+            this.checkAutoSellAndBuyKeysStatus === true
+        ) {
             // remove autosell key if ref in inventory > user defined min ref
             this.removeAutoKeys();
         } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
