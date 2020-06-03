@@ -458,23 +458,30 @@ export = class Commands {
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
             .format('MMMM Do YYYY, HH:mm:ss ZZ');
 
+        const partnerSteamID = steamID;
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
+        const steamidUK = `https://steamid.uk/profile/${partnerSteamID}`;
+        const steamDB = `https://steamdb.info/calculator/${partnerSteamID}/`;
+
         /*eslint-disable */
         const discordPartnerMsg = JSON.stringify({
             username: process.env.DISCORD_WEBHOOK_USERNAME,
             avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! - ${steamID}`,
+            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! - ${partnerSteamID}`,
             embeds: [
                 {
                     author: {
                         name: theirName,
-                        url: `https://steamcommunity.com/profiles/${steamID}`,
+                        url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
                         icon_url: theirAvatar
                     },
                     footer: {
-                        text: `Partner SteamID: ${steamID} • ${time}`
+                        text: `Partner SteamID: ${partnerSteamID} • ${time}`
                     },
                     title: '',
-                    description: `💬 ${msg}`,
+                    description: `💬 ${msg}\n\n🔍 ${theirName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})`,
                     color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                 }
             ]

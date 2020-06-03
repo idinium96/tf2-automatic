@@ -1228,7 +1228,9 @@ export = class MyHandler extends Handler {
 
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
-        const repTF = `https://steamrep.com/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
+        const steamidUK = `https://steamid.uk/profile/${partnerSteamID}`;
+        const steamDB = `https://steamdb.info/calculator/${partnerSteamID}/`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1285,7 +1287,7 @@ export = class MyHandler extends Handler {
                             `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [rep.tf](${repTF})` +
+                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
                             (valueDiff > 0
                                 ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
@@ -1332,7 +1334,9 @@ export = class MyHandler extends Handler {
 
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
-        const repTF = `https://steamrep.com/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
+        const steamidUK = `https://steamid.uk/profile/${partnerSteamID}`;
+        const steamDB = `https://steamdb.info/calculator/${partnerSteamID}/`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1411,7 +1415,7 @@ export = class MyHandler extends Handler {
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [rep.tf](${repTF})` +
+                            `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
                                 .toString()} ref\n` +
