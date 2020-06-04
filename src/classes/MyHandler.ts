@@ -1064,12 +1064,14 @@ export = class MyHandler extends Handler {
         const isRemoveSellingKeys =
             (CurrPureTotaltoScrap < userMinRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
 
-        if (this.checkAutoSellAndBuyKeysStatus === true) {
+        const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
+
+        if (isAlreadyCreatedtoBuyOrSell) {
             if (isRemoveBuyingKeys || isRemoveSellingKeys) {
                 // remove autosell key if ref in inventory > user defined min ref
                 this.removeAutoKeys();
             }
-        } else if (this.checkAutoSellAndBuyKeysStatus === false) {
+        } else if (!isAlreadyCreatedtoBuyOrSell) {
             if (isSellingKeys) {
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (isBuyingKeys) {
