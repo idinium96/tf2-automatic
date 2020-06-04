@@ -53,7 +53,11 @@ If you want to use this feature, you must use [ecosystem.template.json](https://
 This feature when enabled, your bot will automatically buy or sell keys based on your bot pure availability and your settings on this feature. You'll have to set your minimum/maximum keys and minimum/maximum refined metals in your ecosystem.json - more explaination can be found [here](https://github.com/idinium96/tf2-automatic/#your-bot-settings) starting on `ENABLE_AUTO_SELL_AND_BUY_KEYS` until `MAXIMUM_REFINED_TO_STOP_SELL_KEYS`.
 
 Some screenshots:
-![Autokeys](https://user-images.githubusercontent.com/47635037/83779564-b3dfb100-a6be-11ea-8b5a-2de30d40e52e.PNG)
+- When your bot have enough key to sell key for ref (if your ref is less than minimum) OR enough ref to buy keys (when your ref > maximum)
+![Autokeys1](https://user-images.githubusercontent.com/47635037/83779990-2d779f00-a6bf-11ea-8891-fa92cdb534c7.PNG)
+
+- When your bot don't have enough of what I've said before:
+![Autokeys2](https://user-images.githubusercontent.com/47635037/83780154-5e57d400-a6bf-11ea-8dc1-0c833d9c3268.PNG)
 
 You can see codes on how this feature works [here](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L1022-L1136).
 
