@@ -177,7 +177,7 @@ export = class MyHandler extends Handler {
                 return resolve();
             }
 
-            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true' && this.checkAutoSellAndBuyKeysStatus === true) {
                 log.info('Removing autobuy/sell keys from pricelist');
                 this.bot.pricelist
                     .removePrice('5021;6', true)
@@ -1071,6 +1071,12 @@ export = class MyHandler extends Handler {
             if (isRemoveBuyingKeys || isRemoveSellingKeys) {
                 // remove autosell key if ref in inventory > user defined min ref
                 this.removeAutoKeys();
+            } else if (isSellingKeys) {
+                this.removeAutoKeys();
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+            } else if (isBuyingKeys) {
+                this.removeAutoKeys();
+                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
             if (isSellingKeys) {
