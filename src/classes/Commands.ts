@@ -30,6 +30,7 @@ const COMMANDS: string[] = [
     '!how2trade - Guide on how to use and trade with the bot',
     '!price [amount] <name> - Get the price and stock of an item',
     '!stock - Get a list of items that the bot has',
+    '!pure - Get current pure stock 💰',
     '!rate - Get current key prices 🔑',
     '!message <your message> - Send a message to the owner of the bot 💬',
     '!buy [amount] <name> - Instantly buy an item 💲',
@@ -55,6 +56,7 @@ const ADMIN_COMMANDS: string[] = [
     '!stop - Stop the bot 🔴',
     '!restart - Restart the bot 🔄',
     '!version - Get version that the bot is running',
+    '!autokeys - Get info on your current autoBuy/Sell Keys settings 🔑',
     '!avatar <image_URL> - Change avatar',
     '!name <new_name> - Change name',
     '!stats - Get statistics for accepted trades 📊',
@@ -89,6 +91,10 @@ export = class Commands {
             this.priceCommand(steamID, message);
         } else if (command === 'stock') {
             this.stockCommand(steamID);
+        } else if (command === 'pure') {
+            this.pureCommand(steamID);
+        } else if (command === 'autokeys' && isAdmin) {
+            this.autoKeysCommand(steamID);
         } else if (command === 'rate') {
             this.rateCommand(steamID);
         } else if (command === 'message') {
@@ -147,6 +153,42 @@ export = class Commands {
             this.accepttradeCommand(steamID, message);
         } else if ((command === 'declinetrade' || command === 'decline') && isAdmin) {
             this.declinetradeCommand(steamID, message);
+        } else if (
+            message.startsWith('I') || // tf2-automatic bots
+            message.startsWith('❌') ||
+            message.startsWith('Hi') ||
+            message.startsWith('🙋🏻‍♀️Hi') ||
+            message.startsWith('⚠') ||
+            message.startsWith('⚠️') ||
+            message.startsWith('✅') ||
+            message.startsWith('⌛') ||
+            message.startsWith('💲') ||
+            message.startsWith('📜') ||
+            message.startsWith('🛒') ||
+            message.startsWith('💰') ||
+            message.startsWith('Here') ||
+            message.startsWith('The') || // or 'There'
+            message.startsWith('Please') ||
+            message.startsWith('You') || // Or 'Your'
+            message.startsWith('/quote') ||
+            message.startsWith('/pre') ||
+            message.startsWith('/me') ||
+            message.startsWith('/code') ||
+            message.startsWith('Oh') || // If errors occured
+            message.startsWith('Success!') ||
+            message.endsWith('cart.') ||
+            message.endsWith('checkout.') ||
+            message.endsWith('✅') ||
+            message.startsWith('Hey') || // Other bots possible messages - Bot.tf
+            message.startsWith('Unfortunately') ||
+            message.startsWith('==') ||
+            message.startsWith('💬') ||
+            message.startsWith('⇌') ||
+            message.startsWith('Command') || // Other custom bots
+            message.startsWith('Hello')
+            // TODO: Find more possible messages from any other custom bots
+        ) {
+            return null;
         } else {
             this.bot.sendMessage(
                 steamID,
@@ -333,6 +375,51 @@ export = class Commands {
         this.bot.sendMessage(steamID, reply);
     }
 
+    private pureCommand(steamID: SteamID): void {
+        const pureStock = this.pureStock();
+
+        this.bot.sendMessage(steamID, `💰 I have currently ${pureStock.join(' and ')} in my inventory.`);
+    }
+
+    private pureStock(): string[] {
+        const pureStock: string[] = [];
+        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const pureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
+        const pure = [
+            {
+                name: pluralize('key', pureKeys),
+                amount: pureKeys
+            },
+            {
+                name: pluralize('ref', pureScrapTotal),
+                amount: Currencies.toRefined(pureScrapTotal)
+            }
+        ];
+        for (let i = 0; i < pure.length; i++) {
+            pureStock.push(`${pure[i].amount} ${pure[i].name}`);
+        }
+        return pureStock;
+    }
+
+    private autoKeysCommand(steamID: SteamID): void {
+        if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'false') {
+            this.bot.sendMessage(steamID, `This feature is disabled.`);
+            return;
+        }
+        const userMinKeys = process.env.MINIMUM_KEYS;
+        const userMaxKeys = process.env.MAXIMUM_KEYS;
+        const userMinRefined = process.env.MINIMUM_REFINED_TO_START_SELL_KEYS;
+        const userMaxRefined = process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS;
+
+        this.bot.sendMessage(
+            steamID,
+            `Your current settings for autoKeys:\n• ${userMinKeys} ≤ Keys ≤ ${userMaxKeys}\n• ${userMinRefined} < Refs < ${userMaxRefined}`
+        );
+    }
+
     private rateCommand(steamID: SteamID): void {
         const keyPrice = this.bot.pricelist.getKeyPrice().toString();
 
@@ -451,25 +538,35 @@ export = class Commands {
 
         const time = moment()
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
+
+        const partnerSteamID = steamID;
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
         /*eslint-disable */
         const discordPartnerMsg = JSON.stringify({
             username: process.env.DISCORD_WEBHOOK_USERNAME,
             avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! - ${steamID}`,
+            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! - ${partnerSteamID}`,
             embeds: [
                 {
                     author: {
                         name: theirName,
-                        url: `https://steamcommunity.com/profiles/${steamID}`,
+                        url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
                         icon_url: theirAvatar
                     },
                     footer: {
-                        text: `Partner SteamID: ${steamID} • ${time}`
+                        text: `Partner SteamID: ${partnerSteamID} • ${time}`
                     },
                     title: '',
-                    description: `💬 ${msg}`,
+                    description:
+                        '💬 ' +
+                        msg +
+                        (process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS
+                            ? `\n\n🔍 ${theirName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
+                            : ''),
                     color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                 }
             ]
@@ -1830,6 +1927,8 @@ export = class Commands {
                 `❌ I could not find any items in my pricelist that contains "${name}",` +
                     ' I might not be trading the item you are looking for, or try:' +
                     '\n• remove "The"' +
+                    '\n• remove "Unusual", just put effect and name, example: "Kill-a-Watt Vive La France"' +
+                    '\n• remove plural (~s/~es/etc), example: "!buy 2 Mann Co. Supply Crate Key"' +
                     '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
                     '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
                     `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +

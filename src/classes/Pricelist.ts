@@ -2,7 +2,7 @@ import { Currency } from '../types/TeamFortress2';
 import { UnknownDictionary } from '../types/common';
 
 import { EventEmitter } from 'events';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Currencies from 'tf2-currencies';
 import SKU from 'tf2-sku';
 import SchemaManager from 'tf2-schema';
@@ -458,6 +458,10 @@ export default class Pricelist extends EventEmitter {
         request.open('POST', process.env.DISCORD_WEBHOOK_PRICE_UPDATE_URL);
         request.setRequestHeader('Content-type', 'application/json');
 
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
+
         const parts = sku.split(';');
         const newSku = parts[0] + ';6';
         const item = SKU.fromString(newSku);
@@ -618,7 +622,7 @@ export default class Pricelist extends EventEmitter {
                             'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3d/3dba19679c4a689b9d24fa300856cbf3d948d631_full.jpg'
                     },
                     footer: {
-                        text: `Item's SKU: ${sku} • ${moment.utc().format()}`
+                        text: `Item's SKU: ${sku} • ${time}`
                     },
                     thumbnail: {
                         url: itemImageUrlPrint

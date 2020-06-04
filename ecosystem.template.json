@@ -27,6 +27,12 @@
                 "MINIMUM_RECLAIMED": 9,
                 "METAL_THRESHOLD": 9,
 
+                "ENABLE_AUTO_SELL_AND_BUY_KEYS": false,
+                "MINIMUM_KEYS": 3,
+                "MAXIMUM_KEYS": 15,
+                "MINIMUM_REFINED_TO_START_SELL_KEYS": 30,
+                "MAXIMUM_REFINED_TO_STOP_SELL_KEYS": 150,
+
                 "DISABLE_INVENTORY_SORT": false,
                 "DISABLE_LISTINGS": false,
                 "DISABLE_CRAFTING": false,
@@ -68,6 +74,7 @@
                 "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
                 "TIMEZONE": "",
+                "CUSTOM_TIME_FORMAT": "",
 
                 "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
                 "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
@@ -78,6 +85,7 @@
 
                 "DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY": false,
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_URL": "",
+                "DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS": true,
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE": true,
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK": true,
                 "DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE": "[⇋ Send trade offer](https://steamcommunity.com/tradeoffer/new/?partner=93645783&token=QZramobW) | [View my backpack](https://backpack.tf/profiles/76561198053911511)",
@@ -86,9 +94,13 @@
 
                 "DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW": false,
                 "DISCORD_WEBHOOK_REVIEW_OFFER_URL": "",
+                "DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS": true,
+                "DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE": true,
+                "DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK": true,
 
                 "DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER": false,
                 "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL": "",
+                "DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS": true,
 
                 "ENABLE_MANUAL_REVIEW": true,
                 "DISABLE_REVIEW_OFFER_NOTE": false,

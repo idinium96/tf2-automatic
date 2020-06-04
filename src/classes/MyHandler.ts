@@ -43,6 +43,10 @@ export = class MyHandler extends Handler {
 
     private minimumKeysDupeCheck = 0;
 
+    private autoSellAndBuyKeysEnabled = false;
+
+    private checkAutoSellAndBuyKeysStatus = false;
+
     recentlySentMessage: UnknownDictionary<number> = {};
 
     constructor(bot: Bot) {
@@ -74,6 +78,10 @@ export = class MyHandler extends Handler {
         const minimumKeysDupeCheck = parseInt(process.env.MINIMUM_KEYS_DUPE_CHECK);
         if (!isNaN(minimumKeysDupeCheck)) {
             this.minimumKeysDupeCheck = minimumKeysDupeCheck;
+        }
+
+        if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+            this.autoSellAndBuyKeysEnabled = true;
         }
 
         const groups = parseJSON(process.env.GROUPS);
@@ -146,6 +154,9 @@ export = class MyHandler extends Handler {
         // Smelt / combine metal if needed
         this.keepMetalSupply();
 
+        // Auto sell and buy keys if ref < minimum
+        this.autoSellAndBuyKeys();
+
         // Sort the inventory after crafting / combining metal
         this.sortInventory();
 
@@ -164,6 +175,18 @@ export = class MyHandler extends Handler {
             if (this.bot.listingManager.ready !== true) {
                 // We have not set up the listing manager, don't try and remove listings
                 return resolve();
+            }
+
+            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+                log.info('Removing autobuy/sell keys from pricelist');
+                this.bot.pricelist
+                    .removePrice('5021;6', true)
+                    .then(() => {
+                        log.info(`✅ Successfully remove Mann Co. Supply Crate Key.`);
+                    })
+                    .catch(err => {
+                        log.warn(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
+                    });
             }
 
             this.bot.listings.removeAll().asCallback(function(err) {
@@ -848,6 +871,9 @@ export = class MyHandler extends Handler {
             // Smelt / combine metal
             this.keepMetalSupply();
 
+            // Auto sell and buy keys if ref < minimum
+            this.autoSellAndBuyKeys();
+
             // Sort inventory
             this.sortInventory();
 
@@ -993,6 +1019,122 @@ export = class MyHandler extends Handler {
         }
     }
 
+    private autoSellAndBuyKeys(): void {
+        if (this.autoSellAndBuyKeysEnabled === false) {
+            return;
+        }
+        const CurrPureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const CurrPureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const CurrPureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const CurrPureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const CurrPureTotaltoScrap = Currencies.toScrap(CurrPureRef + CurrPureRec + CurrPureScrap);
+
+        const userMinKeys = parseInt(process.env.MINIMUM_KEYS);
+        const userMaxKeys = parseInt(process.env.MAXIMUM_KEYS);
+        const userMinRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
+        const userMaxRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
+
+        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key');
+
+        if (isNaN(userMinKeys) || isNaN(userMinRefinedtoScrap) || isNaN(userMaxRefinedtoScrap)) {
+            log.warn(
+                "You've entered a non-number on either your MINIMUM_KEYS/MINIMUM_REFINED/MAXIMUM_REFINED variables, please correct it. Autosell/buy keys is disabled until you correct it."
+            );
+            return;
+        }
+
+        if (checkKeysAlreadyExist !== null && this.checkAutoSellAndBuyKeysStatus === false) {
+            log.warn(
+                'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell/buy keys is disabled until remove it.'
+            );
+            return;
+        }
+
+        // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
+        const isBuyingKeys = (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys <= userMaxKeys) !== false;
+
+        // remove autobuy keys if ref in inventory > user defined max AND and keys in inv >= user defined max keys
+        const isRemoveBuyingKeys =
+            (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
+
+        // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
+        const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
+
+        // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
+        const isRemoveSellingKeys =
+            (CurrPureTotaltoScrap < userMinRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
+
+        const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
+
+        if (isAlreadyCreatedtoBuyOrSell) {
+            if (isRemoveBuyingKeys || isRemoveSellingKeys) {
+                // remove autosell key if ref in inventory > user defined min ref
+                this.removeAutoKeys();
+            }
+        } else if (!isAlreadyCreatedtoBuyOrSell) {
+            if (isSellingKeys) {
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+            } else if (isBuyingKeys) {
+                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
+            }
+        }
+    }
+
+    private createAutoSellKeys(userMinKeys: number, userMaxKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enabled: true,
+            autoprice: true,
+            max: userMaxKeys,
+            min: userMinKeys,
+            intent: 1
+        } as any;
+        this.bot.pricelist
+            .addPrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private createAutoBuyKeys(userMinKeys: number, userMaxKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enabled: true,
+            autoprice: true,
+            max: userMaxKeys,
+            min: userMinKeys,
+            intent: 0
+        } as any;
+        this.bot.pricelist
+            .addPrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private removeAutoKeys(): void {
+        this.bot.pricelist
+            .removePrice('5021;6', true)
+            .then(() => {
+                log.info(`✅ Automatically remove Mann Co. Supply Crate Key.`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            });
+    }
+
     private keepMetalSupply(): void {
         if (process.env.DISABLE_CRAFTING === 'true') {
             return;
@@ -1003,8 +1145,10 @@ export = class MyHandler extends Handler {
         let reclaimed = currencies['5001;6'].length;
         let scrap = currencies['5000;6'].length;
 
+        // const maxRefined = this.maximumRefined;
         const maxReclaimed = this.minimumReclaimed + this.combineThreshold;
         const maxScrap = this.minimumScrap + this.combineThreshold;
+        // const minRefined = this.minimumRefined;
         const minReclaimed = this.minimumReclaimed;
         const minScrap = this.minimumScrap;
 
@@ -1222,11 +1366,16 @@ export = class MyHandler extends Handler {
         const tradeSummary = offer.summarizeWithLink(this.bot.schema);
         const time = moment()
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
 
         const offerMessage = offer.message;
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const pureStock = this.pureStock();
         const value: { our: Currency; their: Currency } = offer.data('value');
+
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1260,6 +1409,19 @@ export = class MyHandler extends Handler {
                 partnerAvatar = them.avatarFull;
                 partnerName = them.personaName;
             }
+
+            const partnerNameNoFormat =
+                partnerName.includes('_') || partnerName.includes('*') || partnerName.includes('~~')
+                    ? partnerName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : partnerName;
+
+            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS !== 'false';
+            const isShowKeyRate = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE !== 'false';
+            const isShowPureStock = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK !== 'false';
+
             /*eslint-disable */
             const webhookReview = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1280,9 +1442,8 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
+                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
-                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (valueDiff > 0
                                 ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
@@ -1290,7 +1451,14 @@ export = class MyHandler extends Handler {
                                 ? `\n\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
+                            (isShowQuickLinks
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
+                                : '') +
+                            (isShowKeyRate
+                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
+                                : '') +
+                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]
@@ -1320,10 +1488,14 @@ export = class MyHandler extends Handler {
 
         const time = moment()
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
         const pureStock = this.pureStock();
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
+
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1373,6 +1545,21 @@ export = class MyHandler extends Handler {
                 personaName = details.personaName;
                 avatarFull = details.avatarFull;
             }
+
+            const partnerNameNoFormat =
+                personaName.includes('_') || personaName.includes('*') || personaName.includes('~~')
+                    ? personaName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : personaName;
+
+            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS !== 'false';
+            const isShowKeyRate = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE !== 'false';
+            const isShowPureStock = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK !== 'false';
+            const isShowAdditionalNotes =
+                process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE !== 'false';
+
             /*eslint-disable */
             const acceptedTradeSummary = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1393,7 +1580,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `A trade with ${personaName} has been marked as accepted.\n__Summary__:\n` +
+                            `A trade with ${partnerNameNoFormat} has been marked as accepted.\n__Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1402,13 +1589,14 @@ export = class MyHandler extends Handler {
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
+                            (isShowQuickLinks
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
+                                : '') +
+                            (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
                                 : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
-                                ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref`
-                                : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : '') +
+                            (isShowAdditionalNotes
                                 ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
