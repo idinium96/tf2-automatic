@@ -1368,6 +1368,10 @@ export = class MyHandler extends Handler {
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
 
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
+
         let valueDiff: number;
         let valueDiffRef: number;
         let valueDiffKey: string;
@@ -1422,13 +1426,16 @@ export = class MyHandler extends Handler {
                         description:
                             `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
-                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (valueDiff > 0
                                 ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
                                 ? `\n\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                : '') +
+                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
+                            (process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS === 'true'
+                                ? `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
                             `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
@@ -1464,6 +1471,10 @@ export = class MyHandler extends Handler {
         const pureStock = this.pureStock();
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offer.data('value');
+
+        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
+        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
+        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1541,6 +1552,9 @@ export = class MyHandler extends Handler {
                                 : valueDiff < 0
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                : '') +
+                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS === 'true'
+                                ? `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
                             (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
