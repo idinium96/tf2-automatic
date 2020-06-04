@@ -54,9 +54,11 @@ This feature when enabled, your bot will automatically buy or sell keys based on
 
 Some screenshots:
 - When your bot have enough key to sell key for ref (if your ref is less than minimum) OR enough ref to buy keys (when your ref > maximum)
+
 ![Autokeys1](https://user-images.githubusercontent.com/47635037/83779990-2d779f00-a6bf-11ea-8891-fa92cdb534c7.PNG)
 
 - When your bot don't have enough of what I've said before:
+
 ![Autokeys2](https://user-images.githubusercontent.com/47635037/83780154-5e57d400-a6bf-11ea-8dc1-0c833d9c3268.PNG)
 
 You can see codes on how this feature works [here](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L1022-L1136).
@@ -88,6 +90,7 @@ You can run your bot without this first, which then on the first run, it will pr
 - `MINIMUM_RECLAIMED`: [Number] Default is 9 Reclaimed. Explained above.
 - `METAL_THRESHOLD`: [Number] Default is 9, if scraps/reclaimed metal reached minimum + threshold (max), it will combine the metal.
 
+#### Autokeys feature
 - `ENABLE_AUTO_SELL_AND_BUY_KEYS`: [true or false] Default is false. If you set to true, the bot will automatically sell/buy keys based on the availability of the refined metals and keys in your bot inventory. Set it to false if you want to custom price your key.
 - `MINIMUM_KEYS`: [Number] When current keys >= minimum keys, it will start selling keys (with when current ref > minimum ref), else it will stop selling keys.
 - `MAXIMUM_KEYS`: [Number] When current keys < maximum keys, it will start buying keys (with when current ref > maximum ref), else it will stop buying keys.
@@ -131,6 +134,7 @@ You can run your bot without this first, which then on the first run, it will pr
 - `OFFER_MESSAGE`: [string] - Message that will appear when bot sends offer to trade partner.
 
 ### Discord Webhook Configuration
+#### Basic configuration on your embed preferences/appearances
 - `DISCORD_OWNER_ID` - Right click on yourself and click `Copy ID` and paste here. Make sure to enable developer mode on your Discord settings > Appearance > Advanced.
 - `DISCORD_WEBHOOK_USERNAME` - Your Discord Webhook name, example: ※Fumino⚡
 - `DISCORD_WEBHOOK_AVATAR_URL` - Your Discord Webhook Avatar, must be in URL form. Example: https://gyazo.com/421792b5ea817c36054c7991fb18cdbc
@@ -139,13 +143,16 @@ You can run your bot without this first, which then on the first run, it will pr
 - `CUSTOM_TIME_FORMAT` - Please refer [this article](https://www.tutorialspoint.com/momentjs/momentjs_format.htm). Default is `MMMM Do YYYY, HH:mm:ss ZZ`.
 
 **Note on How to get WEBHOOK_X_URL** - See this: https://gyazo.com/539739f0bab50636e20a0fb76e9f1720 (settings in your respective channels)
+#### Queue alert
 - `DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT`: [true or false] - Same as `DISABLE_QUEUE_ALERT`, but if set to false, it will be sent to Discord Webhook instead of Steam Chat.
 - `DISCORD_WEBHOOK_QUEUE_ALERT_URL` - Discord Webhook URL for QUEUE_ALERT.
 
+#### Pricelist update
 - `DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE`: [true or false] - Used to display price updates on the items that are in your pricelist.
 - `DISCORD_WEBHOOK_PRICE_UPDATE_URL` - Discord Webhook URL for PRICE_UPDATE.
 - `DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE` - You can add note there, or just leave it empty.
 
+#### Successful trade summary
 - `DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY`: [true or false] - Used to display every successful trade summary on your trade summary/live-trades channel. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_URL` - Discord Webhook URL for TRADE_SUMMARY.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
@@ -155,12 +162,14 @@ You can run your bot without this first, which then on the first run, it will pr
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER` [true or false] - Set it to true if you want your bot to mention on every successful trades.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU` - Only support ONE SKU or SKU format. Let say you want it to mention on every unusual trade, then set it to ";5;u".
 
+#### Offer review summary
 - `DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW`: [true or false] - Used to alert you on the trade that needs for offer review via Discord Webhook. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_REVIEW_OFFER_URL` - Discord Webhook URL for REVIEW_OFFER.
 - `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
 - `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE`: [true or false] - self explained.
 - `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK`: [true or false] - self explained.
 
+#### Messages
 - `DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER`: [true or false] - Used to alert you on any messages sent from trade partner. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL` - Discord Webhook URL for MESSAGE_FROM_PARTNER.
 - `DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
