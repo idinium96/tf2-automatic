@@ -41,6 +41,8 @@ Screenshots:
 
 You can also only set it to send only trade summary, but the others like Offer review and messages to send to Steam Chat.
 
+Note that, it's an option to show key rate/ pure stock/ quick links on each feature.
+
 If you want to use this feature, you must use [ecosystem.template.json](https://github.com/idinium96/tf2-automatic/blob/Public/ecosystem.template.json) from this version, which contains much more variables for you to fill in.
 
 ## Variables in ecosystem.json summary
