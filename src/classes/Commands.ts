@@ -416,7 +416,7 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            `Your current settings for autoKeys:\n• ${userMinKeys} < Keys ≤ ${userMaxKeys}\n• ${userMinRefined} < Refs ≤ ${userMaxRefined}`
+            `Your current settings for autoKeys:\n• ${userMinKeys} ≤ Keys ≤ ${userMaxKeys}\n• ${userMinRefined} < Refs < ${userMaxRefined}`
         );
     }
 
