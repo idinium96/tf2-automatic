@@ -519,7 +519,7 @@ export = class Commands {
 
         const time = moment()
             .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
 
         const partnerSteamID = steamID;
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;

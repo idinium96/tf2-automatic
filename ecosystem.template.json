@@ -74,6 +74,7 @@
                 "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
                 "TIMEZONE": "",
+                "CUSTOM_TIME_FORMAT": "",
 
                 "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
                 "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
