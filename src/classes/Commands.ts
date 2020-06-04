@@ -1934,6 +1934,8 @@ export = class Commands {
                 `❌ I could not find any items in my pricelist that contains "${name}",` +
                     ' I might not be trading the item you are looking for, or try:' +
                     '\n• remove "The"' +
+                    '\n• remove "Unusual", just put effect and name, example: "Kill-a-Watt Vive La France"' +
+                    '\n• remove plural (~s/~es/etc), example: "!buy 2 Mann Co. Supply Crate Key"' +
                     '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
                     '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
                     `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +
