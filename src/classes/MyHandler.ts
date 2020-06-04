@@ -1405,6 +1405,15 @@ export = class MyHandler extends Handler {
                 partnerAvatar = them.avatarFull;
                 partnerName = them.personaName;
             }
+
+            const partnerNameNoFormat =
+                partnerName.includes('_') || partnerName.includes('*') || partnerName.includes('~~')
+                    ? partnerName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : partnerName;
+
             const isShowQuickLinks = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS !== 'false';
             const isShowKeyRate = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE !== 'false';
             const isShowPureStock = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK !== 'false';
@@ -1429,7 +1438,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
+                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1440,7 +1449,7 @@ export = class MyHandler extends Handler {
                                 : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (isShowQuickLinks
-                                ? `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
                             (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
@@ -1533,6 +1542,14 @@ export = class MyHandler extends Handler {
                 avatarFull = details.avatarFull;
             }
 
+            const partnerNameNoFormat =
+                personaName.includes('_') || personaName.includes('*') || personaName.includes('~~')
+                    ? personaName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : personaName;
+
             const isShowQuickLinks = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS !== 'false';
             const isShowKeyRate = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE !== 'false';
             const isShowPureStock = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK !== 'false';
@@ -1559,7 +1576,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `A trade with ${personaName} has been marked as accepted.\n__Summary__:\n` +
+                            `A trade with ${partnerNameNoFormat} has been marked as accepted.\n__Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1569,7 +1586,7 @@ export = class MyHandler extends Handler {
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (isShowQuickLinks
-                                ? `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
                             (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
