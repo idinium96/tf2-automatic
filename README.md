@@ -39,6 +39,9 @@ Screenshots:
 - Messages (when trade partner send "!message" command -
 ![Messages](https://user-images.githubusercontent.com/47635037/83710455-5a8e6800-a653-11ea-832c-127d6d48b9fd.PNG)
 
+- Price update (Discord Only) - Show price change for every items that are on your pricelist -
+![price-update](https://user-images.githubusercontent.com/47635037/83712639-cc1ce500-a658-11ea-855d-5de43b39ff2f.png)
+
 You can also only set it to send only trade summary, but the others like Offer review and messages to send to Steam Chat.
 
 Note that, it's an option to show key rate/ pure stock/ quick links on each feature.
