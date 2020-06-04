@@ -1072,11 +1072,9 @@ export = class MyHandler extends Handler {
                 // remove autosell key if ref in inventory > user defined min ref
                 this.removeAutoKeys();
             } else if (isSellingKeys) {
-                this.removeAutoKeys();
-                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+                this.updateAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (isBuyingKeys) {
-                this.removeAutoKeys();
-                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
+                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
             if (isSellingKeys) {
@@ -1119,6 +1117,48 @@ export = class MyHandler extends Handler {
         } as any;
         this.bot.pricelist
             .addPrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private updateAutoSellKeys(userMinKeys: number, userMaxKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enabled: true,
+            autoprice: true,
+            max: userMaxKeys,
+            min: userMinKeys,
+            intent: 1
+        } as any;
+        this.bot.pricelist
+            .updatePrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private updateAutoBuyKeys(userMinKeys: number, userMaxKeys: number): void {
+        const entry = {
+            sku: '5021;6',
+            enabled: true,
+            autoprice: true,
+            max: userMaxKeys,
+            min: userMinKeys,
+            intent: 0
+        } as any;
+        this.bot.pricelist
+            .updatePrice(entry as EntryData, true)
             .then(() => {
                 log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
                 this.checkAutoSellAndBuyKeysStatus = true;
