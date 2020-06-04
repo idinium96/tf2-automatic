@@ -177,7 +177,7 @@ export = class MyHandler extends Handler {
                 return resolve();
             }
 
-            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
+            if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true' && this.checkAutoSellAndBuyKeysStatus === true) {
                 log.info('Removing autobuy/sell keys from pricelist');
                 this.bot.pricelist
                     .removePrice('5021;6', true)
