@@ -1051,27 +1051,33 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (
-            CurrPureTotaltoScrap > userMinRefinedtoScrap &&
-            CurrPureKeys >= userMinKeys &&
-            this.checkAutoSellAndBuyKeysStatus === true
-        ) {
-            // remove autosell key if ref in inventory > user defined min ref
-            this.removeAutoKeys();
-        } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
-            if (CurrPureKeys >= userMinKeys) {
-                // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
-                this.createAutoSellKeys(userMinKeys, userMaxKeys);
-            } else if (!CurrPureKeys || CurrPureKeys <= userMinKeys) {
-                // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
+        // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
+        const isBuyingKeys = (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys <= userMaxKeys) !== false;
+
+        // remove autobuy keys if ref in inventory > user defined max AND and keys in inv >= user defined max keys
+        const isRemoveBuyingKeys =
+            (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
+
+        // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
+        const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
+
+        // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
+        const isRemoveSellingKeys =
+            (CurrPureTotaltoScrap < userMinRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
+
+        if (this.checkAutoSellAndBuyKeysStatus === true) {
+            if (isRemoveBuyingKeys || isRemoveSellingKeys) {
+                // remove autosell key if ref in inventory > user defined min ref
                 this.removeAutoKeys();
             }
-        } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
-            if (CurrPureKeys <= userMaxKeys) {
-                // add autobuy keys if ref in inventory > user defined max ref AND keys in inv < user defined max keys
+        } else if (this.checkAutoSellAndBuyKeysStatus === false) {
+            if (isSellingKeys) {
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+            } else if (isRemoveSellingKeys) {
+                this.removeAutoKeys();
+            } else if (isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
-            } else if (CurrPureKeys >= userMaxKeys) {
-                // remove autobuy keys if ref in inventory > user defined max AND and keys in inv > user defined max keys
+            } else if (isRemoveBuyingKeys) {
                 this.removeAutoKeys();
             }
         }
