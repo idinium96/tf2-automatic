@@ -394,14 +394,15 @@ export = class Commands {
         const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
         const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
         const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const pureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
         const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
         const pure = [
             {
-                name: 'keys',
-                amount: this.bot.inventoryManager.getInventory().getAmount('5021;6')
+                name: pluralize('key', pureKeys),
+                amount: pureKeys
             },
             {
-                name: 'ref',
+                name: pluralize('ref', pureScrapTotal),
                 amount: Currencies.toRefined(pureScrapTotal)
             }
         ];
