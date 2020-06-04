@@ -1139,11 +1139,11 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .updatePrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
+                log.info(`✅ Automatically updated Mann Co. Supply Crate Key to sell.`);
                 this.checkAutoSellAndBuyKeysStatus = true;
             })
             .catch(err => {
-                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
+                log.warn(`❌ Failed to update Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
@@ -1160,11 +1160,11 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .updatePrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
+                log.info(`✅ Automatically update Mann Co. Supply Crate Key to buy.`);
                 this.checkAutoSellAndBuyKeysStatus = true;
             })
             .catch(err => {
-                log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                log.warn(`❌ Failed to update Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
