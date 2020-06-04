@@ -1052,13 +1052,13 @@ export = class MyHandler extends Handler {
 
         if (
             CurrPureTotaltoScrap > userMinRefinedtoScrap &&
-            CurrPureKeys > userMaxKeys &&
+            CurrPureKeys >= userMaxKeys &&
             this.checkAutoSellAndBuyKeysStatus === true
         ) {
             // remove autosell key if ref in inventory > user defined min ref
             this.removeAutoKeys();
         } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
-            if (CurrPureKeys > userMinKeys) {
+            if (CurrPureKeys >= userMinKeys) {
                 // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
                 this.createAutoSellKeys(userMinKeys);
             } else if (!CurrPureKeys || CurrPureKeys < userMinKeys) {
@@ -1069,7 +1069,7 @@ export = class MyHandler extends Handler {
             if (CurrPureKeys < userMaxKeys) {
                 // add autobuy keys if ref in inventory > user defined max ref AND keys in inv < user defined max keys
                 this.createAutoBuyKeys(userMaxKeys);
-            } else if (CurrPureKeys > userMaxKeys) {
+            } else if (CurrPureKeys >= userMaxKeys) {
                 // remove autobuy keys if ref in inventory > user defined max AND and keys in inv > user defined max keys
                 this.removeAutoKeys();
             }
