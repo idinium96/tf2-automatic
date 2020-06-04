@@ -30,13 +30,13 @@ Once you have downloaded the source and installed the necessary packages, you ca
 Instead of the bot sending trade summary, review offer and messages to you via Steam Chat, this version will let your bot to send it to a different channels in your discord server.
 
 Screenshots:
-- Trade summary (or live-trades)
+- Trade summary (or live-trades) -
 ![trade-summary](https://user-images.githubusercontent.com/47635037/83710459-5bbf9500-a653-11ea-9391-691a3f1f56f5.PNG)
 
-- Offer review
+- Offer review (when trade partner sent wrong value/overstocked/etc) -
 ![Offer-review](https://user-images.githubusercontent.com/47635037/83710458-5b26fe80-a653-11ea-96a3-55470bc1f2be.png)
 
-- Messages
+- Messages (when trade partner send "!message" command -
 ![Messages](https://user-images.githubusercontent.com/47635037/83710455-5a8e6800-a653-11ea-832c-127d6d48b9fd.PNG)
 
 You can also only set it to send only trade summary, but the others like Offer review and messages to send to Steam Chat.
