@@ -42,11 +42,24 @@ Screenshots:
 - Price update (Discord Only) - Show price change for every items that are on your pricelist -
 ![price-update](https://user-images.githubusercontent.com/47635037/83712639-cc1ce500-a658-11ea-855d-5de43b39ff2f.png)
 
-You can also only set it to send only trade summary, but the others like Offer review and messages to send to Steam Chat.
+You can also only set it to send only trade summary, but the others like Offer review and messages will be sent to you via Steam Chat.
 
 Note that, it's an option to show key rate/ pure stock/ quick links on each feature.
 
 If you want to use this feature, you must use [ecosystem.template.json](https://github.com/idinium96/tf2-automatic/blob/Public/ecosystem.template.json) from this version, which contains much more variables for you to fill in.
+
+## Autokeys (auto buy or sell keys) feature
+
+This feature when enabled, your bot will automatically buy or sell keys based on your bot pure availability and your settings on this feature. You'll have to set your minimum/maximum keys and minimum/maximum refined metals in your ecosystem.json - more explaination can be found [here](https://github.com/idinium96/tf2-automatic/#your-bot-settings) starting on `ENABLE_AUTO_SELL_AND_BUY_KEYS` until `MAXIMUM_REFINED_TO_STOP_SELL_KEYS`.
+
+Some screenshots:
+![Autokeys](https://user-images.githubusercontent.com/47635037/83779564-b3dfb100-a6be-11ea-8b5a-2de30d40e52e.PNG)
+
+You can see codes on how this feature works [here](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L1022-L1136).
+
+## Emojis and more commands added
+
+![commands](https://user-images.githubusercontent.com/47635037/83775310-58f78b00-a6b9-11ea-942f-2381496ccd06.PNG)
 
 ## Variables in ecosystem.json summary
 
