@@ -1060,7 +1060,7 @@ export = class MyHandler extends Handler {
         } else if (CurrPureTotaltoScrap < userMinRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
             if (CurrPureKeys >= userMinKeys) {
                 // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
-                this.createAutoSellKeys(userMinKeys);
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (!CurrPureKeys || CurrPureKeys < userMinKeys) {
                 // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
                 this.removeAutoKeys();
@@ -1068,7 +1068,7 @@ export = class MyHandler extends Handler {
         } else if (CurrPureTotaltoScrap > userMaxRefinedtoScrap && this.checkAutoSellAndBuyKeysStatus === false) {
             if (CurrPureKeys < userMaxKeys) {
                 // add autobuy keys if ref in inventory > user defined max ref AND keys in inv < user defined max keys
-                this.createAutoBuyKeys(userMaxKeys);
+                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
             } else if (CurrPureKeys >= userMaxKeys) {
                 // remove autobuy keys if ref in inventory > user defined max AND and keys in inv > user defined max keys
                 this.removeAutoKeys();
@@ -1076,13 +1076,13 @@ export = class MyHandler extends Handler {
         }
     }
 
-    private createAutoSellKeys(userMinKeys: number): void {
+    private createAutoSellKeys(userMinKeys: number, userMaxKeys: number): void {
         const entry = {
             sku: '5021;6',
             enabled: true,
             autoprice: true,
-            max: userMinKeys + 1,
-            min: 0,
+            max: userMaxKeys,
+            min: userMinKeys,
             intent: 1
         } as any;
         this.bot.pricelist
@@ -1097,13 +1097,13 @@ export = class MyHandler extends Handler {
             });
     }
 
-    private createAutoBuyKeys(userMaxKeys: number): void {
+    private createAutoBuyKeys(userMinKeys: number, userMaxKeys: number): void {
         const entry = {
             sku: '5021;6',
             enabled: true,
             autoprice: true,
             max: userMaxKeys,
-            min: 0,
+            min: userMinKeys,
             intent: 0
         } as any;
         this.bot.pricelist
