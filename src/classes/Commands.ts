@@ -56,6 +56,7 @@ const ADMIN_COMMANDS: string[] = [
     '!stop - Stop the bot 🔴',
     '!restart - Restart the bot 🔄',
     '!version - Get version that the bot is running',
+    '!autokeys - Get info on your current autoBuy/Sell Keys settings 🔑',
     '!avatar <image_URL> - Change avatar',
     '!name <new_name> - Change name',
     '!stats - Get statistics for accepted trades 📊',
@@ -92,6 +93,8 @@ export = class Commands {
             this.stockCommand(steamID);
         } else if (command === 'pure') {
             this.pureCommand(steamID);
+        } else if (command === 'autokeys' && isAdmin) {
+            this.autoKeysCommand(steamID);
         } else if (command === 'rate') {
             this.rateCommand(steamID);
         } else if (command === 'message') {
@@ -399,6 +402,22 @@ export = class Commands {
             pureStock.push(`${pure[i].amount} ${pure[i].name}`);
         }
         return pureStock;
+    }
+
+    private autoKeysCommand(steamID: SteamID): void {
+        if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'false') {
+            this.bot.sendMessage(steamID, `This feature is disabled.`);
+            return;
+        }
+        const userMinKeys = process.env.MINIMUM_KEYS;
+        const userMaxKeys = process.env.MAXIMUM_KEYS;
+        const userMinRefined = process.env.MINIMUM_REFINED_TO_START_SELL_KEYS;
+        const userMaxRefined = process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS;
+
+        this.bot.sendMessage(
+            steamID,
+            `Your current settings for autoKeys:\n• ${userMinKeys} < Keys ≤ ${userMaxKeys}\n• ${userMinRefined} < Refs ≤ ${userMaxRefined}`
+        );
     }
 
     private rateCommand(steamID: SteamID): void {
