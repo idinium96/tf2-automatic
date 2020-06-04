@@ -30,6 +30,7 @@ const COMMANDS: string[] = [
     '!how2trade - Guide on how to use and trade with the bot',
     '!price [amount] <name> - Get the price and stock of an item',
     '!stock - Get a list of items that the bot has',
+    '!pure - Get current pure stock 💰',
     '!rate - Get current key prices 🔑',
     '!message <your message> - Send a message to the owner of the bot 💬',
     '!buy [amount] <name> - Instantly buy an item 💲',
@@ -89,6 +90,8 @@ export = class Commands {
             this.priceCommand(steamID, message);
         } else if (command === 'stock') {
             this.stockCommand(steamID);
+        } else if (command === 'pure') {
+            this.pureCommand(steamID);
         } else if (command === 'rate') {
             this.rateCommand(steamID);
         } else if (command === 'message') {
@@ -331,6 +334,35 @@ export = class Commands {
         }
 
         this.bot.sendMessage(steamID, reply);
+    }
+
+    private pureCommand(steamID: SteamID): void {
+        const pureStock = this.pureStock();
+
+        this.bot.sendMessage(steamID, `💰 I have currently ${pureStock.join(' and ')} in my inventory.`);
+    }
+
+    private pureStock(): string[] {
+        const pureStock: string[] = [];
+        const pureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const pureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const pureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const pureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const pureScrapTotal = Currencies.toScrap(pureRef + pureRec + pureScrap);
+        const pure = [
+            {
+                name: pluralize('key', pureKeys),
+                amount: pureKeys
+            },
+            {
+                name: pluralize('ref', pureScrapTotal),
+                amount: Currencies.toRefined(pureScrapTotal)
+            }
+        ];
+        for (let i = 0; i < pure.length; i++) {
+            pureStock.push(`${pure[i].amount} ${pure[i].name}`);
+        }
+        return pureStock;
     }
 
     private rateCommand(steamID: SteamID): void {
