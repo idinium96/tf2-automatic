@@ -1366,6 +1366,7 @@ export = class MyHandler extends Handler {
 
         const offerMessage = offer.message;
         const keyPrice = this.bot.pricelist.getKeyPrices();
+        const pureStock = this.pureStock();
         const value: { our: Currency; their: Currency } = offer.data('value');
 
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
@@ -1404,6 +1405,10 @@ export = class MyHandler extends Handler {
                 partnerAvatar = them.avatarFull;
                 partnerName = them.personaName;
             }
+            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS !== 'false';
+            const isShowKeyRate = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE !== 'false';
+            const isShowPureStock = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK !== 'false';
+
             /*eslint-disable */
             const webhookReview = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1434,10 +1439,13 @@ export = class MyHandler extends Handler {
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            (process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS === 'true'
+                            (isShowQuickLinks
                                 ? `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
-                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            (isShowKeyRate
+                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
+                                : '') +
+                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
                     }
                 ]
@@ -1524,6 +1532,13 @@ export = class MyHandler extends Handler {
                 personaName = details.personaName;
                 avatarFull = details.avatarFull;
             }
+
+            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS !== 'false';
+            const isShowKeyRate = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE !== 'false';
+            const isShowPureStock = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK !== 'false';
+            const isShowAdditionalNotes =
+                process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE !== 'false';
+
             /*eslint-disable */
             const acceptedTradeSummary = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1553,16 +1568,14 @@ export = class MyHandler extends Handler {
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS === 'true'
+                            (isShowQuickLinks
                                 ? `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
                                 : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE === 'true'
+                            (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
                                 : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK === 'true'
-                                ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref`
-                                : '') +
-                            (process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
+                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : '') +
+                            (isShowAdditionalNotes
                                 ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
                                 : ''),
                         color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
