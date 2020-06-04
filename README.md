@@ -31,15 +31,19 @@ Instead of the bot sending trade summary, review offer and messages to you via S
 
 Screenshots:
 - Trade summary (or live-trades) -
+
 ![trade-summary](https://user-images.githubusercontent.com/47635037/83710459-5bbf9500-a653-11ea-9391-691a3f1f56f5.PNG)
 
 - Offer review (when trade partner sent wrong value/overstocked/etc) -
+
 ![Offer-review](https://user-images.githubusercontent.com/47635037/83710458-5b26fe80-a653-11ea-96a3-55470bc1f2be.png)
 
 - Messages (when trade partner send "!message" command -
+
 ![Messages](https://user-images.githubusercontent.com/47635037/83710455-5a8e6800-a653-11ea-832c-127d6d48b9fd.PNG)
 
 - Price update (Discord Only) - Show price change for every items that are on your pricelist -
+
 ![price-update](https://user-images.githubusercontent.com/47635037/83712639-cc1ce500-a658-11ea-855d-5de43b39ff2f.png)
 
 You can also only set it to send only trade summary, but the others like Offer review and messages will be sent to you via Steam Chat.
@@ -97,41 +101,53 @@ You can run your bot without this first, which then on the first run, it will pr
 - `MINIMUM_REFINED_TO_START_SELL_KEYS`: [Number] - Already explained.
 - `MAXIMUM_REFINED_TO_STOP_SELL_KEYS`: [Number] - Already explained.
 
+#### Set to true if want to disable
 - `DISABLE_INVENTORY_SORT`: [true or false] Default: true. Sort your bot inventory.
 - `DISABLE_LISTINGS`: [true or false] Default: false. This is used if you want to temporarily disable trading while your bot is alive.
 - `DISABLE_CRAFTING`: [true or false] Default: false. **NOT RECOMMENDED** to set is as true, as it cause bot and trade partner to not be able to trade because of missing pure changes.
 - `DISABLE_MESSAGES`: [true or false] Default: true. When true, people (that are friend with your bot) can send messages with "!message" command.
 - `DISABLE_QUEUE_ALERT`: [true or false] - Default: true. My custom - Used to notify owner if your bot has a queue problem, which you'll need to restart your bot.
 
+#### Misc feature
 - `TRADES_MADE_STARTER_VALUE`: [Number] - Used mainly for displaying your bot total trades made, found in your bot Steam Profile page.
 - `LAST_TOTAL_TRADES`: [Number] - Used if your polldata.json is getting bigger which consumed a lot of RAM, but you want to keep total successful trades that your bot has made.
 - `TRADING_STARTING_TIME_UNIX`: [Number - Unix format] - Also same as LAST_TOTAL_TRADES, but this one is the latest time. You can read more on my [Discord server post](https://discordapp.com/channels/664971400678998016/666909518604533760/707706994932449410).
 
+#### Duped unusual check feature
 - `ENABLE_SHOW_ONLY_METAL`: [true or false] - Default: true. My custom - If set to false, it will show [x keys, y ref].
 - `ENABLE_DUPE_CHECK`: [true or false] - Default: true. Used to enable/disable check on duped unusuals
 - `DECLINE_DUPES`: [true or false] - Default: false. Explained itself.
 - `MINIMUM_KEYS_DUPE_CHECK`: [Number] - Default: 10. Explained itself.
 
+#### Set to true if want to skip
 - `SKIP_BPTF_TRADEOFFERURL`: [true or false] - Default: true. Not sure why this thing might not work. Please add trade offer URL by yourself [here](https://backpack.tf/settings##general) (login as your bot Steam account).
 - `SKIP_ACCOUNT_LIMITATIONS`: [true or false] - Default: false. Used to check your account limitation. It's better to set to true if your bot Steam account already a [premium account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
 - `SKIP_UPDATE_PROFILE_SETTINGS`: [true or false] - Default: false. This is just set your bot profile to public, so backpack.tf can load your bot inventory and etc correctly. If you already set all to public, just set this to true.
 
+#### Set to true if want to allow
 - `ALLOW_ESCROW`: [true or false] - Default: false. Escrow = trade hold
 - `ALLOW_OVERPAY`: [true or false] - Default: true. If people give an overpay, your bot will accept. Set it to false if you don't want.
 - `ALLOW_BANNED`: [true or false] - Default: false. I think it's better to set as false.
+
+#### Set time for price to be updated in seconds
 - `MAX_PRICE_AGE`: [Number - in seconds] - Default: 28800 - If the time recorded in your pricelist reach/more than this, it will triggered to check with prices.tf.
 
+#### Compulsory variables
 - `ADMINS`: [Array] - Put your main SteamID64. Example - `["76561198013127982"]`, if you have multiple, `["76561198013127982", "76561198077208792"]`
 - `KEEP`: [Array] - Same as ADMINS, you must fill in BOTH.
 - `GROUPS`: [Array] - If you have Steam group, find your group ID and paste it here.
 - `ALERTS`: [Array] - If you set to `["trade"]`, your bot will send message/discord webhook every time a successful trades were made, other option is `["none"]`.
 
+#### Set to true if want to enable debugging notes in console
 - `DEBUG`: [true or false] - Used to debug if any problem occured.
 - `DEBUG_FILE`: [true or false] - Same as above, but this will create a file which can be sent to [issue](https://github.com/idinium96/tf2-automatic/issues/new/choose).
 
+#### Backpack.tf sell or buy order listings note on all items in pricelist
 - `BPTF_DETAILS_BUY`: [string] - Your buy order message. It will do for all items. available parameters: %name% (print out item name), %price% (item current buying price), %current_stock%, %max_stock% and %keyPrice% (print out: `Key rate: x ref/key`).
 - `BPTF_DETAILS_SELL` [string] - Same as buy order, except have %amount_trade% parameter.
-- `OFFER_MESSAGE`: [string] - Message that will appear when bot sends offer to trade partner.
+
+#### Custom offer message
+- `OFFER_MESSAGE`: [string] - Message that will appear when bot sends offer to trade partner. If leave empty (""), it will print *Powered by tf2-automatic* by default.
 
 ### Discord Webhook Configuration
 #### Basic configuration on your embed preferences/appearances
