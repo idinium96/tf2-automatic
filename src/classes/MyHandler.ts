@@ -1076,8 +1076,6 @@ export = class MyHandler extends Handler {
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
-            } else if (isRemoveBuyingKeys || isRemoveSellingKeys) {
-                this.removeAutoKeys();
             }
         }
     }
