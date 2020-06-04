@@ -1403,6 +1403,15 @@ export = class MyHandler extends Handler {
                 partnerAvatar = them.avatarFull;
                 partnerName = them.personaName;
             }
+
+            const partnerNameNoFormat =
+                partnerName.includes('_') || partnerName.includes('*') || partnerName.includes('~~')
+                    ? partnerName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : partnerName;
+
             /*eslint-disable */
             const webhookReview = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1423,7 +1432,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `⚠️ An offer sent by ${partnerName} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
+                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1433,7 +1442,7 @@ export = class MyHandler extends Handler {
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            `\n\n🔍 ${partnerName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
+                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
                                 .toString()} ref\n`,
@@ -1525,6 +1534,15 @@ export = class MyHandler extends Handler {
                 personaName = details.personaName;
                 avatarFull = details.avatarFull;
             }
+
+            const partnerNameNoFormat =
+                personaName.includes('_') || personaName.includes('*') || personaName.includes('~~')
+                    ? personaName
+                          .replace(/_/g, '‗')
+                          .replace(/\*/g, '★')
+                          .replace(/~/g, '⁓')
+                    : personaName;
+
             /*eslint-disable */
             const acceptedTradeSummary = JSON.stringify({
                 username: process.env.DISCORD_WEBHOOK_USERNAME,
@@ -1545,7 +1563,7 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `A trade with ${personaName} has been marked as accepted.✅\n__Summary__:\n` +
+                            `A trade with ${partnerNameNoFormat} has been marked as accepted.✅\n__Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1554,7 +1572,7 @@ export = class MyHandler extends Handler {
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n\n🔍 ${personaName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
+                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
                                 .toString()} ref\n` +
