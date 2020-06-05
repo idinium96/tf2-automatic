@@ -571,8 +571,13 @@ export = class Commands {
                 );
             } else {
                 this.bot.messageAdmins(
-                    `/quote 💬 You've got a message from #${steamID} (${adminDetails.player_name}): "${msg}"\n\n` +
-                        `Steam: https://steamcommunity.com/profiles/${steamID}\nBackpack.tf: https://backpack.tf/profiles/${steamID}`,
+                    `/quote 💬 You've got a message from #${steamID} (${adminDetails.player_name}):
+                    
+                    "${msg}".
+                    
+                    Steam: https://steamcommunity.com/profiles/${steamID}
+                    Backpack.tf: https://backpack.tf/profiles/${steamID}
+                    SteamREP: https://steamrep.com/profiles/${steamID}`,
                     []
                 );
             }
@@ -1787,9 +1792,9 @@ export = class Commands {
 
         // TODO: Create static class for trade offer related functions?
 
-        let reply =
-            `Offer #${offerId} from ${offerData.partner} is pending for review ⚠️ (reason: ` +
-            `${offerData.action.meta.uniqueReasons.join(', ')}). Summary:\n`;
+        let reply = `Offer #${offerId} from ${offerData.partner} is pending for review. ⚠️
+        Reason: ${offerData.action.meta.uniqueReasons.join(', ')}).
+        Summary:\n\n`;
 
         const keyPrice = this.bot.pricelist.getKeyPrices();
         const value: { our: Currency; their: Currency } = offerData.value;
@@ -2067,17 +2072,18 @@ export = class Commands {
         if (match === null) {
             this.bot.sendMessage(
                 steamID,
-                `❌ I could not find any items in my pricelist that contains "${name}",` +
-                    ' I might not be trading the item you are looking for, or try:' +
-                    '\n• remove "The"' +
-                    '\n• remove "Unusual", just put effect and name, example: "Kill-a-Watt Vive La France"' +
-                    '\n• remove plural (~s/~es/etc), example: "!buy 2 Mann Co. Supply Crate Key"' +
-                    '\n• some Taunt needs "The" like "Taunt: The High Five!", and some are not.' +
-                    '\n• check for dash (-) like "All-Father" or "Mini-Engy"' +
-                    `\n• check for single quote (') like "Orion's Belt" or "Chargin' Targe"` +
-                    '\n• check for dot (.) like "Lucky No. 42" or "B.A.S.E. Jumper"' +
-                    '\n• check for exclamation mark (!) like "Bonk! Atomic Punch"' +
-                    `\n• if you're looking for uncraftable items, do it like "Non-Craftable Crit-a-Cola"`
+                `❌ I could not find any items in my pricelist that contains "${name}", I might not be trading the item you are looking for.
+                
+                Alternatively, please try:
+                • remove "The".
+                • remove "Unusual", just put effect and name, example: "Kill-a-Watt Vive La France".
+                • remove plural (~s/~es/etc), example: "!buy 2 Mann Co. Supply Crate Key".
+                • some Taunt needs "The" like "Taunt: The High Five!", and some are not.
+                • check for dash (-) like "All-Father" or "Mini-Engy".
+                • check for single quote (') like "Orion's Belt" or "Chargin' Targe".
+                • check for dot (.) like "Lucky No. 42" or "B.A.S.E. Jumper".
+                • check for exclamation mark (!) like "Bonk! Atomic Punch".
+                • if you're looking for uncraftable items, do it like "Non-Craftable Crit-a-Cola".`
             );
             return null;
         } else if (Array.isArray(match)) {

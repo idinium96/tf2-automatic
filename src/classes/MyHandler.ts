@@ -1042,17 +1042,26 @@ export = class MyHandler extends Handler {
             } else {
                 const offerMessage = offer.message;
                 this.bot.messageAdmins(
-                    `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.\nReason: ` +
-                        `${meta.uniqueReasons.join(', ')}\n\nOffer Summary:\n${offer.summarize(this.bot.schema)}` +
-                        (offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : '') +
-                        (valueDiff > 0
-                            ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                    `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.
+                    Reason: ${meta.uniqueReasons.join(', ')}
+                    
+                    Offer Summary:
+                    ${offer.summarize(this.bot.schema)}${
+                        valueDiff > 0
+                            ? `\n📈 Profit from overpay: ${valueDiffRef} ref` +
                               (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                             : valueDiff < 0
-                            ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
+                            ? `\n📉 Loss from underpay: ${valueDiffRef} ref` +
                               (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                            : '') +
-                        `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            : ''
+                    }${offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : ''}
+                    
+                    Steam: https://steamcommunity.com/profiles/${offer.partner}
+                    Backpack.tf: https://backpack.tf/profiles/${offer.partner}
+                    SteamREP: https://steamrep.com/profiles/${offer.partner}
+
+                    🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref
+                    💰 Pure stock: ${pureStock.join(', ').toString()} ref`,
                     []
                 );
             }
