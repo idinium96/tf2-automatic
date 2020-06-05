@@ -54,7 +54,7 @@
 
                 "TIMEZONE": "",
                 "CUSTOM_TIME_FORMAT": "",
-                "TIME_COMMAND_ADDITIONAL_NOTES": "",
+                "TIME_ADDITIONAL_NOTES": "",
 
                 "ALLOW_ESCROW": false,
                 "ALLOW_OVERPAY": true,
@@ -178,7 +178,7 @@
 
                 "TIMEZONE": "",
                 "CUSTOM_TIME_FORMAT": "",
-                "TIME_COMMAND_ADDITIONAL_NOTES": "",
+                "TIME_ADDITIONAL_NOTES": "",
 
                 "ALLOW_ESCROW": false,
                 "ALLOW_OVERPAY": true,
