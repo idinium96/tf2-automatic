@@ -1043,17 +1043,26 @@ export = class MyHandler extends Handler {
             } else {
                 const offerMessage = offer.message;
                 this.bot.messageAdmins(
-                    `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.\nReason: ` +
-                        `${meta.uniqueReasons.join(', ')}\n\nOffer Summary:\n${offer.summarize(this.bot.schema)}` +
-                        (offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : '') +
-                        (valueDiff > 0
-                            ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                    `/pre ⚠️ Offer #${offer.id} from ${offer.partner} is waiting for review.
+                    Reason: ${meta.uniqueReasons.join(', ')}
+                    
+                    Offer Summary:
+                    ${offer.summarize(this.bot.schema)}${
+                        valueDiff > 0
+                            ? `\n📈 Profit from overpay: ${valueDiffRef} ref` +
                               (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                             : valueDiff < 0
-                            ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
+                            ? `\n📉 Loss from underpay: ${valueDiffRef} ref` +
                               (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                            : '') +
-                        `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`,
+                            : ''
+                    }${offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : ''}
+                    
+                    Steam: https://steamcommunity.com/profiles/${offer.partner}
+                    Backpack.tf: https://backpack.tf/profiles/${offer.partner}
+                    SteamREP: https://steamrep.com/profiles/${offer.partner}
+
+                    🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref
+                    💰 Pure stock: ${pureStock.join(', ').toString()} ref`,
                     []
                 );
             }
@@ -1458,8 +1467,6 @@ export = class MyHandler extends Handler {
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
         const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
-        const steamidUK = `https://steamid.uk/profile/${partnerSteamID}`;
-        const steamDB = `https://steamdb.info/calculator/${partnerSteamID}/`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1522,7 +1529,10 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
+                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.
+                            Reason: ${reason}
+                            
+                            __Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
@@ -1532,7 +1542,7 @@ export = class MyHandler extends Handler {
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
+                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
                                 .toString()} ref\n`,
@@ -1573,8 +1583,6 @@ export = class MyHandler extends Handler {
         const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
         const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
-        const steamidUK = `https://steamid.uk/profile/${partnerSteamID}`;
-        const steamDB = `https://steamdb.info/calculator/${partnerSteamID}/`;
 
         let valueDiff: number;
         let valueDiffRef: number;
@@ -1653,8 +1661,9 @@ export = class MyHandler extends Handler {
                         },
                         title: '',
                         description:
-                            `A trade with ${partnerNameNoFormat} has been marked as accepted.✅\n__Summary__:\n` +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
+                            `A trade with ${partnerNameNoFormat} has been marked as accepted. ✅
+                            __Summary__:
+                            ${tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**')}` +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
@@ -1662,7 +1671,7 @@ export = class MyHandler extends Handler {
                                 ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP}) | [steamidUK](${steamidUK}) | [steamDB](${steamDB})` +
+                            `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
                                 .toString()} ref\n` +
