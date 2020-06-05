@@ -28,6 +28,7 @@ import { XMLHttpRequest } from 'xmlhttprequest-ts';
 const COMMANDS: string[] = [
     '!help - Get list of commands 📜',
     '!how2trade - Guide on how to use and trade with the bot 📋',
+    '!time - Show owner current time 🕥',
     '!stock - Get a list of items that the bot has 📊',
     '!pure - Get current pure stock 💰',
     '!rate - Get current key prices 🔑',
@@ -94,6 +95,8 @@ export = class Commands {
             this.stockCommand(steamID);
         } else if (command === 'pure') {
             this.pureCommand(steamID);
+        } else if (command === 'time') {
+            this.timeCommand(steamID);
         } else if (command === 'autokeys' && isAdmin) {
             this.autoKeysCommand(steamID);
         } else if (command === 'craftweapon' && isAdmin) {
@@ -384,6 +387,44 @@ export = class Commands {
         const reply = "📃 Here's a list of all craft weapons stock in my inventory:\n\n" + crafWeaponStock.join(', \n');
 
         this.bot.sendMessage(steamID, reply);
+    }
+
+    private timeCommand(steamID: SteamID): void {
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
+
+        const timeEmoji = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC')
+            .format();
+        const emoji =
+            timeEmoji.includes('T00:') || timeEmoji.includes('T12:')
+                ? '🕛'
+                : timeEmoji.includes('T01:') || timeEmoji.includes('T13:')
+                ? '🕐'
+                : timeEmoji.includes('T02:') || timeEmoji.includes('T14:')
+                ? '🕑'
+                : timeEmoji.includes('T03:') || timeEmoji.includes('T15:')
+                ? '🕒'
+                : timeEmoji.includes('T04:') || timeEmoji.includes('T16:')
+                ? '🕓'
+                : timeEmoji.includes('T05:') || timeEmoji.includes('T17:')
+                ? '🕔'
+                : timeEmoji.includes('T06:') || timeEmoji.includes('T18:')
+                ? '🕕'
+                : timeEmoji.includes('T07:') || timeEmoji.includes('T19:')
+                ? '🕖'
+                : timeEmoji.includes('T08:') || timeEmoji.includes('T20:')
+                ? '🕗'
+                : timeEmoji.includes('T09:') || timeEmoji.includes('T21:')
+                ? '🕘'
+                : timeEmoji.includes('T10:') || timeEmoji.includes('T22:')
+                ? '🕙'
+                : timeEmoji.includes('T11:') || timeEmoji.includes('T23:')
+                ? '🕚'
+                : '';
+
+        this.bot.sendMessage(steamID, `My owner time is currently at ${emoji} ${time}.`);
     }
 
     private pureCommand(steamID: SteamID): void {
