@@ -1179,11 +1179,11 @@ export = class MyHandler extends Handler {
             .updatePrice(entry as EntryData, true)
             .then(() => {
                 log.info(`✅ Automatically disabled Autokeys.`);
-                this.checkAutoSellAndBuyKeysStatus = true;
+                this.checkAutoSellAndBuyKeysStatus = false;
             })
             .catch(err => {
                 log.warn(`❌ Failed to disable Autokeys: ${err.message}`);
-                this.checkAutoSellAndBuyKeysStatus = false;
+                this.checkAutoSellAndBuyKeysStatus = true;
             });
     }
 
