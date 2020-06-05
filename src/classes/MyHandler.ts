@@ -1090,14 +1090,14 @@ export = class MyHandler extends Handler {
 
         // remove autobuy keys if ref in inventory > user defined max AND and keys in inv >= user defined max keys
         const isRemoveBuyingKeys =
-            (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
+            (CurrPureTotaltoScrap > userMinRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
 
         // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
         const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
 
         // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
         const isRemoveSellingKeys =
-            (CurrPureTotaltoScrap < userMinRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
+            (CurrPureTotaltoScrap < userMaxRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
 
         const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
 
