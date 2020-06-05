@@ -178,15 +178,8 @@ export = class MyHandler extends Handler {
             }
 
             if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true' && this.checkAutoSellAndBuyKeysStatus === true) {
-                log.info('Removing autobuy/sell keys from pricelist');
-                this.bot.pricelist
-                    .removePrice('5021;6', true)
-                    .then(() => {
-                        log.info(`✅ Successfully remove Mann Co. Supply Crate Key.`);
-                    })
-                    .catch(err => {
-                        log.warn(`❌ Failed to remove Mann Co. Supply Crate Key automatically: ${err.message}`);
-                    });
+                log.info('Disabling autokeys...');
+                this.updateToDisableAutoKeys();
             }
 
             this.bot.listings.removeAll().asCallback(function(err) {
@@ -1093,13 +1086,6 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        if (checkKeysAlreadyExist !== null && this.checkAutoSellAndBuyKeysStatus === false) {
-            log.warn(
-                'You already have Mann Co. Supply Crate Key in the pricelist, please remove it. Autosell/buy keys is disabled until remove it.'
-            );
-            return;
-        }
-
         // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
         const isBuyingKeys = (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys <= userMaxKeys) !== false;
 
@@ -1118,17 +1104,21 @@ export = class MyHandler extends Handler {
 
         if (isAlreadyCreatedtoBuyOrSell) {
             if (isRemoveBuyingKeys || isRemoveSellingKeys) {
-                // remove autosell key if ref in inventory > user defined min ref
-                this.removeAutoKeys();
+                // disable Autokeys
+                this.updateToDisableAutoKeys();
             } else if (isSellingKeys) {
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (isBuyingKeys) {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
-            if (isSellingKeys) {
+            if (checkKeysAlreadyExist !== null && isSellingKeys) {
+                this.updateAutoSellKeys(userMinKeys, userMaxKeys);
+            } else if (checkKeysAlreadyExist !== null && isBuyingKeys) {
+                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
+            } else if (checkKeysAlreadyExist === null && isSellingKeys) {
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
-            } else if (isBuyingKeys) {
+            } else if (!checkKeysAlreadyExist === null && isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         }
@@ -1172,6 +1162,27 @@ export = class MyHandler extends Handler {
             })
             .catch(err => {
                 log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
+                this.checkAutoSellAndBuyKeysStatus = false;
+            });
+    }
+
+    private updateToDisableAutoKeys(): void {
+        const entry = {
+            sku: '5021;6',
+            enabled: false,
+            autoprice: true,
+            max: 1,
+            min: 0,
+            intent: 1
+        } as any;
+        this.bot.pricelist
+            .updatePrice(entry as EntryData, true)
+            .then(() => {
+                log.info(`✅ Automatically disabled Autokeys.`);
+                this.checkAutoSellAndBuyKeysStatus = true;
+            })
+            .catch(err => {
+                log.warn(`❌ Failed to disable Autokeys: ${err.message}`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             });
     }
