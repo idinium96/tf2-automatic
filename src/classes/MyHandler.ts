@@ -1111,13 +1111,13 @@ export = class MyHandler extends Handler {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
-            if (checkKeysAlreadyExist && isSellingKeys) {
+            if (!checkKeysAlreadyExist && isSellingKeys) {
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
-            } else if (checkKeysAlreadyExist && isBuyingKeys) {
-                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
-            } else if (!checkKeysAlreadyExist && isSellingKeys) {
-                this.createAutoSellKeys(userMinKeys, userMaxKeys);
             } else if (!checkKeysAlreadyExist && isBuyingKeys) {
+                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
+            } else if (checkKeysAlreadyExist && isSellingKeys) {
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+            } else if (checkKeysAlreadyExist && isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         }
