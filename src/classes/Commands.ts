@@ -1555,7 +1555,10 @@ export = class Commands {
                 return;
             }
 
-            this.bot.sendMessage(steamID, `✅ Deleted ${name}!`);
+            this.bot.sendMessage(
+                steamID,
+                `✅ Deleted ${(uncraft ? 'Non-Craftable ' : '') + (untrade ? 'Non-Tradable ' : '') + name}!`
+            );
         });
     }
 
