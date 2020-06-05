@@ -1535,29 +1535,14 @@ export = class Commands {
 
         if (assetids.length === 0) {
             // No backpack expanders
-            this.bot.sendMessage(
-                steamID,
-                `❌ I couldn't find any ${(uncraft ? 'Non-Craftable ' : '') +
-                    (untrade ? 'Non-Tradable ' : '') +
-                    pluralize(name, 0)}`
-            );
+            this.bot.sendMessage(steamID, `❌ I couldn't find any ${pluralize(name, 0)}`);
             return;
         }
 
         this.bot.tf2gc.deleteItem(assetids[0], err => {
             if (err) {
-                log.warn(
-                    `Error trying to delete ${(uncraft ? 'Non-Craftable ' : '') +
-                        (untrade ? 'Non-Tradable ' : '') +
-                        name}: `,
-                    err
-                );
-                this.bot.sendMessage(
-                    steamID,
-                    `❌ Failed to delete ${(uncraft ? 'Non-Craftable ' : '') +
-                        (untrade ? 'Non-Tradable ' : '') +
-                        name}: ${err.message}`
-                );
+                log.warn(`Error trying to delete ${name}: `, err);
+                this.bot.sendMessage(steamID, `❌ Failed to delete ${name}: ${err.message}`);
                 return;
             }
 
