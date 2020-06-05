@@ -1495,7 +1495,9 @@ export = class Commands {
                 • Skull Island Topper: 941;6;untradable
                 • Spellbook Page: 8935;6;untradable
                 • Gun Mettle Campaign Coin: 5809;6;untradable
-                • MONOCULUS!: 581;6;untradable`
+                • MONOCULUS!: 581;6;untradable
+                
+                Or other items, please refer here: https://bit.ly/3gZQxFQ (defindex)`
             );
             return;
         }
