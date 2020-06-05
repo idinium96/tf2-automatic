@@ -1076,7 +1076,7 @@ export = class MyHandler extends Handler {
         const userMinRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
         const userMaxRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
 
-        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key');
+        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null;
 
         if (isNaN(userMinKeys) || isNaN(userMinRefinedtoScrap) || isNaN(userMaxRefinedtoScrap)) {
             log.warn(
@@ -1111,13 +1111,13 @@ export = class MyHandler extends Handler {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
-            if (checkKeysAlreadyExist !== null && isSellingKeys) {
+            if (checkKeysAlreadyExist && isSellingKeys) {
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
-            } else if (checkKeysAlreadyExist !== null && isBuyingKeys) {
+            } else if (checkKeysAlreadyExist && isBuyingKeys) {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
-            } else if (checkKeysAlreadyExist === null && isSellingKeys) {
+            } else if (!checkKeysAlreadyExist && isSellingKeys) {
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
-            } else if (!checkKeysAlreadyExist === null && isBuyingKeys) {
+            } else if (!checkKeysAlreadyExist && isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
             }
         }
