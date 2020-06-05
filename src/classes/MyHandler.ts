@@ -1017,9 +1017,6 @@ export = class MyHandler extends Handler {
                     (meta.uniqueReasons.includes('🟥INVALID_VALUE') && !meta.uniqueReasons.includes('🟨INVALID_ITEMS')
                         ? missingPureNote
                         : '') +
-                    (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
-                        ? `My owner time is currently at ${emoji} ${time + (note !== '' ? `. ${note}.` : '.')}`
-                        : '') +
                     (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
                         ? `\n\nNote:\n${reviewReasons.join('\n')}`
                         : '') +
@@ -1029,6 +1026,9 @@ export = class MyHandler extends Handler {
                               /%keyRate%/g,
                               `${keyPrice.sell.metal.toString()} ref`
                           ).replace(/%pureStock%/g, pureStock.join(', ').toString())
+                        : '') +
+                    (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
+                        ? `\n\nMy owner time is currently at ${emoji} ${time + (note !== '' ? `. ${note}.` : '.')}`
                         : '')
             );
             if (
