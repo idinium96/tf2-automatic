@@ -86,7 +86,7 @@ export = class MyHandler extends Handler {
 
         const groups = parseJSON(process.env.GROUPS);
         if (groups !== null && Array.isArray(groups)) {
-            groups.forEach(function(groupID64) {
+            groups.forEach(function (groupID64) {
                 if (!new SteamID(groupID64).isValid()) {
                     throw new Error(`Invalid group SteamID64 "${groupID64}"`);
                 }
@@ -97,7 +97,7 @@ export = class MyHandler extends Handler {
 
         const friendsToKeep = parseJSON(process.env.KEEP).concat(this.bot.getAdmins());
         if (friendsToKeep !== null && Array.isArray(friendsToKeep)) {
-            friendsToKeep.forEach(function(steamID64) {
+            friendsToKeep.forEach(function (steamID64) {
                 if (!new SteamID(steamID64).isValid()) {
                     throw new Error(`Invalid SteamID64 "${steamID64}"`);
                 }
@@ -130,7 +130,7 @@ export = class MyHandler extends Handler {
             files.readFile(paths.files.pricelist, true),
             files.readFile(paths.files.loginAttempts, true),
             files.readFile(paths.files.pollData, true)
-        ]).then(function([loginKey, pricelist, loginAttempts, pollData]) {
+        ]).then(function ([loginKey, pricelist, loginAttempts, pollData]) {
             return { loginKey, pricelist, loginAttempts, pollData };
         });
     }
@@ -138,14 +138,14 @@ export = class MyHandler extends Handler {
     onReady(): void {
         log.info(
             'tf2-automatic v' +
-                process.env.BOT_VERSION +
-                ' is ready! ' +
-                pluralize('item', this.bot.pricelist.getLength(), true) +
-                ' in pricelist, ' +
-                pluralize('listing', this.bot.listingManager.listings.length, true) +
-                ' on www.backpack.tf (cap: ' +
-                this.bot.listingManager.cap +
-                ')'
+            process.env.BOT_VERSION +
+            ' is ready! ' +
+            pluralize('item', this.bot.pricelist.getLength(), true) +
+            ' in pricelist, ' +
+            pluralize('listing', this.bot.listingManager.listings.length, true) +
+            ' on www.backpack.tf (cap: ' +
+            this.bot.listingManager.cap +
+            ')'
         );
 
         this.bot.client.gamesPlayed(['tf2-automatic', 440]);
@@ -182,7 +182,7 @@ export = class MyHandler extends Handler {
                 this.updateToDisableAutoKeys();
             }
 
-            this.bot.listings.removeAll().asCallback(function(err) {
+            this.bot.listings.removeAll().asCallback(function (err) {
                 if (err) {
                     log.warn('Failed to remove all listings: ', err);
                 }
@@ -226,7 +226,7 @@ export = class MyHandler extends Handler {
     onLoginKey(loginKey: string): void {
         log.debug('New login key');
 
-        files.writeFile(paths.files.loginKey, loginKey, false).catch(function(err) {
+        files.writeFile(paths.files.loginKey, loginKey, false).catch(function (err) {
             log.warn('Failed to save login key: ', err);
         });
     }
@@ -241,7 +241,7 @@ export = class MyHandler extends Handler {
     }
 
     onLoginAttempts(attempts: number[]): void {
-        files.writeFile(paths.files.loginAttempts, attempts, true).catch(function(err) {
+        files.writeFile(paths.files.loginAttempts, attempts, true).catch(function (err) {
             log.warn('Failed to save login attempts: ', err);
         });
     }
@@ -369,22 +369,22 @@ export = class MyHandler extends Handler {
         if (
             offer.itemsToGive.length === 0 &&
             (offerMessage.includes('gift') ||
-            offerMessage.includes('donat') || // So that 'donate' or 'donation' will also be accepted
-            offerMessage.includes('tip') || // All others are synonyms
-            offerMessage.includes('tribute') ||
-            offerMessage.includes('souvenir') ||
-            offerMessage.includes('favor') ||
-            offerMessage.includes('giveaway') ||
-            offerMessage.includes('bonus') ||
-            offerMessage.includes('grant') ||
-            offerMessage.includes('bounty') ||
-            offerMessage.includes('present') ||
-            offerMessage.includes('contribution') ||
-            offerMessage.includes('award') ||
-            offerMessage.includes('nice') || // Up until here actually
-            offerMessage.includes('happy') || // All below people might also use
-            offerMessage.includes('thank') ||
-            offerMessage.includes('goo') || // For 'good', 'goodie' or anything else
+                offerMessage.includes('donat') || // So that 'donate' or 'donation' will also be accepted
+                offerMessage.includes('tip') || // All others are synonyms
+                offerMessage.includes('tribute') ||
+                offerMessage.includes('souvenir') ||
+                offerMessage.includes('favor') ||
+                offerMessage.includes('giveaway') ||
+                offerMessage.includes('bonus') ||
+                offerMessage.includes('grant') ||
+                offerMessage.includes('bounty') ||
+                offerMessage.includes('present') ||
+                offerMessage.includes('contribution') ||
+                offerMessage.includes('award') ||
+                offerMessage.includes('nice') || // Up until here actually
+                offerMessage.includes('happy') || // All below people might also use
+                offerMessage.includes('thank') ||
+                offerMessage.includes('goo') || // For 'good', 'goodie' or anything else
                 offerMessage.includes('awesome') ||
                 offerMessage.includes('rep') ||
                 offerMessage.includes('joy') ||
@@ -408,32 +408,32 @@ export = class MyHandler extends Handler {
         // A list of things that is wrong about the offer and other information
         const wrongAboutOffer: (
             | {
-                  reason: '🟦OVERSTOCKED';
-                  sku: string;
-                  buying: boolean;
-                  diff: number;
-                  amountCanTrade: number;
-              }
+                reason: '🟦OVERSTOCKED';
+                sku: string;
+                buying: boolean;
+                diff: number;
+                amountCanTrade: number;
+            }
             | {
-                  reason: '🟨INVALID_ITEMS';
-                  sku: string;
-                  buying: boolean;
-                  amount: number;
-              }
+                reason: '🟨INVALID_ITEMS';
+                sku: string;
+                buying: boolean;
+                amount: number;
+            }
             | {
-                  reason: '🟥INVALID_VALUE';
-                  our: number;
-                  their: number;
-              }
+                reason: '🟥INVALID_VALUE';
+                our: number;
+                their: number;
+            }
             | {
-                  reason: '🟪DUPE_CHECK_FAILED';
-                  assetid?: string;
-                  error?: string;
-              }
+                reason: '🟪DUPE_CHECK_FAILED';
+                assetid?: string;
+                error?: string;
+            }
             | {
-                  reason: '🟫DUPED_ITEMS';
-                  assetid: string;
-              }
+                reason: '🟫DUPED_ITEMS';
+                assetid: string;
+            }
         )[] = [];
 
         let assetidsToCheck = [];
@@ -679,7 +679,7 @@ export = class MyHandler extends Handler {
             const requests = assetidsToCheck.map(assetid => {
                 return (callback: (err: Error | null, result: boolean | null) => void): void => {
                     log.debug('Dupe checking ' + assetid + '...');
-                    Promise.resolve(inventory.isDuped(assetid)).asCallback(function(err, result) {
+                    Promise.resolve(inventory.isDuped(assetid)).asCallback(function (err, result) {
                         log.debug('Dupe check for ' + assetid + ' done');
                         callback(err, result);
                     });
@@ -687,7 +687,7 @@ export = class MyHandler extends Handler {
             });
 
             try {
-                const result: (boolean | null)[] = await Promise.fromCallback(function(callback) {
+                const result: (boolean | null)[] = await Promise.fromCallback(function (callback) {
                     async.series(requests, callback);
                 });
 
@@ -841,17 +841,17 @@ export = class MyHandler extends Handler {
                     this.bot.messageAdmins(
                         'trade',
                         `/me Trade #${offer.id} with ${offer.partner.getSteamID64()} is accepted. ✅\n\nSummary:\n` +
-                            offer.summarize(this.bot.schema) +
-                            (valueDiff > 0
-                                ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : valueDiff < 0
+                        offer.summarize(this.bot.schema) +
+                        (valueDiff > 0
+                            ? `\n\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                            (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                            : valueDiff < 0
                                 ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref | 💰 Pure stock: ${pureStock
-                                .join(', ')
-                                .toString()} ref`,
+                        `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref | 💰 Pure stock: ${pureStock
+                            .join(', ')
+                            .toString()} ref`,
                         []
                     );
                 }
@@ -938,28 +938,28 @@ export = class MyHandler extends Handler {
             timeEmoji.includes('T00:') || timeEmoji.includes('T12:')
                 ? '🕛'
                 : timeEmoji.includes('T01:') || timeEmoji.includes('T13:')
-                ? '🕐'
-                : timeEmoji.includes('T02:') || timeEmoji.includes('T14:')
-                ? '🕑'
-                : timeEmoji.includes('T03:') || timeEmoji.includes('T15:')
-                ? '🕒'
-                : timeEmoji.includes('T04:') || timeEmoji.includes('T16:')
-                ? '🕓'
-                : timeEmoji.includes('T05:') || timeEmoji.includes('T17:')
-                ? '🕔'
-                : timeEmoji.includes('T06:') || timeEmoji.includes('T18:')
-                ? '🕕'
-                : timeEmoji.includes('T07:') || timeEmoji.includes('T19:')
-                ? '🕖'
-                : timeEmoji.includes('T08:') || timeEmoji.includes('T20:')
-                ? '🕗'
-                : timeEmoji.includes('T09:') || timeEmoji.includes('T21:')
-                ? '🕘'
-                : timeEmoji.includes('T10:') || timeEmoji.includes('T22:')
-                ? '🕙'
-                : timeEmoji.includes('T11:') || timeEmoji.includes('T23:')
-                ? '🕚'
-                : '';
+                    ? '🕐'
+                    : timeEmoji.includes('T02:') || timeEmoji.includes('T14:')
+                        ? '🕑'
+                        : timeEmoji.includes('T03:') || timeEmoji.includes('T15:')
+                            ? '🕒'
+                            : timeEmoji.includes('T04:') || timeEmoji.includes('T16:')
+                                ? '🕓'
+                                : timeEmoji.includes('T05:') || timeEmoji.includes('T17:')
+                                    ? '🕔'
+                                    : timeEmoji.includes('T06:') || timeEmoji.includes('T18:')
+                                        ? '🕕'
+                                        : timeEmoji.includes('T07:') || timeEmoji.includes('T19:')
+                                            ? '🕖'
+                                            : timeEmoji.includes('T08:') || timeEmoji.includes('T20:')
+                                                ? '🕗'
+                                                : timeEmoji.includes('T09:') || timeEmoji.includes('T21:')
+                                                    ? '🕘'
+                                                    : timeEmoji.includes('T10:') || timeEmoji.includes('T22:')
+                                                        ? '🕙'
+                                                        : timeEmoji.includes('T11:') || timeEmoji.includes('T23:')
+                                                            ? '🕚'
+                                                            : '';
 
         const timeNote = process.env.TIME_ADDITIONAL_NOTES ? process.env.TIME_ADDITIONAL_NOTES : '';
 
@@ -1005,28 +1005,28 @@ export = class MyHandler extends Handler {
             this.bot.sendMessage(
                 offer.partner,
                 `/pre ⚠️ Your offer is waiting for review.\nReason: ${meta.uniqueReasons.join(', ')}` +
-                    '\n\nYour offer summary:\n' +
-                    offer
-                        .summarize(this.bot.schema)
-                        .replace('Asked', '🤖  My side')
-                        .replace('Offered', '🧐Your side') +
-                    (meta.uniqueReasons.includes('🟥INVALID_VALUE') && !meta.uniqueReasons.includes('🟨INVALID_ITEMS')
-                        ? missingPureNote
-                        : '') +
-                    (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
-                        ? `\n\n📝Note📝\n${reviewReasons.join('\n')}`
-                        : '') +
-                    (process.env.ADDITIONAL_NOTE
-                        ? '\n\n' +
-                          process.env.ADDITIONAL_NOTE.replace(
-                              /%keyRate%/g,
-                              `${keyPrice.sell.metal.toString()} ref`
-                          ).replace(/%pureStock%/g, pureStock.join(', ').toString())
-                        : '') +
-                    (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
-                        ? `\n\nMy owner time is currently at ${emoji} ${time +
-                              (timeNote !== '' ? `. ${timeNote}.` : '.')}`
-                        : '')
+                '\n\nYour offer summary:\n' +
+                offer
+                    .summarize(this.bot.schema)
+                    .replace('Asked', '🤖  My side')
+                    .replace('Offered', '🧐Your side') +
+                (meta.uniqueReasons.includes('🟥INVALID_VALUE') && !meta.uniqueReasons.includes('🟨INVALID_ITEMS')
+                    ? missingPureNote
+                    : '') +
+                (process.env.DISABLE_REVIEW_OFFER_NOTE === 'false'
+                    ? `\n\n📝Note📝\n${reviewReasons.join('\n')}`
+                    : '') +
+                (process.env.ADDITIONAL_NOTE
+                    ? '\n\n' +
+                    process.env.ADDITIONAL_NOTE.replace(
+                        /%keyRate%/g,
+                        `${keyPrice.sell.metal.toString()} ref`
+                    ).replace(/%pureStock%/g, pureStock.join(', ').toString())
+                    : '') +
+                (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
+                    ? `\n\nMy owner time is currently at ${emoji} ${time +
+                    (timeNote !== '' ? `. ${timeNote}.` : '.')}`
+                    : '')
             );
             if (
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
@@ -1041,12 +1041,12 @@ export = class MyHandler extends Handler {
                     
                     Offer Summary:
                     ${offer.summarize(this.bot.schema)}${
-                        valueDiff > 0
-                            ? `\n📈 Profit from overpay: ${valueDiffRef} ref` +
-                              (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                            : valueDiff < 0
+                    valueDiff > 0
+                        ? `\n📈 Profit from overpay: ${valueDiffRef} ref` +
+                        (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                        : valueDiff < 0
                             ? `\n📉 Loss from underpay: ${valueDiffRef} ref` +
-                              (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                            (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                             : ''
                     }${offerMessage.length !== 0 ? `\n\n💬 Offer message: "${offerMessage}"` : ''}
                     
@@ -1091,14 +1091,14 @@ export = class MyHandler extends Handler {
 
         // remove autobuy keys if ref in inventory > user defined max AND and keys in inv >= user defined max keys
         const isRemoveBuyingKeys =
-            (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
+            (CurrPureTotaltoScrap > userMinRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
 
         // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
         const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
 
         // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
         const isRemoveSellingKeys =
-            (CurrPureTotaltoScrap < userMinRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
+            (CurrPureTotaltoScrap < userMaxRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
 
         const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
 
@@ -1329,7 +1329,7 @@ export = class MyHandler extends Handler {
         this.bot.getAdmins().forEach(steamID => {
             if (!this.bot.friends.isFriend(steamID)) {
                 log.info(`Not friends with admin ${steamID}, sending friend request...`);
-                this.bot.client.addFriend(steamID, function(err) {
+                this.bot.client.addFriend(steamID, function (err) {
                     if (err) {
                         log.warn('Failed to send friend request: ', err);
                     }
@@ -1343,7 +1343,7 @@ export = class MyHandler extends Handler {
 
         log.debug(`Sending friend request to ${steamID64}...`);
 
-        this.bot.client.addFriend(steamID, function(err) {
+        this.bot.client.addFriend(steamID, function (err) {
             if (err) {
                 log.warn(`Failed to send friend request to ${steamID64}: `, err);
                 return;
@@ -1378,8 +1378,8 @@ export = class MyHandler extends Handler {
                         process.env.CUSTOM_WELCOME_MESSAGE
                             ? process.env.CUSTOM_WELCOME_MESSAGE
                             : `🙋🏻‍♀️ Hi! If you don't know how things work, please type "!` +
-                                  (isAdmin ? 'help' : 'how2trade') +
-                                  '" 🤗'
+                            (isAdmin ? 'help' : 'how2trade') +
+                            '" 🤗'
                     );
                     return;
                 }
@@ -1400,8 +1400,8 @@ export = class MyHandler extends Handler {
                 process.env.CUSTOM_WELCOME_MESSAGE
                     ? process.env.CUSTOM_WELCOME_MESSAGE
                     : `🙋🏻‍♀️ Hi ${friend.player_name}! If you don't know how things work, please type "!` +
-                          (isAdmin ? 'help' : 'how2trade') +
-                          '" 🤗'
+                    (isAdmin ? 'help' : 'how2trade') +
+                    '" 🤗'
             );
         });
     }
@@ -1421,7 +1421,7 @@ export = class MyHandler extends Handler {
             const friendsWithTrades = this.bot.trades.getTradesWithPeople(friends);
 
             // Ignore friends to keep
-            this.friendsToKeep.forEach(function(steamID) {
+            this.friendsToKeep.forEach(function (steamID) {
                 delete friendsWithTrades[steamID];
             });
 
@@ -1500,7 +1500,7 @@ export = class MyHandler extends Handler {
         let partnerAvatar: string;
         let partnerName: string;
         log.debug('getting partner Avatar and Name...');
-        offer.getUserDetails(function(err, me, them) {
+        offer.getUserDetails(function (err, me, them) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 partnerAvatar =
@@ -1515,9 +1515,9 @@ export = class MyHandler extends Handler {
             const partnerNameNoFormat =
                 partnerName.includes('_') || partnerName.includes('*') || partnerName.includes('~~')
                     ? partnerName
-                          .replace(/_/g, '‗')
-                          .replace(/\*/g, '★')
-                          .replace(/~/g, '⁓')
+                        .replace(/_/g, '‗')
+                        .replace(/\*/g, '★')
+                        .replace(/~/g, '⁓')
                     : partnerName;
 
             /*eslint-disable */
@@ -1547,11 +1547,11 @@ export = class MyHandler extends Handler {
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : '') +
+                                    ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
+                                    (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                    : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
@@ -1632,7 +1632,7 @@ export = class MyHandler extends Handler {
         let personaName: string;
         let avatarFull: string;
         log.debug('getting partner Avatar and Name...');
-        this.getPartnerDetails(offer, function(err, details) {
+        this.getPartnerDetails(offer, function (err, details) {
             if (err) {
                 log.debug('Error retrieving partner Avatar and Name: ', err);
                 personaName = 'unknown';
@@ -1647,9 +1647,9 @@ export = class MyHandler extends Handler {
             const partnerNameNoFormat =
                 personaName.includes('_') || personaName.includes('*') || personaName.includes('~~')
                     ? personaName
-                          .replace(/_/g, '‗')
-                          .replace(/\*/g, '★')
-                          .replace(/~/g, '⁓')
+                        .replace(/_/g, '‗')
+                        .replace(/\*/g, '★')
+                        .replace(/~/g, '⁓')
                     : personaName;
 
             /*eslint-disable */
@@ -1677,11 +1677,11 @@ export = class MyHandler extends Handler {
                             ${tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**')}` +
                             (valueDiff > 0
                                 ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : '') +
+                                    ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
+                                    (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
+                                    : '') +
                             `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})` +
                             `\n\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
                                 .join(', ')
@@ -1701,7 +1701,7 @@ export = class MyHandler extends Handler {
     private getPartnerDetails(offer: TradeOfferManager.TradeOffer, callback: (err: any, details: any) => void): any {
         // check state of the offer
         if (offer.state === TradeOfferManager.ETradeOfferState.active) {
-            offer.getUserDetails(function(err, me, them) {
+            offer.getUserDetails(function (err, me, them) {
                 if (err) {
                     callback(err, {});
                 } else {
@@ -1764,14 +1764,14 @@ export = class MyHandler extends Handler {
                 this.bot.client.myGroups[steamID] !== SteamUser.EClanRelationship.Member &&
                 this.bot.client.myGroups[steamID] !== SteamUser.EClanRelationship.Blocked
             ) {
-                this.bot.community.getSteamGroup(new SteamID(steamID), function(err, group) {
+                this.bot.community.getSteamGroup(new SteamID(steamID), function (err, group) {
                     if (err) {
                         log.warn('Failed to get group: ', err);
                         return;
                     }
 
                     log.info(`Not member of group ${group.name} ("${steamID}"), joining...`);
-                    group.join(function(err) {
+                    group.join(function (err) {
                         if (err) {
                             log.warn('Failed to join group: ', err);
                         }
@@ -1782,7 +1782,7 @@ export = class MyHandler extends Handler {
     }
 
     onPollData(pollData: PollData): void {
-        files.writeFile(paths.files.pollData, pollData, true).catch(function(err) {
+        files.writeFile(paths.files.pollData, pollData, true).catch(function (err) {
             log.warn('Failed to save polldata: ', err);
         });
     }
@@ -1801,7 +1801,7 @@ export = class MyHandler extends Handler {
                 pricelist.map(entry => entry.getJSON()),
                 true
             )
-            .catch(function(err) {
+            .catch(function (err) {
                 log.warn('Failed to save pricelist: ', err);
             });
     }
