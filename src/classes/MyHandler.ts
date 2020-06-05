@@ -968,6 +968,8 @@ export = class MyHandler extends Handler {
                 ? '🕚'
                 : '';
 
+        const timeNote = process.env.TIME_ADDITIONAL_NOTES ? process.env.TIME_ADDITIONAL_NOTES : '';
+
         if (action === 'skip') {
             const reviewReasons: string[] = [];
             let note: string;
@@ -1028,7 +1030,8 @@ export = class MyHandler extends Handler {
                           ).replace(/%pureStock%/g, pureStock.join(', ').toString())
                         : '') +
                     (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
-                        ? `\n\nMy owner time is currently at ${emoji} ${time + (note !== '' ? `. ${note}.` : '.')}`
+                        ? `\n\nMy owner time is currently at ${emoji} ${time +
+                              (timeNote !== '' ? `. ${timeNote}.` : '.')}`
                         : '')
             );
             if (
