@@ -934,6 +934,42 @@ export = class MyHandler extends Handler {
             itemsList.push(theirItemsSku);
         }
 
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
+
+        const timeEmoji = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC')
+            .format();
+        const emoji =
+            timeEmoji.includes('T00:') || timeEmoji.includes('T12:')
+                ? '🕛'
+                : timeEmoji.includes('T01:') || timeEmoji.includes('T13:')
+                ? '🕐'
+                : timeEmoji.includes('T02:') || timeEmoji.includes('T14:')
+                ? '🕑'
+                : timeEmoji.includes('T03:') || timeEmoji.includes('T15:')
+                ? '🕒'
+                : timeEmoji.includes('T04:') || timeEmoji.includes('T16:')
+                ? '🕓'
+                : timeEmoji.includes('T05:') || timeEmoji.includes('T17:')
+                ? '🕔'
+                : timeEmoji.includes('T06:') || timeEmoji.includes('T18:')
+                ? '🕕'
+                : timeEmoji.includes('T07:') || timeEmoji.includes('T19:')
+                ? '🕖'
+                : timeEmoji.includes('T08:') || timeEmoji.includes('T20:')
+                ? '🕗'
+                : timeEmoji.includes('T09:') || timeEmoji.includes('T21:')
+                ? '🕘'
+                : timeEmoji.includes('T10:') || timeEmoji.includes('T22:')
+                ? '🕙'
+                : timeEmoji.includes('T11:') || timeEmoji.includes('T23:')
+                ? '🕚'
+                : '';
+
+        const timeNote = process.env.TIME_ADDITIONAL_NOTES ? process.env.TIME_ADDITIONAL_NOTES : '';
+
         if (action === 'skip') {
             const reviewReasons: string[] = [];
             let note: string;
@@ -992,6 +1028,10 @@ export = class MyHandler extends Handler {
                               /%keyRate%/g,
                               `${keyPrice.sell.metal.toString()} ref`
                           ).replace(/%pureStock%/g, pureStock.join(', ').toString())
+                        : '') +
+                    (process.env.DISABLE_SHOW_CURRENT_TIME === 'false'
+                        ? `\n\nMy owner time is currently at ${emoji} ${time +
+                              (timeNote !== '' ? `. ${timeNote}.` : '.')}`
                         : '')
             );
             if (
@@ -1491,16 +1531,16 @@ export = class MyHandler extends Handler {
                             `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
                             tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
                             (valueDiff > 0
-                                ? `\n\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
+                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : valueDiff < 0
-                                ? `\n\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
+                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
                             (isShowQuickLinks
-                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
-                                : '') +
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})\n`
+                                : '\n') +
                             (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
                                 : '') +
@@ -1636,8 +1676,8 @@ export = class MyHandler extends Handler {
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
                             (isShowQuickLinks
-                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
-                                : '') +
+                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})\n`
+                                : '\n') +
                             (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
                                 : '') +

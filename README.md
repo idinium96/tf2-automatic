@@ -69,7 +69,7 @@ You can see codes on how this feature works [here](https://github.com/idinium96/
 
 ## Emojis and more commands added
 
-![commands](https://user-images.githubusercontent.com/47635037/83775310-58f78b00-a6b9-11ea-942f-2381496ccd06.PNG)
+![commands](https://user-images.githubusercontent.com/47635037/83876566-a46a7180-a76b-11ea-8e2b-15920e4a4994.PNG)
 
 ## Variables in ecosystem.json summary
 
@@ -124,6 +124,12 @@ You can run your bot without this first, which then on the first run, it will pr
 - `SKIP_ACCOUNT_LIMITATIONS`: [true or false] - Default: false. Used to check your account limitation. It's better to set to true if your bot Steam account already a [premium account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
 - `SKIP_UPDATE_PROFILE_SETTINGS`: [true or false] - Default: false. This is just set your bot profile to public, so backpack.tf can load your bot inventory and etc correctly. If you already set all to public, just set this to true.
 
+#### Your time
+Time will be use in "!time" command and 
+- `TIMEZONE` - Please only use these [Timezone Format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), for example "Asia/Kuala_Lumpur".
+- `CUSTOM_TIME_FORMAT` - Please refer [this article](https://www.tutorialspoint.com/momentjs/momentjs_format.htm). Default is `MMMM Do YYYY, HH:mm:ss ZZ`.
+- `TIME_ADDITIONAL_NOTES` - Your additional note when the bot show your current time, such as your active hours, etc.
+
 #### Set to true if want to allow
 - `ALLOW_ESCROW`: [true or false] - Default: false. Escrow = trade hold
 - `ALLOW_OVERPAY`: [true or false] - Default: true. If people give an overpay, your bot will accept. Set it to false if you don't want.
@@ -155,8 +161,6 @@ You can run your bot without this first, which then on the first run, it will pr
 - `DISCORD_WEBHOOK_USERNAME` - Your Discord Webhook name, example: ※Fumino⚡
 - `DISCORD_WEBHOOK_AVATAR_URL` - Your Discord Webhook Avatar, must be in URL form. Example: https://gyazo.com/421792b5ea817c36054c7991fb18cdbc
 - `DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX` - Embed color, you can found yours at [spycolor.com](https://www.spycolor.com/) and copy the one that said "has decimal index of: `take the value here`". Example: "9171753" for #8bf329 color.
-- `TIMEZONE` - Please only use these [Timezone Format](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), for example "Asia/Kuala_Lumpur".
-- `CUSTOM_TIME_FORMAT` - Please refer [this article](https://www.tutorialspoint.com/momentjs/momentjs_format.htm). Default is `MMMM Do YYYY, HH:mm:ss ZZ`.
 
 **Note on How to get WEBHOOK_X_URL** - See this: https://gyazo.com/539739f0bab50636e20a0fb76e9f1720 (settings in your respective channels)
 #### Queue alert
@@ -192,7 +196,8 @@ You can run your bot without this first, which then on the first run, it will pr
 
 ### Manual Review settings
 - `ENABLE_MANUAL_REVIEW`: [true or false] - Set to true if you want any INVALID_VALUE/INVALID_ITEMS/OVERSTOCKED/DUPED_ITEMS/DUPE_CHECK_FAILED trades to be reviewed by you.
-- `DISABLE_REVIEW_OFFER_NOTE`: [true or false] - If set to true, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L906-L934)
+- `DISABLE_REVIEW_OFFER_NOTE`: [true or false] - If set to false, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L906-L934)
+- `DISABLE_SHOW_CURRENT_TIME`: [true or false] - If set to false, it will show owner time on offer review notification that trade partner will received.
 - `INVALID_VALUE_NOTE` - Your custom INVALID_VALUE note.
 - `INVALID_ITEMS_NOTE` - Your custom INVALID_ITEMS note.
 - `OVERSTOCKED_NOTE` - Your custom OVERSTOCKED note.

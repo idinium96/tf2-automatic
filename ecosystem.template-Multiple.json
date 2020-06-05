@@ -52,6 +52,10 @@
                 "SKIP_ACCOUNT_LIMITATIONS": true,
                 "SKIP_UPDATE_PROFILE_SETTINGS": true,
 
+                "TIMEZONE": "",
+                "CUSTOM_TIME_FORMAT": "",
+                "TIME_ADDITIONAL_NOTES": "",
+
                 "ALLOW_ESCROW": false,
                 "ALLOW_OVERPAY": true,
                 "ALLOW_BANNED": false,
@@ -73,8 +77,6 @@
                 "DISCORD_WEBHOOK_USERNAME": "",
                 "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
-                "TIMEZONE": "",
-                "CUSTOM_TIME_FORMAT": "",
 
                 "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
                 "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
@@ -104,6 +106,7 @@
 
                 "ENABLE_MANUAL_REVIEW": true,
                 "DISABLE_REVIEW_OFFER_NOTE": false,
+                "DISABLE_SHOW_CURRENT_TIME": false,
                 "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
                 "INVALID_ITEMS_NOTE": "Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.",
                 "OVERSTOCKED_NOTE": "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.",
@@ -173,6 +176,10 @@
                 "SKIP_ACCOUNT_LIMITATIONS": true,
                 "SKIP_UPDATE_PROFILE_SETTINGS": true,
 
+                "TIMEZONE": "",
+                "CUSTOM_TIME_FORMAT": "",
+                "TIME_ADDITIONAL_NOTES": "",
+
                 "ALLOW_ESCROW": false,
                 "ALLOW_OVERPAY": true,
                 "ALLOW_BANNED": false,
@@ -194,8 +201,6 @@
                 "DISCORD_WEBHOOK_USERNAME": "",
                 "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
-                "TIMEZONE": "",
-                "CUSTOM_TIME_FORMAT": "",
 
                 "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
                 "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
@@ -225,6 +230,7 @@
 
                 "ENABLE_MANUAL_REVIEW": true,
                 "DISABLE_REVIEW_OFFER_NOTE": false,
+                "DISABLE_SHOW_CURRENT_TIME": false,
                 "INVALID_VALUE_NOTE": "Your offer will be ignored. Please cancel it and make another offer with correct value.",
                 "INVALID_ITEMS_NOTE": "Some item(s) you offered might not in my pricelist. Please wait for the owner to verify it.",
                 "OVERSTOCKED_NOTE": "Some item(s) you offered might already reached max amount I can have OR it's a common bug on me. Please wait.",
