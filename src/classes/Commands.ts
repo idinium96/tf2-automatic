@@ -1525,7 +1525,7 @@ export = class Commands {
 
         const assetids = this.bot.inventoryManager.getInventory().findBySKU(SKU.fromObject(item), false);
 
-        const name = this.bot.schema.getName(item);
+        const name = this.bot.schema.getName(item, false);
 
         if (assetids.length === 0) {
             // No backpack expanders
