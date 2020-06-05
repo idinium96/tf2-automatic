@@ -417,7 +417,7 @@ export = class Commands {
 
         this.bot.sendMessage(
             steamID,
-            `My owner time is currently at ${emoji} ${time + (note !== '' ? ` ${note}.` : '.')}`
+            `My owner time is currently at ${emoji} ${time + (note !== '' ? `. ${note}.` : '.')}`
         );
     }
 
