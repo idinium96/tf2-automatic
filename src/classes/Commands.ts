@@ -424,7 +424,7 @@ export = class Commands {
                 ? '🕚'
                 : '';
 
-        const note = process.env.TIME_COMMAND_ADDITIONAL_NOTES ? process.env.TIME_COMMAND_ADDITIONAL_NOTES : '';
+        const note = process.env.TIME_ADDITIONAL_NOTES ? process.env.TIME_ADDITIONAL_NOTES : '';
 
         this.bot.sendMessage(
             steamID,
