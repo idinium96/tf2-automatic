@@ -424,7 +424,12 @@ export = class Commands {
                 ? '🕚'
                 : '';
 
-        this.bot.sendMessage(steamID, `My owner time is currently at ${emoji} ${time}.`);
+        const note = process.env.TIME_COMMAND_ADDITIONAL_NOTES ? process.env.TIME_COMMAND_ADDITIONAL_NOTES : '';
+
+        this.bot.sendMessage(
+            steamID,
+            `My owner time is currently at ${emoji} ${time + (note !== '' ? `. ${note}.` : '.')}`
+        );
     }
 
     private pureCommand(steamID: SteamID): void {
