@@ -1508,7 +1508,7 @@ export = class Commands {
         let untrade = false;
         if (params.sku.includes('untradable')) {
             params.sku = params.sku.replace(';untradable', '');
-            untrade = false;
+            untrade = true;
         }
 
         let uncraft = false;
