@@ -47,6 +47,8 @@ export = class MyHandler extends Handler {
 
     private checkAutoSellAndBuyKeysStatus = false;
 
+    private isBuyingKeys = false;
+
     recentlySentMessage: UnknownDictionary<number> = {};
 
     constructor(bot: Bot) {
@@ -809,6 +811,10 @@ export = class MyHandler extends Handler {
 
                 offer.log('trade', 'has been accepted.');
 
+                const autoKeysEnabled = process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS !== 'false';
+                const autoKeysStatus = this.checkAutoSellAndBuyKeysStatus;
+                const isBuyingKeys = this.isBuyingKeys;
+
                 const pureStock = this.pureStock();
 
                 const keyPrice = this.bot.pricelist.getKeyPrices();
@@ -849,9 +855,14 @@ export = class MyHandler extends Handler {
                                 ? `\n\n📉 Loss from underpay: ${valueDiffRef} ref` +
                                   (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
                                 : '') +
-                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref\n💰 Pure stock: ${pureStock
-                                .join(', ')
-                                .toString()} ref`,
+                            `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref` +
+                            `${
+                                autoKeysEnabled
+                                    ? ' | Autokeys: ' +
+                                      (autoKeysStatus ? '✅' + (isBuyingKeys ? ' (buying)' : ' (selling)') : '🛑')
+                                    : ''
+                            }
+                        💰 Pure stock: ${pureStock.join(', ').toString()} ref`,
                         []
                     );
                 }
@@ -1105,20 +1116,27 @@ export = class MyHandler extends Handler {
             if (isRemoveBuyingKeys || isRemoveSellingKeys) {
                 // disable Autokeys
                 this.updateToDisableAutoKeys();
+                this.isBuyingKeys = false;
             } else if (isSellingKeys) {
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = false;
             } else if (isBuyingKeys) {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = true;
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
             if (!checkKeysAlreadyExist && isSellingKeys) {
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = false;
             } else if (!checkKeysAlreadyExist && isBuyingKeys) {
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = true;
             } else if (checkKeysAlreadyExist && isSellingKeys) {
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = false;
             } else if (checkKeysAlreadyExist && isBuyingKeys) {
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
+                this.isBuyingKeys = true;
             }
         }
     }
@@ -1603,6 +1621,10 @@ export = class MyHandler extends Handler {
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
         const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
+        const autoKeysEnabled = process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS !== 'false';
+        const autoKeysStatus = this.checkAutoSellAndBuyKeysStatus;
+        const isBuyingKeys = this.isBuyingKeys;
+
         let valueDiff: number;
         let valueDiffRef: number;
         let valueDiffKey: string;
@@ -1699,7 +1721,13 @@ export = class MyHandler extends Handler {
                                 ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})\n`
                                 : '\n') +
                             (isShowKeyRate
-                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
+                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref` +
+                                  `${
+                                      autoKeysEnabled
+                                          ? ' | Autokeys: ' +
+                                            (autoKeysStatus ? '✅' + (isBuyingKeys ? ' (buying)' : ' (selling)') : '🛑')
+                                          : ''
+                                  }`
                                 : '') +
                             (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : '') +
                             (isShowAdditionalNotes
