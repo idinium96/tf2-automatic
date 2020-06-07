@@ -1082,11 +1082,11 @@ export = class MyHandler extends Handler {
         if (this.autoSellAndBuyKeysEnabled === false) {
             return;
         }
-        const CurrPureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
-        const CurrPureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
-        const CurrPureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
-        const CurrPureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
-        const CurrPureTotaltoScrap = Currencies.toScrap(CurrPureRef + CurrPureRec + CurrPureScrap);
+        const currPureKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const currPureScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const currPureRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const currPureRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const currPureTotaltoScrap = Currencies.toScrap(currPureRef + currPureRec + currPureScrap);
 
         const userMinKeys = parseInt(process.env.MINIMUM_KEYS);
         const userMaxKeys = parseInt(process.env.MAXIMUM_KEYS);
@@ -1105,25 +1105,25 @@ export = class MyHandler extends Handler {
         }
 
         // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
-        const isBuyingKeys = (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys <= userMaxKeys) !== false;
+        const isBuyingKeys = (currPureTotaltoScrap > userMaxRefinedtoScrap && currPureKeys <= userMaxKeys) !== false;
 
         // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
-        const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
+        const isSellingKeys = (currPureTotaltoScrap < userMinRefinedtoScrap && currPureKeys >= userMinKeys) !== false;
 
         // remove Autokeys if ref in between min and max with keys < min or keys > max
         const isRemoveAutoKeys =
-            (CurrPureTotaltoScrap >= userMinRefinedtoScrap &&
-                CurrPureTotaltoScrap <= userMaxRefinedtoScrap &&
-                (CurrPureKeys <= userMinKeys ||
-                    (enableKeyBanking ? false : CurrPureKeys >= userMinKeys && CurrPureKeys <= userMaxKeys) ||
-                    CurrPureKeys >= userMaxKeys)) !== false;
+            (currPureTotaltoScrap >= userMinRefinedtoScrap &&
+                currPureTotaltoScrap <= userMaxRefinedtoScrap &&
+                (currPureKeys <= userMinKeys ||
+                    (enableKeyBanking ? false : currPureKeys >= userMinKeys && currPureKeys <= userMaxKeys) ||
+                    currPureKeys >= userMaxKeys)) !== false;
 
         const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
 
         log.debug(
             `Autokeys status:
-            Ref: MinRef(${userMinRefinedtoScrap}) < CurrRef(${CurrPureTotaltoScrap}) < MaxRef(${userMaxRefinedtoScrap})
-            Key: MinKeys(${userMinKeys}) <= CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+            Ref: MinRef(${userMinRefinedtoScrap}) < CurrRef(${currPureTotaltoScrap}) < MaxRef(${userMaxRefinedtoScrap})
+            Key: MinKeys(${userMinKeys}) <= CurrKeys(${currPureKeys}) <= MaxKeys(${userMaxKeys})`
         );
 
         if (isAlreadyCreatedtoBuyOrSell) {
@@ -1137,14 +1137,14 @@ export = class MyHandler extends Handler {
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                    `Sell: CurrRef(${currPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${currPureKeys}) >= MaxKeys(${userMinKeys})`
                 );
             } else if (isBuyingKeys) {
                 this.isBuyingKeys = true;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                    `Buy: CurrRef(${currPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${currPureKeys}) <= MaxKeys(${userMaxKeys})`
                 );
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
@@ -1153,28 +1153,28 @@ export = class MyHandler extends Handler {
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                    `Sell: CurrRef(${currPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${currPureKeys}) >= MaxKeys(${userMinKeys})`
                 );
             } else if (!checkKeysAlreadyExist && isBuyingKeys) {
                 this.isBuyingKeys = true;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                    `Buy: CurrRef(${currPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${currPureKeys}) <= MaxKeys(${userMaxKeys})`
                 );
             } else if (checkKeysAlreadyExist && isSellingKeys) {
                 this.isBuyingKeys = false;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                    `Sell: CurrRef(${currPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${currPureKeys}) >= MaxKeys(${userMinKeys})`
                 );
             } else if (checkKeysAlreadyExist && isBuyingKeys) {
                 this.isBuyingKeys = true;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
                 log.debug(
-                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                    `Buy: CurrRef(${currPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${currPureKeys}) <= MaxKeys(${userMaxKeys})`
                 );
             }
         }
