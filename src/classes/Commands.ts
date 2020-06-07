@@ -18,7 +18,7 @@ import CartQueue from './CartQueue';
 import { Item, Currency } from '../types/TeamFortress2';
 import { UnknownDictionaryKnownValues, UnknownDictionary } from '../types/common';
 import { fixItem } from '../lib/items';
-import { requestCheck } from '../lib/ptf-api';
+import { requestCheck, getPrice } from '../lib/ptf-api';
 import validator from '../lib/validator';
 import log from '../lib/logger';
 import SchemaManager from 'tf2-schema';
@@ -53,6 +53,7 @@ const ADMIN_COMMANDS: string[] = [
     '!remove <sku=> OR <item=> - Remove a pricelist entry ➖',
     '!get <sku=> OR <item=> - Get raw information about a pricelist entry',
     '!pricecheck <sku=> OR <item=> - Requests an item to be priced by PricesTF',
+    '!check sku=<item sku> - Request current price for an item from Prices.TF',
     '!expand <craftable=true|false> - Uses Backpack Expanders to increase the inventory limit',
     '!delete sku=<item sku> - Delete any item (use only sku) 🚮',
     '!stop - Stop the bot 🔴',
@@ -135,6 +136,8 @@ export = class Commands {
             this.updateCommand(steamID, message);
         } else if (command === 'pricecheck' && isAdmin) {
             this.pricecheckCommand(steamID, message);
+        } else if (command === 'check' && isAdmin) {
+            this.checkCommand(steamID, message);
         } else if (command === 'delete' && isAdmin) {
             this.deleteCommand(steamID, message);
         } else if (command === 'expand' && isAdmin) {
@@ -1424,6 +1427,44 @@ export = class Commands {
 
             this.bot.sendMessage(steamID, `⌛ Price check requested for ${body.name}, the item will be checked.`);
         });
+    }
+
+    private async checkCommand(steamID: SteamID, message: string): Promise<void> {
+        message = removeLinkProtocol(message);
+        const params = CommandParser.parseParams(CommandParser.removeCommand(message));
+
+        if (params.sku === undefined) {
+            const item = this.getItemFromParams(steamID, params);
+
+            if (item === null) {
+                return;
+            }
+
+            params.sku = SKU.fromObject(item);
+        }
+
+        params.sku = SKU.fromObject(fixItem(SKU.fromString(params.sku), this.bot.schema));
+        const item = SKU.fromString(params.sku);
+        const name = this.bot.schema.getName(item);
+
+        let price;
+
+        try {
+            price = await getPrice(params.sku, 'bptf');
+        } catch (err) {
+            this.bot.sendMessage(
+                steamID,
+                `Error getting price for ${name}: ${err.body && err.body.message ? err.body.message : err.message}`
+            );
+        }
+
+        if (!price) {
+            return;
+        }
+        const currBuy = new Currencies(price.buy);
+        const currSell = new Currencies(price.sell);
+
+        this.bot.sendMessage(steamID, `/pre 🔎 ${name}:\n• Buy  : ${currBuy}\n• Sell : ${currSell}`);
     }
 
     private expandCommand(steamID: SteamID, message: string): void {
