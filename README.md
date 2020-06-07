@@ -95,18 +95,19 @@ You can run your bot without this first, which then on the first run, it will pr
 - `METAL_THRESHOLD`: [Number] Default is 9, if scraps/reclaimed metal reached minimum + threshold (max), it will combine the metal.
 
 #### Autokeys feature
-- `ENABLE_AUTO_SELL_AND_BUY_KEYS`: [true or false] Default is false. If you set to true, the bot will automatically sell/buy keys based on the availability of the refined metals and keys in your bot inventory. Set it to false if you want to custom price your key.
+- `ENABLE_AUTO_SELL_AND_BUY_KEYS`: [true|false] Default is false. If you set to true, the bot will automatically sell/buy keys based on the availability of the refined metals and keys in your bot inventory. Set it to false if you want to custom price your key.
+- `ENABLE_AUTO_KEY_BANKING`: [true|false] Default is false. If set to true, it will do key banking (meaning if current ref < max, it will not stop buying keys and if current ref > min, it will not stop selling keys).
 - `MINIMUM_KEYS`: [Number] When current keys >= minimum keys, it will start selling keys (with when current ref > minimum ref), else it will stop selling keys.
 - `MAXIMUM_KEYS`: [Number] When current keys < maximum keys, it will start buying keys (with when current ref > maximum ref), else it will stop buying keys.
 - `MINIMUM_REFINED_TO_START_SELL_KEYS`: [Number] - Already explained.
 - `MAXIMUM_REFINED_TO_STOP_SELL_KEYS`: [Number] - Already explained.
 
 #### Set to true if want to disable
-- `DISABLE_INVENTORY_SORT`: [true or false] Default: true. Sort your bot inventory.
-- `DISABLE_LISTINGS`: [true or false] Default: false. This is used if you want to temporarily disable trading while your bot is alive.
-- `DISABLE_CRAFTING`: [true or false] Default: false. **NOT RECOMMENDED** to set is as true, as it cause bot and trade partner to not be able to trade because of missing pure changes.
-- `DISABLE_MESSAGES`: [true or false] Default: true. When true, people (that are friend with your bot) can send messages with "!message" command.
-- `DISABLE_QUEUE_ALERT`: [true or false] - Default: true. My custom - Used to notify owner if your bot has a queue problem, which you'll need to restart your bot.
+- `DISABLE_INVENTORY_SORT`: [true|false] Default: true. Sort your bot inventory.
+- `DISABLE_LISTINGS`: [true|false] Default: false. This is used if you want to temporarily disable trading while your bot is alive.
+- `DISABLE_CRAFTING`: [true|false] Default: false. **NOT RECOMMENDED** to set is as true, as it cause bot and trade partner to not be able to trade because of missing pure changes.
+- `DISABLE_MESSAGES`: [true|false] Default: true. When true, people (that are friend with your bot) can send messages with "!message" command.
+- `DISABLE_QUEUE_ALERT`: [true|false] - Default: true. My custom - Used to notify owner if your bot has a queue problem, which you'll need to restart your bot.
 
 #### Misc feature
 - `TRADES_MADE_STARTER_VALUE`: [Number] - Used mainly for displaying your bot total trades made, found in your bot Steam Profile page.
@@ -114,15 +115,15 @@ You can run your bot without this first, which then on the first run, it will pr
 - `TRADING_STARTING_TIME_UNIX`: [Number - Unix format] - Also same as LAST_TOTAL_TRADES, but this one is the latest time. You can read more on my [Discord server post](https://discordapp.com/channels/664971400678998016/666909518604533760/707706994932449410).
 
 #### Duped unusual check feature
-- `ENABLE_SHOW_ONLY_METAL`: [true or false] - Default: true. My custom - If set to false, it will show [x keys, y ref].
-- `ENABLE_DUPE_CHECK`: [true or false] - Default: true. Used to enable/disable check on duped unusuals
-- `DECLINE_DUPES`: [true or false] - Default: false. Explained itself.
+- `ENABLE_SHOW_ONLY_METAL`: [true|false] - Default: true. My custom - If set to false, it will show [x keys, y ref].
+- `ENABLE_DUPE_CHECK`: [true|false] - Default: true. Used to enable/disable check on duped unusuals
+- `DECLINE_DUPES`: [true|false] - Default: false. Explained itself.
 - `MINIMUM_KEYS_DUPE_CHECK`: [Number] - Default: 10. Explained itself.
 
 #### Set to true if want to skip
-- `SKIP_BPTF_TRADEOFFERURL`: [true or false] - Default: true. Not sure why this thing might not work. Please add trade offer URL by yourself [here](https://backpack.tf/settings##general) (login as your bot Steam account).
-- `SKIP_ACCOUNT_LIMITATIONS`: [true or false] - Default: false. Used to check your account limitation. It's better to set to true if your bot Steam account already a [premium account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
-- `SKIP_UPDATE_PROFILE_SETTINGS`: [true or false] - Default: false. This is just set your bot profile to public, so backpack.tf can load your bot inventory and etc correctly. If you already set all to public, just set this to true.
+- `SKIP_BPTF_TRADEOFFERURL`: [true|false] - Default: true. Not sure why this thing might not work. Please add trade offer URL by yourself [here](https://backpack.tf/settings##general) (login as your bot Steam account).
+- `SKIP_ACCOUNT_LIMITATIONS`: [true|false] - Default: false. Used to check your account limitation. It's better to set to true if your bot Steam account already a [premium account](https://support.steampowered.com/kb_article.php?ref=3330-IAGK-7663).
+- `SKIP_UPDATE_PROFILE_SETTINGS`: [true|false] - Default: false. This is just set your bot profile to public, so backpack.tf can load your bot inventory and etc correctly. If you already set all to public, just set this to true.
 
 #### Your time
 Time will be use in "!time" command and 
@@ -131,9 +132,9 @@ Time will be use in "!time" command and
 - `TIME_ADDITIONAL_NOTES` - Your additional note when the bot show your current time, such as your active hours, etc.
 
 #### Set to true if want to allow
-- `ALLOW_ESCROW`: [true or false] - Default: false. Escrow = trade hold
-- `ALLOW_OVERPAY`: [true or false] - Default: true. If people give an overpay, your bot will accept. Set it to false if you don't want.
-- `ALLOW_BANNED`: [true or false] - Default: false. I think it's better to set as false.
+- `ALLOW_ESCROW`: [true|false] - Default: false. Escrow = trade hold
+- `ALLOW_OVERPAY`: [true|false] - Default: true. If people give an overpay, your bot will accept. Set it to false if you don't want.
+- `ALLOW_BANNED`: [true|false] - Default: false. I think it's better to set as false.
 
 #### Set time for price to be updated in seconds
 - `MAX_PRICE_AGE`: [Number - in seconds] - Default: 28800 - If the time recorded in your pricelist reach/more than this, it will triggered to check with prices.tf.
@@ -145,8 +146,8 @@ Time will be use in "!time" command and
 - `ALERTS`: [Array] - If you set to `["trade"]`, your bot will send message/discord webhook every time a successful trades were made, other option is `["none"]`.
 
 #### Set to true if want to enable debugging notes in console
-- `DEBUG`: [true or false] - Used to debug if any problem occured.
-- `DEBUG_FILE`: [true or false] - Same as above, but this will create a file which can be sent to [issue](https://github.com/idinium96/tf2-automatic/issues/new/choose).
+- `DEBUG`: [true|false] - Used to debug if any problem occured.
+- `DEBUG_FILE`: [true|false] - Same as above, but this will create a file which can be sent to [issue](https://github.com/idinium96/tf2-automatic/issues/new/choose).
 
 #### Backpack.tf sell or buy order listings note on all items in pricelist
 - `BPTF_DETAILS_BUY`: [string] - Your buy order message. It will do for all items. available parameters: %name% (print out item name), %price% (item current buying price), %current_stock%, %max_stock% and %keyPrice% (print out: `Key rate: x ref/key`).
@@ -164,40 +165,40 @@ Time will be use in "!time" command and
 
 **Note on How to get WEBHOOK_X_URL** - See this: https://gyazo.com/539739f0bab50636e20a0fb76e9f1720 (settings in your respective channels)
 #### Queue alert
-- `DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT`: [true or false] - Same as `DISABLE_QUEUE_ALERT`, but if set to false, it will be sent to Discord Webhook instead of Steam Chat.
+- `DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT`: [true|false] - Same as `DISABLE_QUEUE_ALERT`, but if set to false, it will be sent to Discord Webhook instead of Steam Chat.
 - `DISCORD_WEBHOOK_QUEUE_ALERT_URL` - Discord Webhook URL for QUEUE_ALERT.
 
 #### Pricelist update
-- `DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE`: [true or false] - Used to display price updates on the items that are in your pricelist.
+- `DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE`: [true|false] - Used to display price updates on the items that are in your pricelist.
 - `DISCORD_WEBHOOK_PRICE_UPDATE_URL` - Discord Webhook URL for PRICE_UPDATE.
 - `DISCORD_WEBHOOK_PRICE_UPDATE_ADDITIONAL_DESCRIPTION_NOTE` - You can add note there, or just leave it empty.
 
 #### Successful trade summary
-- `DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY`: [true or false] - Used to display every successful trade summary on your trade summary/live-trades channel. If set to false, it will send to your Steam Chat.
+- `DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY`: [true|false] - Used to display every successful trade summary on your trade summary/live-trades channel. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_URL` - Discord Webhook URL for TRADE_SUMMARY.
-- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
-- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE`: [true or false] - self explained.
-- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK`: [true or false] - self explained.
+- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS`: [true|false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
+- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE`: [true|false] - self explained.
+- `DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK`: [true|false] - self explained.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE` - Notes.
-- `DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER` [true or false] - Set it to true if you want your bot to mention on every successful trades.
+- `DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER` [true|false] - Set it to true if you want your bot to mention on every successful trades.
 - `DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU` - Only support ONE SKU or SKU format. Let say you want it to mention on every unusual trade, then set it to ";5;u".
 
 #### Offer review summary
-- `DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW`: [true or false] - Used to alert you on the trade that needs for offer review via Discord Webhook. If set to false, it will send to your Steam Chat.
+- `DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW`: [true|false] - Used to alert you on the trade that needs for offer review via Discord Webhook. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_REVIEW_OFFER_URL` - Discord Webhook URL for REVIEW_OFFER.
-- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
-- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE`: [true or false] - self explained.
-- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK`: [true or false] - self explained.
+- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS`: [true|false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
+- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE`: [true|false] - self explained.
+- `DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK`: [true|false] - self explained.
 
 #### Messages
-- `DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER`: [true or false] - Used to alert you on any messages sent from trade partner. If set to false, it will send to your Steam Chat.
+- `DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER`: [true|false] - Used to alert you on any messages sent from trade partner. If set to false, it will send to your Steam Chat.
 - `DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL` - Discord Webhook URL for MESSAGE_FROM_PARTNER.
-- `DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS`: [true or false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
+- `DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS`: [true|false] - Show trade partner quick links to their Steam profile, backpack.tf and SteamREP pages.
 
 ### Manual Review settings
-- `ENABLE_MANUAL_REVIEW`: [true or false] - Set to true if you want any INVALID_VALUE/INVALID_ITEMS/OVERSTOCKED/DUPED_ITEMS/DUPE_CHECK_FAILED trades to be reviewed by you.
-- `DISABLE_REVIEW_OFFER_NOTE`: [true or false] - If set to false, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L906-L934)
-- `DISABLE_SHOW_CURRENT_TIME`: [true or false] - If set to false, it will show owner time on offer review notification that trade partner will received.
+- `ENABLE_MANUAL_REVIEW`: [true|false] - Set to true if you want any INVALID_VALUE/INVALID_ITEMS/OVERSTOCKED/DUPED_ITEMS/DUPE_CHECK_FAILED trades to be reviewed by you.
+- `DISABLE_REVIEW_OFFER_NOTE`: [true|false] - If set to false, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L906-L934)
+- `DISABLE_SHOW_CURRENT_TIME`: [true|false] - If set to false, it will show owner time on offer review notification that trade partner will received.
 - `INVALID_VALUE_NOTE` - Your custom INVALID_VALUE note.
 - `INVALID_ITEMS_NOTE` - Your custom INVALID_ITEMS note.
 - `OVERSTOCKED_NOTE` - Your custom OVERSTOCKED note.
