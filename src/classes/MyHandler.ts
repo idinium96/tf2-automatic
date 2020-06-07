@@ -180,7 +180,7 @@ export = class MyHandler extends Handler {
             }
 
             if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true' && this.checkAutoSellAndBuyKeysStatus === true) {
-                log.info('Disabling Autokeys...');
+                log.debug('Disabling Autokeys...');
                 this.updateToDisableAutoKeys();
             }
 
@@ -811,6 +811,9 @@ export = class MyHandler extends Handler {
 
                 offer.log('trade', 'has been accepted.');
 
+                // Auto sell and buy keys if ref < minimum
+                this.autoSellAndBuyKeys();
+
                 const autoKeysEnabled = process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS !== 'false';
                 const autoKeysStatus = this.checkAutoSellAndBuyKeysStatus;
                 const isBuyingKeys = this.isBuyingKeys;
@@ -874,9 +877,6 @@ export = class MyHandler extends Handler {
 
             // Smelt / combine metal
             this.keepMetalSupply();
-
-            // Auto sell and buy keys if ref < minimum
-            this.autoSellAndBuyKeys();
 
             // Sort inventory
             this.sortInventory();
@@ -1099,44 +1099,75 @@ export = class MyHandler extends Handler {
         // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
         const isBuyingKeys = (CurrPureTotaltoScrap > userMaxRefinedtoScrap && CurrPureKeys <= userMaxKeys) !== false;
 
-        // remove autobuy keys if ref in inventory > user defined max AND and keys in inv >= user defined max keys
-        const isRemoveBuyingKeys =
-            (CurrPureTotaltoScrap > userMinRefinedtoScrap && CurrPureKeys >= userMaxKeys) !== false;
-
         // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
         const isSellingKeys = (CurrPureTotaltoScrap < userMinRefinedtoScrap && CurrPureKeys >= userMinKeys) !== false;
 
-        // remove autosell key if ref in inventory < user defined min ref AND (keys in inv < user defined min keys OR if keys does not exist)
-        const isRemoveSellingKeys =
-            (CurrPureTotaltoScrap < userMaxRefinedtoScrap && (!CurrPureKeys || CurrPureKeys <= userMinKeys)) !== false;
+        // remove Autokeys if ref in between min and max with keys < min or keys > max
+        const isRemoveAutoKeys =
+            (CurrPureTotaltoScrap >= userMinRefinedtoScrap &&
+                CurrPureTotaltoScrap <= userMaxRefinedtoScrap &&
+                (CurrPureKeys <= userMinKeys ||
+                    (CurrPureKeys >= userMinKeys && CurrPureKeys <= userMaxKeys) ||
+                    CurrPureKeys >= userMaxKeys)) !== false;
 
         const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
 
+        log.debug(
+            `Autokeys status:
+            Ref: MinRef(${userMinRefinedtoScrap}) < CurrRef(${CurrPureTotaltoScrap}) < MaxRef(${userMaxRefinedtoScrap})
+            Key: MinKeys(${userMinKeys}) <= CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+        );
+
         if (isAlreadyCreatedtoBuyOrSell) {
-            if (isRemoveBuyingKeys || isRemoveSellingKeys) {
+            if (isRemoveAutoKeys) {
                 // disable Autokeys
+                this.isBuyingKeys = false;
+                this.checkAutoSellAndBuyKeysStatus = false;
                 this.updateToDisableAutoKeys();
-                this.isBuyingKeys = false;
             } else if (isSellingKeys) {
-                this.updateAutoSellKeys(userMinKeys, userMaxKeys);
                 this.isBuyingKeys = false;
+                this.checkAutoSellAndBuyKeysStatus = true;
+                this.updateAutoSellKeys(userMinKeys, userMaxKeys);
+                log.debug(
+                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                );
             } else if (isBuyingKeys) {
-                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
                 this.isBuyingKeys = true;
+                this.checkAutoSellAndBuyKeysStatus = true;
+                this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
+                log.debug(
+                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                );
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
             if (!checkKeysAlreadyExist && isSellingKeys) {
+                this.isBuyingKeys = false;
+                this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
-                this.isBuyingKeys = false;
+                log.debug(
+                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                );
             } else if (!checkKeysAlreadyExist && isBuyingKeys) {
+                this.isBuyingKeys = true;
+                this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
-                this.isBuyingKeys = true;
+                log.debug(
+                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                );
             } else if (checkKeysAlreadyExist && isSellingKeys) {
-                this.createAutoSellKeys(userMinKeys, userMaxKeys);
                 this.isBuyingKeys = false;
+                this.checkAutoSellAndBuyKeysStatus = true;
+                this.createAutoSellKeys(userMinKeys, userMaxKeys);
+                log.debug(
+                    `Sell: CurrRef(${CurrPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) >= MaxKeys(${userMinKeys})`
+                );
             } else if (checkKeysAlreadyExist && isBuyingKeys) {
-                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
                 this.isBuyingKeys = true;
+                this.checkAutoSellAndBuyKeysStatus = true;
+                this.createAutoBuyKeys(userMinKeys, userMaxKeys);
+                log.debug(
+                    `Buy: CurrRef(${CurrPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${CurrPureKeys}) <= MaxKeys(${userMaxKeys})`
+                );
             }
         }
     }
@@ -1153,8 +1184,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .addPrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
-                this.checkAutoSellAndBuyKeysStatus = true;
+                log.debug(`✅ Automatically added Mann Co. Supply Crate Key to sell.`);
             })
             .catch(err => {
                 log.warn(`❌ Failed to add Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
@@ -1174,8 +1204,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .addPrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
-                this.checkAutoSellAndBuyKeysStatus = true;
+                log.debug(`✅ Automatically added Mann Co. Supply Crate Key to buy.`);
             })
             .catch(err => {
                 log.warn(`❌ Failed to add Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
@@ -1195,8 +1224,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .updatePrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically disabled Autokeys.`);
-                this.checkAutoSellAndBuyKeysStatus = false;
+                log.debug(`✅ Automatically disabled Autokeys.`);
             })
             .catch(err => {
                 log.warn(`❌ Failed to disable Autokeys: ${err.message}`);
@@ -1216,8 +1244,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .updatePrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically updated Mann Co. Supply Crate Key to sell.`);
-                this.checkAutoSellAndBuyKeysStatus = true;
+                log.debug(`✅ Automatically updated Mann Co. Supply Crate Key to sell.`);
             })
             .catch(err => {
                 log.warn(`❌ Failed to update Mann Co. Supply Crate Key to sell automatically: ${err.message}`);
@@ -1237,8 +1264,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .updatePrice(entry as EntryData, true)
             .then(() => {
-                log.info(`✅ Automatically update Mann Co. Supply Crate Key to buy.`);
-                this.checkAutoSellAndBuyKeysStatus = true;
+                log.debug(`✅ Automatically update Mann Co. Supply Crate Key to buy.`);
             })
             .catch(err => {
                 log.warn(`❌ Failed to update Mann Co. Supply Crate Key to buy automatically: ${err.message}`);
@@ -1250,7 +1276,7 @@ export = class MyHandler extends Handler {
         this.bot.pricelist
             .removePrice('5021;6', true)
             .then(() => {
-                log.info(`✅ Automatically remove Mann Co. Supply Crate Key.`);
+                log.debug(`✅ Automatically remove Mann Co. Supply Crate Key.`);
                 this.checkAutoSellAndBuyKeysStatus = false;
             })
             .catch(err => {
