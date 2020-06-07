@@ -45,6 +45,8 @@ export = class MyHandler extends Handler {
 
     private autoSellAndBuyKeysEnabled = false;
 
+    private enableKeyBanking = false;
+
     private checkAutoSellAndBuyKeysStatus = false;
 
     private isBuyingKeys = false;
@@ -84,6 +86,10 @@ export = class MyHandler extends Handler {
 
         if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
             this.autoSellAndBuyKeysEnabled = true;
+        }
+
+        if (process.env.ENABLE_AUTO_KEY_BANKING === 'true') {
+            this.enableKeyBanking = true;
         }
 
         const groups = parseJSON(process.env.GROUPS);
@@ -1087,6 +1093,8 @@ export = class MyHandler extends Handler {
         const userMinRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
         const userMaxRefinedtoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
 
+        const enableKeyBanking = this.enableKeyBanking;
+
         const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null;
 
         if (isNaN(userMinKeys) || isNaN(userMinRefinedtoScrap) || isNaN(userMaxRefinedtoScrap)) {
@@ -1107,7 +1115,7 @@ export = class MyHandler extends Handler {
             (CurrPureTotaltoScrap >= userMinRefinedtoScrap &&
                 CurrPureTotaltoScrap <= userMaxRefinedtoScrap &&
                 (CurrPureKeys <= userMinKeys ||
-                    (CurrPureKeys >= userMinKeys && CurrPureKeys <= userMaxKeys) ||
+                    (enableKeyBanking ? false : CurrPureKeys >= userMinKeys && CurrPureKeys <= userMaxKeys) ||
                     CurrPureKeys >= userMaxKeys)) !== false;
 
         const isAlreadyCreatedtoBuyOrSell = this.checkAutoSellAndBuyKeysStatus !== false;
