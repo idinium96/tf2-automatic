@@ -1106,15 +1106,15 @@ export = class MyHandler extends Handler {
 
         // add autobuy keys if ref in inventory > user defined max ref AND keys in inv <= user defined max keys
         const isBuyingKeys =
-            (enableKeyBanking
+            ((enableKeyBanking
                 ? currPureTotaltoScrap > userMinRefinedtoScrap
-                : currPureTotaltoScrap > userMaxRefinedtoScrap && currPureKeys <= userMaxKeys) !== false;
+                : currPureTotaltoScrap > userMaxRefinedtoScrap) && currPureKeys <= userMaxKeys) !== false;
 
         // add autosell key if ref in inventory < user defined min ref AND keys in inv > user defined min keys
         const isSellingKeys =
-            (enableKeyBanking
+            ((enableKeyBanking
                 ? currPureTotaltoScrap < userMaxRefinedtoScrap
-                : currPureTotaltoScrap < userMinRefinedtoScrap && currPureKeys >= userMinKeys) !== false;
+                : currPureTotaltoScrap < userMinRefinedtoScrap) && currPureKeys >= userMinKeys) !== false;
 
         // remove Autokeys if ref in between min and max with keys < min or keys > max
         const isRemoveAutoKeys =
