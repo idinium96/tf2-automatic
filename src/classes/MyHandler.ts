@@ -1154,28 +1154,28 @@ export = class MyHandler extends Handler {
                 );
             }
         } else if (!isAlreadyCreatedtoBuyOrSell) {
-            if (checkKeysAlreadyExist && isSellingKeys) {
+            if (!checkKeysAlreadyExist && isSellingKeys) {
                 this.isBuyingKeys = false;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoSellKeys(userMinKeys, userMaxKeys);
                 log.debug(
                     `Sell: CurrRef(${currPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${currPureKeys}) >= MaxKeys(${userMinKeys})`
                 );
-            } else if (checkKeysAlreadyExist && isBuyingKeys) {
+            } else if (!checkKeysAlreadyExist && isBuyingKeys) {
                 this.isBuyingKeys = true;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.updateAutoBuyKeys(userMinKeys, userMaxKeys);
                 log.debug(
                     `Buy: CurrRef(${currPureTotaltoScrap}) > MaxRef(${userMaxRefinedtoScrap}) && CurrKeys(${currPureKeys}) <= MaxKeys(${userMaxKeys})`
                 );
-            } else if (!checkKeysAlreadyExist && isSellingKeys) {
+            } else if (checkKeysAlreadyExist && isSellingKeys) {
                 this.isBuyingKeys = false;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.createAutoSellKeys(userMinKeys, userMaxKeys);
                 log.debug(
                     `Sell: CurrRef(${currPureTotaltoScrap}) < MinRef(${userMinRefinedtoScrap}) && CurrKeys(${currPureKeys}) >= MaxKeys(${userMinKeys})`
                 );
-            } else if (!checkKeysAlreadyExist && isBuyingKeys) {
+            } else if (checkKeysAlreadyExist && isBuyingKeys) {
                 this.isBuyingKeys = true;
                 this.checkAutoSellAndBuyKeysStatus = true;
                 this.createAutoBuyKeys(userMinKeys, userMaxKeys);
