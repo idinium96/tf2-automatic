@@ -1106,8 +1106,6 @@ export = class MyHandler extends Handler {
         const userMinReftoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
         const userMaxReftoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
 
-        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null;
-
         if (isNaN(userMinKeys) || isNaN(userMinReftoScrap) || isNaN(userMaxReftoScrap)) {
             log.warn(
                 "You've entered a non-number on either your MINIMUM_KEYS/MINIMUM_REFINED/MAXIMUM_REFINED variables, please correct it. Autosell/buy keys is disabled until you correct it."
@@ -1174,8 +1172,6 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        const isAlreadyCreatedAutoKeys = this.checkAutokeysStatus !== false;
-
         log.debug(
             `Autokeys status:
             Ref: MinRef(${Currencies.toRefined(userMinReftoScrap)}) < CurrRef(${Currencies.toRefined(
@@ -1187,7 +1183,10 @@ export = class MyHandler extends Handler {
             }`
         );
 
-        if (isAlreadyCreatedAutoKeys) {
+        const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
+        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null;
+
+        if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
             if (isBankingKeys && enableKeyBanking) {
                 // enable keys banking - if banking conditions to enable banking matched and banking is enabled
@@ -1220,7 +1219,7 @@ export = class MyHandler extends Handler {
                 this.checkAutokeysStatus = false;
                 this.updateToDisableAutokeys();
             }
-        } else if (!isAlreadyCreatedAutoKeys) {
+        } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
             if (!checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry already in the pricelist.json
