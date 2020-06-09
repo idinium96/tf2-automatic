@@ -822,7 +822,7 @@ export = class MyHandler extends Handler {
                 // Auto sell and buy keys if ref < minimum
                 this.autokeys();
 
-                const autoKeysEnabled = this.enableKeyBanking;
+                const isAutoKeysEnabled = this.enableAutokeys;
                 const isKeysBankingEnabled = this.enableKeyBanking;
                 const autoKeysStatus = this.checkAutokeysStatus;
                 const isBuyingKeys = this.isBuyingKeys;
@@ -870,7 +870,7 @@ export = class MyHandler extends Handler {
                                 : '') +
                             `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref` +
                             `${
-                                autoKeysEnabled
+                                isAutoKeysEnabled
                                     ? ' | Autokeys: ' +
                                       (autoKeysStatus
                                           ? '✅' +
@@ -1782,7 +1782,7 @@ export = class MyHandler extends Handler {
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
         const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
-        const isAutokeysEnabled = this.enableKeyBanking;
+        const isAutoKeysEnabled = this.enableAutokeys;
         const isKeysBankingEnabled = this.enableKeyBanking;
         const autoKeysStatus = this.checkAutokeysStatus;
         const isBuyingKeys = this.isBuyingKeys;
@@ -1886,7 +1886,7 @@ export = class MyHandler extends Handler {
                             (isShowKeyRate
                                 ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref` +
                                   `${
-                                      isAutokeysEnabled
+                                      isAutoKeysEnabled
                                           ? ' | Autokeys: ' +
                                             (autoKeysStatus
                                                 ? '✅' +
