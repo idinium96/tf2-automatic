@@ -87,7 +87,7 @@ export = class MyHandler extends Handler {
         }
 
         if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
-            this.enableKeyBanking = true;
+            this.enableAutokeys = true;
         }
 
         if (process.env.ENABLE_AUTO_KEY_BANKING === 'true') {
