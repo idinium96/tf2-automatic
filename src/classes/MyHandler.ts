@@ -1184,7 +1184,7 @@ export = class MyHandler extends Handler {
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
-        const checkKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null;
+        const checkKeysAlreadyExist = (this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null) !== false;
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
@@ -1221,7 +1221,7 @@ export = class MyHandler extends Handler {
             }
         } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
-            if (!checkKeysAlreadyExist) {
+            if (checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry already in the pricelist.json
                 if (isBankingKeys && enableKeyBanking) {
                     // enable keys banking - if banking conditions to enable banking matched and banking is enabled
@@ -1242,7 +1242,7 @@ export = class MyHandler extends Handler {
                     this.checkAutokeysStatus = true;
                     this.updateAutokeysSell(userMinKeys, userMaxKeys);
                 }
-            } else if (checkKeysAlreadyExist) {
+            } else if (!checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry does not exist in the pricelist.json
                 if (isBankingKeys && enableKeyBanking) {
                     //create new Key entry and enable keys banking - if banking conditions to enable banking matched and banking is enabled
