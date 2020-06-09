@@ -1184,7 +1184,7 @@ export = class MyHandler extends Handler {
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
-        const checkKeysAlreadyExist = (this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null) !== false;
+        const checkKeysAlreadyExist = (this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null) !== true;
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
