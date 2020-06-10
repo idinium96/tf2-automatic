@@ -1113,7 +1113,9 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        // enable Autokeys - Buying - if currRef > maxRef AND currKeys < maxKeys
+        /**
+         * enable Autokeys - Buying - true if currRef \> maxRef AND currKeys \< maxKeys
+         */
         const isBuyingKeys = (currReftoScrap > userMaxReftoScrap && currKeys < userMaxKeys) !== false;
         /*
         //        <——————————————————————————————————○            \
@@ -1123,7 +1125,9 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // enable Autokeys - Selling - if currRef < minRef AND currKeys > mixKeys
+        /**
+         * enable Autokeys - Selling - true if currRef \< minRef AND currKeys \> minKeys
+         */
         const isSellingKeys = (currReftoScrap < userMinReftoScrap && currKeys > userMinKeys) !== false;
         /*
         //              ○———————————————————————————————————>     \
@@ -1133,7 +1137,10 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // disable Autokeys if minRef <= currRef <= maxRef AND (currKeys <= minKeys OR minKeys <= currKeys <= maxKeys OR currKeys >= maxKeys)
+        /**
+         * disable Autokeys - true if minRef ≤ currRef ≤ maxRef AND
+         * (currKeys ≤ minKeys OR minKeys ≤ currKeys ≤ maxKeys OR currKeys ≥ maxKeys)
+         */
         const isRemoveAutoKeys =
             (currReftoScrap >= userMinReftoScrap &&
                 currReftoScrap <= userMaxReftoScrap &&
@@ -1148,9 +1155,14 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
+        /**
+         * enable Autokeys - Banking - true if user set ENABLE_AUTO_KEY_BANKING to true
+         */
         const enableKeyBanking = this.enableKeyBanking;
 
-        // enable Autokeys - Banking - if minRef < currRef < maxRef AND currKeys > minKeys
+        /**
+         * enable Autokeys - Banking - true if minRef \< currRef \< maxRef AND currKeys \> minKeys
+         */
         const isBankingKeys =
             (currReftoScrap > userMinReftoScrap && currReftoScrap < userMaxReftoScrap && currKeys > userMinKeys) !==
             false;
@@ -1162,7 +1174,9 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // disable Autokeys - Banking - if currRef < minRef AND currKeys < minKeys
+        /**
+         * disable Autokeys - Banking - true if currRef \< minRef AND currKeys \< minKeys
+         */
         const isRemoveBankingKeys = currReftoScrap < userMinReftoScrap && currKeys < userMinKeys !== false;
         /*
         //        <—————○                                         \
@@ -1173,14 +1187,13 @@ export = class MyHandler extends Handler {
         */
 
         log.debug(
-            `Autokeys status:
-            Ref: MinRef(${Currencies.toRefined(userMinReftoScrap)}) < CurrRef(${Currencies.toRefined(
+            `
+Autokeys status:-
+Ref: MinRef(${Currencies.toRefined(userMinReftoScrap)}) < CurrRef(${Currencies.toRefined(
                 currReftoScrap
             )}) < MaxRef(${Currencies.toRefined(userMaxReftoScrap)})
-            Key: MinKeys(${userMinKeys}) <= CurrKeys(${currKeys}) <= MaxKeys(${userMaxKeys})
-            Status: ${
-                isBuyingKeys ? ' Buying' : isSellingKeys ? ' Selling' : isBankingKeys ? ' Banking' : ' Not active'
-            }`
+Key: MinKeys(${userMinKeys}) ≤ CurrKeys(${currKeys}) ≤ MaxKeys(${userMaxKeys})
+Status: ${isBuyingKeys ? 'Buying' : isSellingKeys ? 'Selling' : isBankingKeys ? 'Banking' : 'Not active'}`
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
