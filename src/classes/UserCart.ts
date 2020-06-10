@@ -62,7 +62,7 @@ class UserCart extends Cart {
                     async.series(requests, callback);
                 });
 
-                log.debug('Got result from dupe checks', { result: result });
+                log.debug('Got result from dupe checks on ' + assetidsToCheck.join(', '), { result: result });
 
                 for (let i = 0; i < result.length; i++) {
                     if (result[i] === true) {
