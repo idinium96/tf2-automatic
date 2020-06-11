@@ -12,7 +12,6 @@ import TradeOfferManager, { TradeOffer, PollData } from 'steam-tradeoffer-manage
 import pluralize from 'pluralize';
 import SteamID from 'steamid';
 import Currencies from 'tf2-currencies';
-import SKU from 'tf2-sku';
 import async from 'async';
 
 import { XMLHttpRequest } from 'xmlhttprequest-ts';
@@ -43,9 +42,9 @@ export = class MyHandler extends Handler {
 
     private minimumKeysDupeCheck = 0;
 
-    private enableAutokeys = false;
+    private autokeysEnabled = false;
 
-    private enableKeyBanking = false;
+    private keyBankingEnabled = false;
 
     private checkAutokeysStatus = false;
 
@@ -87,11 +86,11 @@ export = class MyHandler extends Handler {
         }
 
         if (process.env.ENABLE_AUTO_SELL_AND_BUY_KEYS === 'true') {
-            this.enableAutokeys = true;
+            this.autokeysEnabled = true;
         }
 
         if (process.env.ENABLE_AUTO_KEY_BANKING === 'true') {
-            this.enableKeyBanking = true;
+            this.keyBankingEnabled = true;
         }
 
         const groups = parseJSON(process.env.GROUPS);
@@ -509,11 +508,14 @@ export = class MyHandler extends Handler {
                             });
                         }
 
-                        const item = SKU.fromString(sku);
+                        const buyPrice = match.buy.toValue(keyPrice.metal);
+                        const sellPrice = match.sell.toValue(keyPrice.metal);
+                        const minimumKeysDupeCheck = this.minimumKeysDupeCheck * keyPrice.toValue();
 
                         if (
-                            item.effect !== null &&
-                            match.buy.toValue(keyPrice.metal) > this.minimumKeysDupeCheck * keyPrice.toValue()
+                            buying && // check only items on their side
+                            (buyPrice > minimumKeysDupeCheck || sellPrice > minimumKeysDupeCheck)
+                            // if their side contains invalid_items, will use our side value
                         ) {
                             assetidsToCheck = assetidsToCheck.concat(assetids);
                         }
@@ -701,7 +703,7 @@ export = class MyHandler extends Handler {
                     async.series(requests, callback);
                 });
 
-                log.debug('Got result from dupe checks', { result: result });
+                log.debug('Got result from dupe checks on ' + assetidsToCheck.join(', '), { result: result });
 
                 // Decline by default
                 const declineDupes = process.env.DECLINE_DUPES !== 'false';
@@ -732,7 +734,7 @@ export = class MyHandler extends Handler {
                     }
                 }
             } catch (err) {
-                log.warn('Failed dupe check: ' + err.message);
+                log.warn('Failed dupe check on ' + assetidsToCheck.join(', ') + ': ' + err.message);
                 wrongAboutOffer.push({
                     reason: '🟪DUPE_CHECK_FAILED',
                     error: err.message
@@ -822,8 +824,8 @@ export = class MyHandler extends Handler {
                 // Auto sell and buy keys if ref < minimum
                 this.autokeys();
 
-                const isAutoKeysEnabled = this.enableAutokeys;
-                const isKeysBankingEnabled = this.enableKeyBanking;
+                const isAutoKeysEnabled = this.autokeysEnabled;
+                const isKeysBankingEnabled = this.keyBankingEnabled;
                 const autoKeysStatus = this.checkAutokeysStatus;
                 const isBuyingKeys = this.isBuyingKeys;
                 const isBankingKeys = this.isBankingKeys;
@@ -1092,7 +1094,7 @@ export = class MyHandler extends Handler {
     }
 
     private autokeys(): void {
-        if (this.enableAutokeys === false) {
+        if (this.autokeysEnabled === false) {
             return;
         }
         const currKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
@@ -1113,7 +1115,9 @@ export = class MyHandler extends Handler {
             return;
         }
 
-        // enable Autokeys - Buying - if currRef > maxRef AND currKeys < maxKeys
+        /**
+         * enable Autokeys - Buying - true if currRef \> maxRef AND currKeys \< maxKeys
+         */
         const isBuyingKeys = (currReftoScrap > userMaxReftoScrap && currKeys < userMaxKeys) !== false;
         /*
         //        <——————————————————————————————————○            \
@@ -1123,7 +1127,9 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // enable Autokeys - Selling - if currRef < minRef AND currKeys > mixKeys
+        /**
+         * enable Autokeys - Selling - true if currRef \< minRef AND currKeys \> minKeys
+         */
         const isSellingKeys = (currReftoScrap < userMinReftoScrap && currKeys > userMinKeys) !== false;
         /*
         //              ○———————————————————————————————————>     \
@@ -1133,7 +1139,10 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // disable Autokeys if minRef <= currRef <= maxRef AND (currKeys <= minKeys OR minKeys <= currKeys <= maxKeys OR currKeys >= maxKeys)
+        /**
+         * disable Autokeys - true if minRef ≤ currRef ≤ maxRef AND
+         * (currKeys ≤ minKeys OR minKeys ≤ currKeys ≤ maxKeys OR currKeys ≥ maxKeys)
+         */
         const isRemoveAutoKeys =
             (currReftoScrap >= userMinReftoScrap &&
                 currReftoScrap <= userMaxReftoScrap &&
@@ -1148,9 +1157,14 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        const enableKeyBanking = this.enableKeyBanking;
+        /**
+         * enable Autokeys - Banking - true if user set ENABLE_AUTO_KEY_BANKING to true
+         */
+        const isEnableKeyBanking = this.keyBankingEnabled;
 
-        // enable Autokeys - Banking - if minRef < currRef < maxRef AND currKeys > minKeys
+        /**
+         * enable Autokeys - Banking - true if minRef \< currRef \< maxRef AND currKeys \> minKeys
+         */
         const isBankingKeys =
             (currReftoScrap > userMinReftoScrap && currReftoScrap < userMaxReftoScrap && currKeys > userMinKeys) !==
             false;
@@ -1162,25 +1176,26 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
-        // disable Autokeys - Banking - if currRef < minRef AND currKeys < minKeys
-        const isRemoveBankingKeys = currReftoScrap < userMinReftoScrap && currKeys < userMinKeys !== false;
+        /**
+         * disable Autokeys - Banking - true if currRef \< minRef AND currKeys \< minKeys
+         */
+        const isRemoveBankingKeys = currReftoScrap <= userMaxReftoScrap && currKeys <= userMinKeys !== false;
         /*
-        //        <—————○                                         \
+        //        <—————●                                         \
         // Keys --------|----------------------------|---------->  ⟩ AND
-        //        <—————○                                         /
+        //        <——————————————————————————————————●            /
         // Refs --------|----------------------------|---------->
         //             min                          max
         */
 
         log.debug(
-            `Autokeys status:
-            Ref: MinRef(${Currencies.toRefined(userMinReftoScrap)}) < CurrRef(${Currencies.toRefined(
+            `
+Autokeys status:-
+    Ref: MinRef(${Currencies.toRefined(userMinReftoScrap)}) < CurrRef(${Currencies.toRefined(
                 currReftoScrap
             )}) < MaxRef(${Currencies.toRefined(userMaxReftoScrap)})
-            Key: MinKeys(${userMinKeys}) <= CurrKeys(${currKeys}) <= MaxKeys(${userMaxKeys})
-            Status: ${
-                isBuyingKeys ? ' Buying' : isSellingKeys ? ' Selling' : isBankingKeys ? ' Banking' : ' Not active'
-            }`
+    Key: MinKeys(${userMinKeys}) ≤ CurrKeys(${currKeys}) ≤ MaxKeys(${userMaxKeys})
+ Status: ${isBuyingKeys ? 'Buying' : isSellingKeys ? 'Selling' : isBankingKeys ? 'Banking' : 'Not active'}`
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
@@ -1188,7 +1203,7 @@ export = class MyHandler extends Handler {
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
-            if (isBankingKeys && enableKeyBanking) {
+            if (isBankingKeys && isEnableKeyBanking) {
                 // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = true;
@@ -1206,13 +1221,13 @@ export = class MyHandler extends Handler {
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = true;
                 this.updateAutokeysSell(userMinKeys, userMaxKeys);
-            } else if (isRemoveBankingKeys && enableKeyBanking) {
+            } else if (isRemoveBankingKeys && isEnableKeyBanking) {
                 // disable keys banking - if to conditions to disable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = false;
                 this.updateToDisableAutokeys();
-            } else if (isRemoveAutoKeys && !enableKeyBanking) {
+            } else if (isRemoveAutoKeys && !isEnableKeyBanking) {
                 // disable Autokeys when conditions to disable Autokeys matched
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
@@ -1223,7 +1238,7 @@ export = class MyHandler extends Handler {
             // if Autokeys is not running/disabled
             if (checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry already in the pricelist.json
-                if (isBankingKeys && enableKeyBanking) {
+                if (isBankingKeys && isEnableKeyBanking) {
                     // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
@@ -1244,7 +1259,7 @@ export = class MyHandler extends Handler {
                 }
             } else if (!checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry does not exist in the pricelist.json
-                if (isBankingKeys && enableKeyBanking) {
+                if (isBankingKeys && isEnableKeyBanking) {
                     //create new Key entry and enable keys banking - if banking conditions to enable banking matched and banking is enabled
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
@@ -1782,8 +1797,8 @@ export = class MyHandler extends Handler {
         const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
         const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
 
-        const isAutoKeysEnabled = this.enableAutokeys;
-        const isKeysBankingEnabled = this.enableKeyBanking;
+        const isAutoKeysEnabled = this.autokeysEnabled;
+        const isKeysBankingEnabled = this.keyBankingEnabled;
         const autoKeysStatus = this.checkAutokeysStatus;
         const isBuyingKeys = this.isBuyingKeys;
         const isBankingKeys = this.isBankingKeys;

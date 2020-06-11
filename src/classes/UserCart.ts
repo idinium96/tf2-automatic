@@ -36,7 +36,12 @@ class UserCart extends Cart {
 
         // TODO: Check for dupes
 
-        if ((this.bot.handler as MyHandler).hasDupeCheckEnabled()) {
+        const isDupedCheckEnabled = (this.bot.handler as MyHandler).hasDupeCheckEnabled();
+        const keyPrice = this.bot.pricelist.getKeyPrice();
+        const theirItemsValue = this.getTheirCurrencies().toValue(keyPrice.metal);
+        const minimumKeysDupeCheck = (this.bot.handler as MyHandler).getMinimumKeysDupeCheck() * keyPrice.toValue();
+
+        if (isDupedCheckEnabled && theirItemsValue > minimumKeysDupeCheck) {
             const assetidsToCheck = this.offer.data('_dupeCheck');
             this.offer.data('_dupeCheck', undefined);
 
@@ -57,7 +62,7 @@ class UserCart extends Cart {
                     async.series(requests, callback);
                 });
 
-                log.debug('Got result from dupe checks', { result: result });
+                log.debug('Got result from dupe checks on ' + assetidsToCheck.join(', '), { result: result });
 
                 for (let i = 0; i < result.length; i++) {
                     if (result[i] === true) {
