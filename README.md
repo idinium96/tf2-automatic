@@ -57,7 +57,7 @@ If you want to use this feature, you must use [ecosystem.template.json](https://
 This feature when enabled, your bot will automatically buy or sell keys based on your bot pure availability and your settings on this feature. You'll have to set your minimum/maximum keys and minimum/maximum refined metals in your ecosystem.json - more explaination can be found [here](https://github.com/idinium96/tf2-automatic/#your-bot-settings) starting on `ENABLE_AUTO_SELL_AND_BUY_KEYS` until `MAXIMUM_REFINED_TO_STOP_SELL_KEYS`.
 
 Some screenshots:
-- When your bot have enough key to sell key for ref (if your ref is less than minimum) OR enough ref to buy keys (when your ref > maximum)
+- When your bot have enough key to sell to get more ref (if your ref is less than minimum) OR enough ref to buy more keys (when your ref > maximum and keys < max)
 
 ![Autokeys1](https://user-images.githubusercontent.com/47635037/83779990-2d779f00-a6bf-11ea-8891-fa92cdb534c7.PNG)
 
@@ -65,7 +65,7 @@ Some screenshots:
 
 ![Autokeys2](https://user-images.githubusercontent.com/47635037/83780154-5e57d400-a6bf-11ea-8dc1-0c833d9c3268.PNG)
 
-You can see codes on how this feature works [here](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L1022-L1136).
+You can see codes on how this feature works [here](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L1094-L1421).
 
 ## Emojis and more commands added
 
@@ -96,7 +96,7 @@ You can run your bot without this first, which then on the first run, it will pr
 
 #### Autokeys feature
 - `ENABLE_AUTO_SELL_AND_BUY_KEYS`: [true|false] Default is false. If you set to true, the bot will automatically sell/buy keys based on the availability of the refined metals and keys in your bot inventory. Set it to false if you want to custom price your key.
-- `ENABLE_AUTO_KEY_BANKING`: [true|false] Default is false. If set to true, it will do key banking (must also set `ENABLE_AUTO_SELL_AND_BUY_KEYS` to true and for banking, meaning if current ref < max, it will not stop buying keys and if current ref > min, it will not stop selling keys).
+- `ENABLE_AUTO_KEY_BANKING`: [true|false] Default is false. If set to true, it will do key banking (must also set **ENABLE_AUTO_SELL_AND_BUY_KEYS** to true and for banking, meaning if current ref is in between min and max and keys > min, it will do key banking).
 - `MINIMUM_KEYS`: [Number] When current keys >= minimum keys, it will start selling keys (with when current ref < minimum ref), else it will stop selling keys.
 - `MAXIMUM_KEYS`: [Number] When current keys < maximum keys, it will start buying keys (with when current ref > maximum ref), else it will stop buying keys.
 - `MINIMUM_REFINED_TO_START_SELL_KEYS`: [Number] - Already explained.
@@ -163,7 +163,7 @@ Time will be use in "!time" command and
 - `DISCORD_WEBHOOK_AVATAR_URL` - Your Discord Webhook Avatar, must be in URL form. Example: https://gyazo.com/421792b5ea817c36054c7991fb18cdbc
 - `DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX` - Embed color, you can found yours at [spycolor.com](https://www.spycolor.com/) and copy the one that said "has decimal index of: `take the value here`". Example: "9171753" for #8bf329 color.
 
-**Note on How to get WEBHOOK_X_URL** - See this: https://gyazo.com/539739f0bab50636e20a0fb76e9f1720 (settings in your respective channels)
+**Note on How to get DISCORD_WEBHOOK_X_URL** - See this: https://gyazo.com/539739f0bab50636e20a0fb76e9f1720 (settings in your respective channels)
 #### Queue alert
 - `DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT`: [true|false] - Same as `DISABLE_QUEUE_ALERT`, but if set to false, it will be sent to Discord Webhook instead of Steam Chat.
 - `DISCORD_WEBHOOK_QUEUE_ALERT_URL` - Discord Webhook URL for QUEUE_ALERT.
@@ -197,7 +197,7 @@ Time will be use in "!time" command and
 
 ### Manual Review settings
 - `ENABLE_MANUAL_REVIEW`: [true|false] - Set to true if you want any INVALID_VALUE/INVALID_ITEMS/OVERSTOCKED/DUPED_ITEMS/DUPE_CHECK_FAILED trades to be reviewed by you.
-- `DISABLE_REVIEW_OFFER_NOTE`: [true|false] - If set to false, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L906-L934)
+- `DISABLE_REVIEW_OFFER_NOTE`: [true|false] - If set to false, it will show note on [each error](https://github.com/idinium96/tf2-automatic/blob/Public/src/classes/MyHandler.ts#L998-L1059)
 - `DISABLE_SHOW_CURRENT_TIME`: [true|false] - If set to false, it will show owner time on offer review notification that trade partner will received.
 - `INVALID_VALUE_NOTE` - Your custom INVALID_VALUE note.
 - `INVALID_ITEMS_NOTE` - Your custom INVALID_ITEMS note.
