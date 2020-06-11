@@ -1182,11 +1182,11 @@ export = class MyHandler extends Handler {
         /**
          * disable Autokeys - Banking - true if currRef \< minRef AND currKeys \< minKeys
          */
-        const isRemoveBankingKeys = currReftoScrap < userMinReftoScrap && currKeys < userMinKeys !== false;
+        const isRemoveBankingKeys = currReftoScrap <= userMaxReftoScrap && currKeys <= userMinKeys !== false;
         /*
-        //        <—————○                                         \
+        //        <—————●                                         \
         // Keys --------|----------------------------|---------->  ⟩ AND
-        //        <—————○                                         /
+        //        <——————————————————————————————————●            /
         // Refs --------|----------------------------|---------->
         //             min                          max
         */
