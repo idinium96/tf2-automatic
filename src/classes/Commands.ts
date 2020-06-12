@@ -461,15 +461,84 @@ export = class Commands {
             this.bot.sendMessage(steamID, `This feature is disabled.`);
             return;
         }
-        const userMinKeys = process.env.MINIMUM_KEYS;
-        const userMaxKeys = process.env.MAXIMUM_KEYS;
-        const userMinRefined = process.env.MINIMUM_REFINED_TO_START_SELL_KEYS;
-        const userMaxRefined = process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS;
 
-        this.bot.sendMessage(
-            steamID,
-            `Your current settings for autoKeys:\n• ${userMinKeys} ≤ Keys ≤ ${userMaxKeys}\n• ${userMinRefined} < Refs < ${userMaxRefined}`
-        );
+        const currKeys = this.bot.inventoryManager.getInventory().getAmount('5021;6');
+        const currScrap = this.bot.inventoryManager.getInventory().getAmount('5000;6') * (1 / 9);
+        const currRec = this.bot.inventoryManager.getInventory().getAmount('5001;6') * (1 / 3);
+        const currRef = this.bot.inventoryManager.getInventory().getAmount('5002;6');
+        const currReftoScrap = Currencies.toScrap(currRef + currRec + currScrap);
+
+        const userMinKeys = parseInt(process.env.MINIMUM_KEYS);
+        const userMaxKeys = parseInt(process.env.MAXIMUM_KEYS);
+        const userMinReftoScrap = Currencies.toScrap(parseInt(process.env.MINIMUM_REFINED_TO_START_SELL_KEYS));
+        const userMaxReftoScrap = Currencies.toScrap(parseInt(process.env.MAXIMUM_REFINED_TO_STOP_SELL_KEYS));
+
+        const isBuyingKeys = (currReftoScrap > userMaxReftoScrap && currKeys < userMaxKeys) !== false;
+        const isSellingKeys = (currReftoScrap < userMinReftoScrap && currKeys > userMinKeys) !== false;
+        const enableKeyBanking = process.env.ENABLE_AUTO_BANKING !== 'false';
+        const isBankingKeys =
+            (currReftoScrap > userMinReftoScrap && currReftoScrap < userMaxReftoScrap && currKeys > userMinKeys) !==
+            false;
+
+        const keyBlMin = `       X`;
+        const keyAbMax = `                     X`;
+        const keyAtBet = `              X`;
+        const keyAtMin = `         X`;
+        const keyAtMax = `                   X`;
+        const keysLine = `Keys ————|—————————|————▶`;
+        const refBlMin = `       X`;
+        const refAbMax = `                     X`;
+        const refAtBet = `              X`;
+        const refAtMin = `         X`;
+        const refAtMax = `                   X`;
+        const refsLine = `Refs ————|—————————|————▶`;
+        const xAxisRef = `        min       max`;
+        const keysPosition =
+            currKeys < userMinKeys
+                ? keyBlMin
+                : currKeys > userMaxKeys
+                ? keyAbMax
+                : currKeys > userMinKeys && currKeys < userMaxKeys
+                ? keyAtBet
+                : currKeys === userMinKeys
+                ? keyAtMin
+                : currKeys === userMaxKeys
+                ? keyAtMax
+                : '';
+        const refsPosition =
+            currReftoScrap < userMinReftoScrap
+                ? refBlMin
+                : currReftoScrap > userMaxReftoScrap
+                ? refAbMax
+                : currReftoScrap > userMinReftoScrap && currReftoScrap < userMaxReftoScrap
+                ? refAtBet
+                : currReftoScrap === userMinReftoScrap
+                ? refAtMin
+                : currReftoScrap === userMaxReftoScrap
+                ? refAtMax
+                : '';
+        const summary = `\n• ${userMinKeys} ≤ ${pluralize(
+            'key',
+            currKeys
+        )}(${currKeys}) ≤ ${userMaxKeys}\n• ${Currencies.toRefined(userMinReftoScrap)} < ${pluralize(
+            'ref',
+            Currencies.toRefined(currReftoScrap)
+        )}(${Currencies.toRefined(currReftoScrap)}) < ${Currencies.toRefined(userMaxReftoScrap)}`;
+
+        let reply = `Your current AutoKeys settings:\n${summary}\n\nDiagram:\n${keysPosition}\n${keysLine}\n${refsPosition}\n${refsLine}\n${xAxisRef}\n`;
+        reply += `\n   Auto-banking: ${enableKeyBanking ? 'enabled' : 'disabled'}`;
+        reply += `\nAutokeys status: ${
+            isBankingKeys ? 'banking' : isSellingKeys ? 'selling' : isBuyingKeys ? 'buying' : 'not active'
+        }`;
+        /*
+        //        X
+        // Keys ————|—————————|————▶
+        //                       X
+        // Refs ————|—————————|————▶
+        //         min       max
+        */
+
+        this.bot.sendMessage(steamID, '/pre ' + reply);
     }
 
     private rateCommand(steamID: SteamID): void {
