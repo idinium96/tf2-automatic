@@ -52,6 +52,14 @@ export = class MyHandler extends Handler {
 
     private isBankingKeys = false;
 
+    private checkAlertOnLowPure = false;
+
+    private alreadyUpdatedToBank = false;
+
+    private alreadyUpdatedToBuy = false;
+
+    private alreadyUpdatedToSell = false;
+
     recentlySentMessage: UnknownDictionary<number> = {};
 
     constructor(bot: Bot) {
@@ -1188,6 +1196,10 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
+        const isAlreadyUpdatedToBank = this.alreadyUpdatedToBank;
+        const isAlreadyUpdatedToBuy = this.alreadyUpdatedToBuy;
+        const isAlreadyUpdatedToSell = this.alreadyUpdatedToSell;
+
         log.debug(
             `
 Autokeys status:-
@@ -1203,58 +1215,82 @@ Autokeys status:-
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
-            if (isBankingKeys && isEnableKeyBanking) {
+            if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
                 // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = true;
                 this.checkAutokeysStatus = true;
+                this.alreadyUpdatedToBank = true;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-            } else if (isBuyingKeys) {
+            } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
                 // enable Autokeys - Buying - if buying keys conditions matched
                 this.isBuyingKeys = true;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = true;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = true;
+                this.alreadyUpdatedToSell = false;
                 this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-            } else if (isSellingKeys) {
+            } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
                 // enable Autokeys - Selling - if selling keys conditions matched
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = true;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = true;
                 this.updateAutokeysSell(userMinKeys, userMaxKeys);
             } else if (isRemoveBankingKeys && isEnableKeyBanking) {
                 // disable keys banking - if to conditions to disable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateToDisableAutokeys();
             } else if (isRemoveAutoKeys && !isEnableKeyBanking) {
                 // disable Autokeys when conditions to disable Autokeys matched
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateToDisableAutokeys();
             }
         } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
             if (checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry already in the pricelist.json
-                if (isBankingKeys && isEnableKeyBanking) {
+                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
                     // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = true;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-                } else if (isBuyingKeys) {
+                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
                     // enable Autokeys - Buying - if buying keys conditions matched
                     this.isBuyingKeys = true;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = true;
+                    this.alreadyUpdatedToSell = false;
                     this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-                } else if (isSellingKeys) {
+                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
                     // enable Autokeys - Selling - if selling keys conditions matched
                     this.isBuyingKeys = false;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = true;
                     this.updateAutokeysSell(userMinKeys, userMaxKeys);
                 }
             } else if (!checkKeysAlreadyExist) {
@@ -1264,18 +1300,27 @@ Autokeys status:-
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysBanking(userMinKeys, userMaxKeys);
                 } else if (isBuyingKeys) {
                     // create new Key entry and enable Autokeys - Buying - if buying keys conditions matched
                     this.isBuyingKeys = true;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysBuy(userMinKeys, userMaxKeys);
                 } else if (isSellingKeys) {
                     // create new Key entry and enable Autokeys - Selling - if selling keys conditions matched
                     this.isBuyingKeys = false;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysSell(userMinKeys, userMaxKeys);
                 }
             }
