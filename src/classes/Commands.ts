@@ -1533,7 +1533,10 @@ export = class Commands {
         const currBuy = new Currencies(price.buy);
         const currSell = new Currencies(price.sell);
 
-        this.bot.sendMessage(steamID, `/pre 🔎 ${name}:\n• Buy  : ${currBuy}\n• Sell : ${currSell}`);
+        this.bot.sendMessage(
+            steamID,
+            `🔎 ${name}:\n• Buy  : ${currBuy}\n• Sell : ${currSell}\n\nPrices.TF: https://prices.tf/items/${params.sku}`
+        );
     }
 
     private expandCommand(steamID: SteamID, message: string): void {
