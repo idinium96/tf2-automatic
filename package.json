@@ -23,8 +23,6 @@
     },
     "homepage": "https://github.com/Nicklason/tf2-automatic#readme",
     "dependencies": {
-        "@angular/common": "^9.1.11",
-        "@angular/core": "^9.1.11",
         "@nicklason/request-retry": "^1.1.2",
         "@types/cheerio": "^0.22.18",
         "async": "^3.2.0",
@@ -60,8 +58,7 @@
         "valid-url": "^1.0.9",
         "winston": "^3.2.1",
         "winston-daily-rotate-file": "^4.4.2",
-        "xmlhttprequest-ts": "^1.0.1",
-        "zone.js": "^0.10.3"
+        "xmlhttprequest-ts": "^1.0.1"
     },
     "devDependencies": {
         "@types/async": "^3.2.3",
