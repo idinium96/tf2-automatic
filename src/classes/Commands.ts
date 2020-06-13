@@ -842,10 +842,10 @@ export = class Commands {
                     (position !== 1 ? 'are' : 'is') +
                     ` ${position} infront of you.`
             );
-            if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
+            if (position >= 2 && process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
                 if (
-                    process.env.DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT === 'false' &&
-                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL
+                    process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                    process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
                 ) {
                     this.sendWebhookQueueAlert(position);
                 } else {
@@ -857,7 +857,7 @@ export = class Commands {
 
     private sendWebhookQueueAlert(position: number): void {
         const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
+        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
         request.setRequestHeader('Content-type', 'application/json');
         const ownerID = process.env.DISCORD_OWNER_ID;
         const time = moment()
@@ -1533,7 +1533,10 @@ export = class Commands {
         const currBuy = new Currencies(price.buy);
         const currSell = new Currencies(price.sell);
 
-        this.bot.sendMessage(steamID, `/pre 🔎 ${name}:\n• Buy  : ${currBuy}\n• Sell : ${currSell}`);
+        this.bot.sendMessage(
+            steamID,
+            `🔎 ${name}:\n• Buy  : ${currBuy}\n• Sell : ${currSell}\n\nPrices.TF: https://prices.tf/items/${params.sku}`
+        );
     }
 
     private expandCommand(steamID: SteamID, message: string): void {
@@ -2314,6 +2317,39 @@ export = class Commands {
             }
 
             item.quality = quality;
+        }
+
+        if (params.craftable !== undefined) {
+            if (typeof params.craftable !== 'boolean') {
+                this.bot.sendMessage(steamID, `❌ Craftable must be "true" or "false" only.`);
+                return null;
+            }
+            if (params.craftable === false) {
+                item.craftable = false;
+            } else {
+                item.craftable = true;
+            }
+        }
+
+        if (params.australium !== undefined) {
+            if (typeof params.australium !== 'boolean') {
+                this.bot.sendMessage(steamID, `❌ Australium must be "true" or "false" only.`);
+                return null;
+            }
+            if (params.australium === false) {
+                item.australium = false;
+            } else {
+                item.australium = true;
+            }
+        }
+
+        if (params.killstreak !== undefined) {
+            const killstreak = parseInt(params.killstreak);
+            if (isNaN(killstreak) || killstreak > 3) {
+                this.bot.sendMessage(steamID, `❌ Unknown killstreak "${params.killstreak}".`);
+                return null;
+            }
+            item.killstreak = killstreak;
         }
 
         if (params.paintkit !== undefined) {

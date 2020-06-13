@@ -38,7 +38,7 @@
                 "DISABLE_LISTINGS": false,
                 "DISABLE_CRAFTING": false,
                 "DISABLE_MESSAGES": false,
-                "DISABLE_QUEUE_ALERT": false,
+                "DISABLE_SOMETHING_WRONG_ALERT": false,
 
                 "TRADES_MADE_STARTER_VALUE": 0,
                 "LAST_TOTAL_TRADES": 0,
@@ -79,8 +79,8 @@
                 "DISCORD_WEBHOOK_AVATAR_URL": "",
                 "DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX": "9171753",
 
-                "DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT": false,
-                "DISCORD_WEBHOOK_QUEUE_ALERT_URL": "",
+                "DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT": false,
+                "DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL": "",
 
                 "DISABLE_DISCORD_WEBHOOK_PRICE_UPDATE": false,
                 "DISCORD_WEBHOOK_PRICE_UPDATE_URL": "",

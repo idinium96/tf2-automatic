@@ -52,6 +52,14 @@ export = class MyHandler extends Handler {
 
     private isBankingKeys = false;
 
+    private checkAlertOnLowPure = false;
+
+    private alreadyUpdatedToBank = false;
+
+    private alreadyUpdatedToBuy = false;
+
+    private alreadyUpdatedToSell = false;
+
     recentlySentMessage: UnknownDictionary<number> = {};
 
     constructor(bot: Bot) {
@@ -1188,6 +1196,24 @@ export = class MyHandler extends Handler {
         //             min                          max
         */
 
+        const isAlreadyAlert = this.checkAlertOnLowPure;
+
+        /**
+         * send alert to admins when both keys and refs below minimum
+         */
+        const isAlertAdmins = currReftoScrap <= userMinReftoScrap && currKeys <= userMinKeys !== false;
+        /*
+        //        <—————●                                         \
+        // Keys --------|----------------------------|---------->  ⟩ AND
+        //        <—————●                                         /
+        // Refs --------|----------------------------|---------->
+        //             min                          max
+        */
+
+        const isAlreadyUpdatedToBank = this.alreadyUpdatedToBank;
+        const isAlreadyUpdatedToBuy = this.alreadyUpdatedToBuy;
+        const isAlreadyUpdatedToSell = this.alreadyUpdatedToSell;
+
         log.debug(
             `
 Autokeys status:-
@@ -1203,59 +1229,131 @@ Autokeys status:-
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
-            if (isBankingKeys && isEnableKeyBanking) {
+            if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
                 // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = true;
                 this.checkAutokeysStatus = true;
+                this.checkAlertOnLowPure = false;
+                this.alreadyUpdatedToBank = true;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-            } else if (isBuyingKeys) {
+            } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
                 // enable Autokeys - Buying - if buying keys conditions matched
                 this.isBuyingKeys = true;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = true;
+                this.checkAlertOnLowPure = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = true;
+                this.alreadyUpdatedToSell = false;
                 this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-            } else if (isSellingKeys) {
+            } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
                 // enable Autokeys - Selling - if selling keys conditions matched
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = true;
+                this.checkAlertOnLowPure = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = true;
                 this.updateAutokeysSell(userMinKeys, userMaxKeys);
             } else if (isRemoveBankingKeys && isEnableKeyBanking) {
                 // disable keys banking - if to conditions to disable banking matched and banking is enabled
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = false;
+                this.checkAlertOnLowPure = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateToDisableAutokeys();
             } else if (isRemoveAutoKeys && !isEnableKeyBanking) {
                 // disable Autokeys when conditions to disable Autokeys matched
                 this.isBuyingKeys = false;
                 this.isBankingKeys = false;
                 this.checkAutokeysStatus = false;
+                this.checkAlertOnLowPure = false;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
                 this.updateToDisableAutokeys();
+            } else if (isAlertAdmins && isAlreadyAlert !== true) {
+                // alert admins when low pure
+                this.isBuyingKeys = false;
+                this.isBankingKeys = false;
+                this.checkAutokeysStatus = false;
+                this.checkAlertOnLowPure = true;
+                this.alreadyUpdatedToBank = false;
+                this.alreadyUpdatedToBuy = false;
+                this.alreadyUpdatedToSell = false;
+                const msg = 'I am now low on both keys and refs.';
+                if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                    if (
+                        process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                        process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                    ) {
+                        this.sendWebhookLowPureAlert(msg);
+                    } else {
+                        this.bot.messageAdmins(msg, []);
+                    }
+                }
             }
         } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
             if (checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry already in the pricelist.json
-                if (isBankingKeys && isEnableKeyBanking) {
+                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
                     // enable keys banking - if banking conditions to enable banking matched and banking is enabled
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = true;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-                } else if (isBuyingKeys) {
+                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
                     // enable Autokeys - Buying - if buying keys conditions matched
                     this.isBuyingKeys = true;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = true;
+                    this.alreadyUpdatedToSell = false;
                     this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-                } else if (isSellingKeys) {
+                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
                     // enable Autokeys - Selling - if selling keys conditions matched
                     this.isBuyingKeys = false;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = true;
                     this.updateAutokeysSell(userMinKeys, userMaxKeys);
+                } else if (isAlertAdmins && isAlreadyAlert !== true) {
+                    // alert admins when low pure
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = false;
+                    this.checkAlertOnLowPure = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    const msg = 'I am now low on both keys and refs.';
+                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                        if (
+                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                        ) {
+                            this.sendWebhookLowPureAlert(msg);
+                        } else {
+                            this.bot.messageAdmins(msg, []);
+                        }
+                    }
                 }
             } else if (!checkKeysAlreadyExist) {
                 // if Mann Co. Supply Crate Key entry does not exist in the pricelist.json
@@ -1264,19 +1362,51 @@ Autokeys status:-
                     this.isBuyingKeys = false;
                     this.isBankingKeys = true;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysBanking(userMinKeys, userMaxKeys);
                 } else if (isBuyingKeys) {
                     // create new Key entry and enable Autokeys - Buying - if buying keys conditions matched
                     this.isBuyingKeys = true;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysBuy(userMinKeys, userMaxKeys);
                 } else if (isSellingKeys) {
                     // create new Key entry and enable Autokeys - Selling - if selling keys conditions matched
                     this.isBuyingKeys = false;
                     this.isBankingKeys = false;
                     this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
                     this.createAutokeysSell(userMinKeys, userMaxKeys);
+                } else if (isAlertAdmins && isAlreadyAlert !== true) {
+                    // alert admins when low pure
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = false;
+                    this.checkAlertOnLowPure = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    const msg = 'I am now low on both keys and refs.';
+                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                        if (
+                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                        ) {
+                            this.sendWebhookLowPureAlert(msg);
+                        } else {
+                            this.bot.messageAdmins(msg, []);
+                        }
+                    }
                 }
             }
         }
@@ -1655,6 +1785,24 @@ Autokeys status:-
                 this.bot.client.removeFriend(element.steamID);
             });
         }
+    }
+
+    private sendWebhookLowPureAlert(msg: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+        const ownerID = process.env.DISCORD_OWNER_ID;
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+        /*eslint-disable */
+        const discordQueue = {
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            content: `<@!${ownerID}> [Something Wrong alert]: "${msg}" - ${time}`
+        };
+        /*eslint-enable */
+        request.send(JSON.stringify(discordQueue));
     }
 
     private sendWebHookReviewOfferSummary(offer: TradeOfferManager.TradeOffer, reason: string): void {

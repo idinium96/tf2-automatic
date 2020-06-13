@@ -307,6 +307,17 @@ abstract class Cart {
                         "An error occurred while sending your trade offer, this is most likely because I've recently accepted a big offer"
                     );
                 } else if (error.eresult == 15) {
+                    const msg = "I don't, or the trade partner don't, have space for more items. Please take a look.";
+                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                        if (
+                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                        ) {
+                            this.sendWebhookSomethingWrongAlert(msg);
+                        } else {
+                            this.bot.messageAdmins(msg, []);
+                        }
+                    }
                     return Promise.reject("I don't, or you don't, have space for more items");
                 } else if (error.eresult == 20) {
                     return Promise.reject(
@@ -320,6 +331,24 @@ abstract class Cart {
 
                 return Promise.reject(err);
             });
+    }
+
+    private sendWebhookSomethingWrongAlert(msg: string): void {
+        const request = new XMLHttpRequest();
+        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
+        request.setRequestHeader('Content-type', 'application/json');
+        const ownerID = process.env.DISCORD_OWNER_ID;
+        const time = moment()
+            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+            .format('MMMM Do YYYY, HH:mm:ss ZZ');
+        /*eslint-disable */
+        const discordQueue = {
+            username: process.env.DISCORD_WEBHOOK_USERNAME,
+            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
+            content: `<@!${ownerID}> [Something Wrong alert]: "${msg}" - ${time}`
+        };
+        /*eslint-enable */
+        request.send(JSON.stringify(discordQueue));
     }
 
     toString(): string {
