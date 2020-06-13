@@ -14,7 +14,6 @@ import SteamID from 'steamid';
 import Currencies from 'tf2-currencies';
 import async from 'async';
 
-import { XMLHttpRequest } from 'xmlhttprequest-ts';
 import moment from 'moment-timezone';
 
 import log from '../lib/logger';
@@ -22,9 +21,12 @@ import * as files from '../lib/files';
 import paths from '../resources/paths';
 import { parseJSON, exponentialBackoff } from '../lib/helpers';
 import TF2Inventory from './TF2Inventory';
+import DiscordWebhook from './DiscordWebhook';
 
 export = class MyHandler extends Handler {
     private readonly commands: Commands;
+
+    readonly discord: DiscordWebhook;
 
     readonly cartQueue: CartQueue;
 
@@ -67,6 +69,7 @@ export = class MyHandler extends Handler {
 
         this.commands = new Commands(bot);
         this.cartQueue = new CartQueue(bot);
+        this.discord = new DiscordWebhook(bot);
 
         const minimumScrap = parseInt(process.env.MINIMUM_SCRAP);
         const minimumReclaimed = parseInt(process.env.MINIMUM_RECLAIMED);
@@ -865,7 +868,18 @@ export = class MyHandler extends Handler {
                     process.env.DISABLE_DISCORD_WEBHOOK_TRADE_SUMMARY === 'false' &&
                     process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL
                 ) {
-                    this.sendWebHookTradeSummary(offer);
+                    this.discord.sendTradeSummary(
+                        offer,
+                        isAutoKeysEnabled,
+                        isKeysBankingEnabled,
+                        autoKeysStatus,
+                        isBuyingKeys,
+                        isBankingKeys,
+                        pureStock,
+                        valueDiff,
+                        valueDiffRef,
+                        valueDiffKey
+                    );
                 } else {
                     this.bot.messageAdmins(
                         'trade',
@@ -1071,7 +1085,15 @@ export = class MyHandler extends Handler {
                 process.env.DISABLE_DISCORD_WEBHOOK_OFFER_REVIEW === 'false' &&
                 process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL
             ) {
-                this.sendWebHookReviewOfferSummary(offer, meta.uniqueReasons.join(', '));
+                this.discord.sendOfferReview(
+                    offer,
+                    meta.uniqueReasons.join(', '),
+                    pureStock,
+                    valueDiff,
+                    valueDiffRef,
+                    valueDiffKey,
+                    time
+                );
             } else {
                 const offerMessage = offer.message;
                 this.bot.messageAdmins(
@@ -1225,7 +1247,7 @@ Autokeys status:-
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
-        const checkKeysAlreadyExist = (this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null) !== true;
+        const isKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key', false);
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
@@ -1294,7 +1316,7 @@ Autokeys status:-
                         process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
                         process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
                     ) {
-                        this.sendWebhookLowPureAlert(msg);
+                        this.discord.sendLowPureAlert(msg);
                     } else {
                         this.bot.messageAdmins(msg, []);
                     }
@@ -1302,60 +1324,7 @@ Autokeys status:-
             }
         } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
-            if (checkKeysAlreadyExist) {
-                // if Mann Co. Supply Crate Key entry already in the pricelist.json
-                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
-                    // enable keys banking - if banking conditions to enable banking matched and banking is enabled
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = true;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = true;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = false;
-                    this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
-                    // enable Autokeys - Buying - if buying keys conditions matched
-                    this.isBuyingKeys = true;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = true;
-                    this.alreadyUpdatedToSell = false;
-                    this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
-                    // enable Autokeys - Selling - if selling keys conditions matched
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = true;
-                    this.updateAutokeysSell(userMinKeys, userMaxKeys);
-                } else if (isAlertAdmins && isAlreadyAlert !== true) {
-                    // alert admins when low pure
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = false;
-                    this.checkAlertOnLowPure = true;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = false;
-                    const msg = 'I am now low on both keys and refs.';
-                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
-                        if (
-                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
-                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
-                        ) {
-                            this.sendWebhookLowPureAlert(msg);
-                        } else {
-                            this.bot.messageAdmins(msg, []);
-                        }
-                    }
-                }
-            } else if (!checkKeysAlreadyExist) {
+            if (isKeysAlreadyExist === null) {
                 // if Mann Co. Supply Crate Key entry does not exist in the pricelist.json
                 if (isBankingKeys && isEnableKeyBanking) {
                     //create new Key entry and enable keys banking - if banking conditions to enable banking matched and banking is enabled
@@ -1402,7 +1371,60 @@ Autokeys status:-
                             process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
                             process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
                         ) {
-                            this.sendWebhookLowPureAlert(msg);
+                            this.discord.sendLowPureAlert(msg);
+                        } else {
+                            this.bot.messageAdmins(msg, []);
+                        }
+                    }
+                }
+            } else {
+                // if Mann Co. Supply Crate Key entry already in the pricelist.json
+                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
+                    // enable keys banking - if banking conditions to enable banking matched and banking is enabled
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = true;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = true;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    this.updateAutokeysBanking(userMinKeys, userMaxKeys);
+                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
+                    // enable Autokeys - Buying - if buying keys conditions matched
+                    this.isBuyingKeys = true;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = true;
+                    this.alreadyUpdatedToSell = false;
+                    this.updateAutokeysBuy(userMinKeys, userMaxKeys);
+                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
+                    // enable Autokeys - Selling - if selling keys conditions matched
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = true;
+                    this.updateAutokeysSell(userMinKeys, userMaxKeys);
+                } else if (isAlertAdmins && isAlreadyAlert !== true) {
+                    // alert admins when low pure
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = false;
+                    this.checkAlertOnLowPure = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    const msg = 'I am now low on both keys and refs.';
+                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                        if (
+                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                        ) {
+                            this.discord.sendLowPureAlert(msg);
                         } else {
                             this.bot.messageAdmins(msg, []);
                         }
@@ -1783,320 +1805,6 @@ Autokeys status:-
                         : '/quote I am cleaning up my friend list and you have been selected to be removed. Feel free to add me again if you want to trade at the other time!'
                 );
                 this.bot.client.removeFriend(element.steamID);
-            });
-        }
-    }
-
-    private sendWebhookLowPureAlert(msg: string): void {
-        const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-        const ownerID = process.env.DISCORD_OWNER_ID;
-        const time = moment()
-            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
-        /*eslint-disable */
-        const discordQueue = {
-            username: process.env.DISCORD_WEBHOOK_USERNAME,
-            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${ownerID}> [Something Wrong alert]: "${msg}" - ${time}`
-        };
-        /*eslint-enable */
-        request.send(JSON.stringify(discordQueue));
-    }
-
-    private sendWebHookReviewOfferSummary(offer: TradeOfferManager.TradeOffer, reason: string): void {
-        const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_REVIEW_OFFER_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-
-        const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
-        const time = moment()
-            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
-
-        const offerMessage = offer.message;
-        const keyPrice = this.bot.pricelist.getKeyPrices();
-        const pureStock = this.pureStock();
-        const value: { our: Currency; their: Currency } = offer.data('value');
-
-        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
-        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
-        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
-
-        let valueDiff: number;
-        let valueDiffRef: number;
-        let valueDiffKey: string;
-        if (!value) {
-            valueDiff = 0;
-            valueDiffRef = 0;
-            valueDiffKey = '';
-        } else {
-            valueDiff =
-                new Currencies(value.their).toValue(keyPrice.sell.metal) -
-                new Currencies(value.our).toValue(keyPrice.sell.metal);
-            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
-            valueDiffKey = Currencies.toCurrencies(
-                Math.abs(valueDiff),
-                Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
-            ).toString();
-        }
-
-        let partnerAvatar: string;
-        let partnerName: string;
-        log.debug('getting partner Avatar and Name...');
-        offer.getUserDetails(function(err, me, them) {
-            if (err) {
-                log.debug('Error retrieving partner Avatar and Name: ', err);
-                partnerAvatar =
-                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
-                partnerName = 'unknown';
-            } else {
-                log.debug('partner Avatar and Name retrieved. Applying...');
-                partnerAvatar = them.avatarFull;
-                partnerName = them.personaName;
-            }
-
-            const partnerNameNoFormat =
-                partnerName.includes('_') || partnerName.includes('*') || partnerName.includes('~~')
-                    ? partnerName
-                          .replace(/_/g, '‗')
-                          .replace(/\*/g, '★')
-                          .replace(/~/g, '⁓')
-                    : partnerName;
-
-            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_QUICK_LINKS !== 'false';
-            const isShowKeyRate = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_KEY_RATE !== 'false';
-            const isShowPureStock = process.env.DISCORD_WEBHOOK_REVIEW_OFFER_SHOW_PURE_STOCK !== 'false';
-
-            /*eslint-disable */
-            const webhookReview = JSON.stringify({
-                username: process.env.DISCORD_WEBHOOK_USERNAME,
-                avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-                content: `<@!${process.env.DISCORD_OWNER_ID}>, check this! - ${offer.id}`,
-                embeds: [
-                    {
-                        author: {
-                            name: `Offer from: ${partnerName}`,
-                            url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
-                            icon_url: partnerAvatar
-                        },
-                        footer: {
-                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${time}`
-                        },
-                        thumbnail: {
-                            url: ''
-                        },
-                        title: '',
-                        description:
-                            `⚠️ An offer sent by ${partnerNameNoFormat} is waiting for review.\nReason: ${reason}\n\n__Offer Summary__:\n` +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
-                            (valueDiff > 0
-                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : valueDiff < 0
-                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : '') +
-                            (offerMessage.length !== 0 ? `\n\n💬 Offer message: _${offerMessage}_` : '') +
-                            (isShowQuickLinks
-                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})\n`
-                                : '\n') +
-                            (isShowKeyRate
-                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref`
-                                : '') +
-                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : ''),
-                        color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
-                    }
-                ]
-            });
-            /*eslint-enable */
-            request.send(webhookReview);
-        });
-    }
-
-    private sendWebHookTradeSummary(offer: TradeOfferManager.TradeOffer): void {
-        const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-
-        const partnerSteamID = offer.partner.toString();
-        const tradeSummary = offer.summarizeWithLink(this.bot.schema);
-
-        const skuSummary = offer.summarizeSKU();
-        let skuFromEnv = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER_ONLY_ITEMS_SKU;
-        if (!skuFromEnv || skuFromEnv === '') {
-            skuFromEnv = ';';
-        }
-        const mentionOwner =
-            process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_MENTION_OWNER === 'true' && skuSummary.includes(skuFromEnv)
-                ? `<@!${process.env.DISCORD_OWNER_ID}>`
-                : '';
-
-        const time = moment()
-            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
-        const pureStock = this.pureStock();
-        const keyPrice = this.bot.pricelist.getKeyPrices();
-        const value: { our: Currency; their: Currency } = offer.data('value');
-
-        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
-        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
-        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
-
-        const isAutoKeysEnabled = this.autokeysEnabled;
-        const isKeysBankingEnabled = this.keyBankingEnabled;
-        const autoKeysStatus = this.checkAutokeysStatus;
-        const isBuyingKeys = this.isBuyingKeys;
-        const isBankingKeys = this.isBankingKeys;
-
-        let valueDiff: number;
-        let valueDiffRef: number;
-        let valueDiffKey: string;
-        if (!value) {
-            valueDiff = 0;
-            valueDiffRef = 0;
-            valueDiffKey = '';
-        } else {
-            valueDiff =
-                new Currencies(value.their).toValue(keyPrice.sell.metal) -
-                new Currencies(value.our).toValue(keyPrice.sell.metal);
-            valueDiffRef = Currencies.toRefined(Currencies.toScrap(Math.abs(valueDiff * (1 / 9))));
-            valueDiffKey = Currencies.toCurrencies(
-                Math.abs(valueDiff),
-                Math.abs(valueDiff) >= keyPrice.sell.metal ? keyPrice.sell.metal : undefined
-            ).toString();
-        }
-
-        let tradesTotal = 0;
-        const offerData = this.bot.manager.pollData.offerData;
-        for (const offerID in offerData) {
-            if (!Object.prototype.hasOwnProperty.call(offerData, offerID)) {
-                continue;
-            }
-
-            if (offerData[offerID].handledByUs === true && offerData[offerID].isAccepted === true) {
-                // Sucessful trades handled by the bot
-                tradesTotal++;
-            }
-        }
-        const tradesMade = process.env.TRADES_MADE_STARTER_VALUE
-            ? +process.env.TRADES_MADE_STARTER_VALUE + tradesTotal
-            : 0 + tradesTotal;
-
-        let personaName: string;
-        let avatarFull: string;
-        log.debug('getting partner Avatar and Name...');
-        this.getPartnerDetails(offer, function(err, details) {
-            if (err) {
-                log.debug('Error retrieving partner Avatar and Name: ', err);
-                personaName = 'unknown';
-                avatarFull =
-                    'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/72/72f78b4c8cc1f62323f8a33f6d53e27db57c2252_full.jpg'; //default "?" image
-            } else {
-                log.debug('partner Avatar and Name retrieved. Applying...');
-                personaName = details.personaName;
-                avatarFull = details.avatarFull;
-            }
-
-            const partnerNameNoFormat =
-                personaName.includes('_') || personaName.includes('*') || personaName.includes('~~')
-                    ? personaName
-                          .replace(/_/g, '‗')
-                          .replace(/\*/g, '★')
-                          .replace(/~/g, '⁓')
-                    : personaName;
-
-            const isShowQuickLinks = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_QUICK_LINKS !== 'false';
-            const isShowKeyRate = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_KEY_RATE !== 'false';
-            const isShowPureStock = process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_SHOW_PURE_STOCK !== 'false';
-            const isShowAdditionalNotes =
-                process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE !== 'false';
-
-            /*eslint-disable */
-            const acceptedTradeSummary = JSON.stringify({
-                username: process.env.DISCORD_WEBHOOK_USERNAME,
-                avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-                content: mentionOwner,
-                embeds: [
-                    {
-                        author: {
-                            name: `Trade from: ${personaName} #${tradesMade.toString()}`,
-                            url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
-                            icon_url: avatarFull
-                        },
-                        footer: {
-                            text: `Offer #${offer.id} • SteamID: ${partnerSteamID} • ${time}`
-                        },
-                        thumbnail: {
-                            url: ''
-                        },
-                        title: '',
-                        description:
-                            `A trade with ${partnerNameNoFormat} has been marked as accepted.\n__Summary__:\n` +
-                            tradeSummary.replace('Asked:', '**Asked:**').replace('Offered:', '**Offered:**') +
-                            (valueDiff > 0
-                                ? `\n📈 ***Profit from overpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : valueDiff < 0
-                                ? `\n📉 ***Loss from underpay:*** ${valueDiffRef} ref` +
-                                  (valueDiffRef >= keyPrice.sell.metal ? ` (${valueDiffKey})` : '')
-                                : '') +
-                            (isShowQuickLinks
-                                ? `\n\n🔍 ${partnerNameNoFormat}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})\n`
-                                : '\n') +
-                            (isShowKeyRate
-                                ? `\n🔑 Key rate: ${keyPrice.buy.metal.toString()}/${keyPrice.sell.metal.toString()} ref` +
-                                  `${
-                                      isAutoKeysEnabled
-                                          ? ' | Autokeys: ' +
-                                            (autoKeysStatus
-                                                ? '✅' +
-                                                  (isKeysBankingEnabled
-                                                      ? isBankingKeys
-                                                          ? ' (banking)'
-                                                          : isBuyingKeys
-                                                          ? ' (buying)'
-                                                          : ' (selling)'
-                                                      : 'Not active')
-                                                : '🛑')
-                                          : ''
-                                  }`
-                                : '') +
-                            (isShowPureStock ? `\n💰 Pure stock: ${pureStock.join(', ').toString()} ref` : '') +
-                            (isShowAdditionalNotes
-                                ? '\n' + process.env.DISCORD_WEBHOOK_TRADE_SUMMARY_ADDITIONAL_DESCRIPTION_NOTE
-                                : ''),
-                        color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
-                    }
-                ]
-            });
-            /*eslint-enable */
-            request.send(acceptedTradeSummary);
-        });
-    }
-
-    private getPartnerDetails(offer: TradeOfferManager.TradeOffer, callback: (err: any, details: any) => void): any {
-        // check state of the offer
-        if (offer.state === TradeOfferManager.ETradeOfferState.active) {
-            offer.getUserDetails(function(err, me, them) {
-                if (err) {
-                    callback(err, {});
-                } else {
-                    callback(null, them);
-                }
-            });
-        } else {
-            this.bot.community.getSteamUser(offer.partner, (err, user) => {
-                if (err) {
-                    callback(err, {});
-                } else {
-                    callback(null, {
-                        personaName: user.name,
-                        avatarFull: user.getAvatarURL('full')
-                    });
-                }
             });
         }
     }
