@@ -842,10 +842,10 @@ export = class Commands {
                     (position !== 1 ? 'are' : 'is') +
                     ` ${position} infront of you.`
             );
-            if (position >= 2 && process.env.DISABLE_QUEUE_ALERT === 'false') {
+            if (position >= 2 && process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
                 if (
-                    process.env.DISABLE_DISCORD_WEBHOOK_QUEUE_ALERT === 'false' &&
-                    process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL
+                    process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                    process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
                 ) {
                     this.sendWebhookQueueAlert(position);
                 } else {
@@ -857,7 +857,7 @@ export = class Commands {
 
     private sendWebhookQueueAlert(position: number): void {
         const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_QUEUE_ALERT_URL);
+        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
         request.setRequestHeader('Content-type', 'application/json');
         const ownerID = process.env.DISCORD_OWNER_ID;
         const time = moment()
