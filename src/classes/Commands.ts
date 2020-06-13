@@ -14,6 +14,7 @@ import AdminCart from './AdminCart';
 import UserCart from './UserCart';
 import MyHandler from './MyHandler';
 import CartQueue from './CartQueue';
+import DiscordWebhook from './DiscordWebhook';
 
 import { Item, Currency } from '../types/TeamFortress2';
 import { UnknownDictionaryKnownValues, UnknownDictionary } from '../types/common';
@@ -22,8 +23,6 @@ import { requestCheck, getPrice } from '../lib/ptf-api';
 import validator from '../lib/validator';
 import log from '../lib/logger';
 import SchemaManager from 'tf2-schema';
-
-import { XMLHttpRequest } from 'xmlhttprequest-ts';
 
 const COMMANDS: string[] = [
     '!help - Get list of commands',
@@ -73,8 +72,11 @@ const ADMIN_COMMANDS: string[] = [
 export = class Commands {
     private readonly bot: Bot;
 
+    readonly discord: DiscordWebhook;
+
     constructor(bot: Bot) {
         this.bot = bot;
+        this.discord = new DiscordWebhook(bot);
     }
 
     get cartQueue(): CartQueue {
@@ -635,7 +637,7 @@ export = class Commands {
                 process.env.DISABLE_DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER === 'false' &&
                 process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL
             ) {
-                this.sendWebhookPartnerMessage(
+                this.discord.sendPartnerMessage(
                     steamID.toString(),
                     msg,
                     adminDetails.player_name,
@@ -655,51 +657,6 @@ export = class Commands {
             }
             this.bot.sendMessage(steamID, '✅ Your message has been sent.');
         }
-    }
-
-    private sendWebhookPartnerMessage(steamID: string, msg: string, theirName: string, theirAvatar: string): void {
-        const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-
-        const time = moment()
-            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format(process.env.CUSTOM_TIME_FORMAT ? process.env.CUSTOM_TIME_FORMAT : 'MMMM Do YYYY, HH:mm:ss ZZ'); // refer: https://www.tutorialspoint.com/momentjs/momentjs_format.htm
-
-        const partnerSteamID = steamID;
-        const steamProfile = `https://steamcommunity.com/profiles/${partnerSteamID}`;
-        const backpackTF = `https://backpack.tf/profiles/${partnerSteamID}`;
-        const steamREP = `https://steamrep.com/profiles/${partnerSteamID}`;
-
-        /*eslint-disable */
-        const discordPartnerMsg = JSON.stringify({
-            username: process.env.DISCORD_WEBHOOK_USERNAME,
-            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${process.env.DISCORD_OWNER_ID}>, new message! - ${partnerSteamID}`,
-            embeds: [
-                {
-                    author: {
-                        name: theirName,
-                        url: `https://steamcommunity.com/profiles/${partnerSteamID}`,
-                        icon_url: theirAvatar
-                    },
-                    footer: {
-                        text: `Partner SteamID: ${partnerSteamID} • ${time}`
-                    },
-                    title: '',
-                    description:
-                        '💬 ' +
-                        msg +
-                        (process.env.DISCORD_WEBHOOK_MESSAGE_FROM_PARTNER_SHOW_QUICK_LINKS
-                            ? `\n\n🔍 ${theirName}'s info:\n[Steam Profile](${steamProfile}) | [backpack.tf](${backpackTF}) | [steamREP](${steamREP})`
-                            : ''),
-                    color: process.env.DISCORD_WEBHOOK_EMBED_COLOR_IN_DECIMAL_INDEX
-                }
-            ]
-        });
-        /*eslint-enable */
-
-        request.send(discordPartnerMsg);
     }
 
     private cartCommand(steamID: SteamID): void {
@@ -847,30 +804,12 @@ export = class Commands {
                     process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
                     process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
                 ) {
-                    this.sendWebhookQueueAlert(position);
+                    this.discord.sendQueueAlert(position);
                 } else {
                     this.bot.messageAdmins(`⚠️ [Queue alert] Current position: ${position}`, []);
                 }
             }
         }
-    }
-
-    private sendWebhookQueueAlert(position: number): void {
-        const request = new XMLHttpRequest();
-        request.open('POST', process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL);
-        request.setRequestHeader('Content-type', 'application/json');
-        const ownerID = process.env.DISCORD_OWNER_ID;
-        const time = moment()
-            .tz(process.env.TIMEZONE ? process.env.TIMEZONE : 'UTC') //timezone format: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-            .format('MMMM Do YYYY, HH:mm:ss ZZ');
-        /*eslint-disable */
-        const discordQueue = {
-            username: process.env.DISCORD_WEBHOOK_USERNAME,
-            avatar_url: process.env.DISCORD_WEBHOOK_AVATAR_URL,
-            content: `<@!${ownerID}> [Queue alert] Current position: ${position} - ${time}`
-        };
-        /*eslint-enable */
-        request.send(JSON.stringify(discordQueue));
     }
 
     private depositCommand(steamID: SteamID, message: string): void {
