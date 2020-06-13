@@ -1247,7 +1247,7 @@ Autokeys status:-
         );
 
         const isAlreadyRunningAutokeys = this.checkAutokeysStatus !== false;
-        const isKeysAlreadyExist = (this.bot.pricelist.searchByName('Mann Co. Supply Crate Key') !== null) !== true;
+        const isKeysAlreadyExist = this.bot.pricelist.searchByName('Mann Co. Supply Crate Key', false);
 
         if (isAlreadyRunningAutokeys) {
             // if Autokeys already running
@@ -1324,60 +1324,7 @@ Autokeys status:-
             }
         } else if (!isAlreadyRunningAutokeys) {
             // if Autokeys is not running/disabled
-            if (isKeysAlreadyExist) {
-                // if Mann Co. Supply Crate Key entry already in the pricelist.json
-                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
-                    // enable keys banking - if banking conditions to enable banking matched and banking is enabled
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = true;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = true;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = false;
-                    this.updateAutokeysBanking(userMinKeys, userMaxKeys);
-                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
-                    // enable Autokeys - Buying - if buying keys conditions matched
-                    this.isBuyingKeys = true;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = true;
-                    this.alreadyUpdatedToSell = false;
-                    this.updateAutokeysBuy(userMinKeys, userMaxKeys);
-                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
-                    // enable Autokeys - Selling - if selling keys conditions matched
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = true;
-                    this.checkAlertOnLowPure = false;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = true;
-                    this.updateAutokeysSell(userMinKeys, userMaxKeys);
-                } else if (isAlertAdmins && isAlreadyAlert !== true) {
-                    // alert admins when low pure
-                    this.isBuyingKeys = false;
-                    this.isBankingKeys = false;
-                    this.checkAutokeysStatus = false;
-                    this.checkAlertOnLowPure = true;
-                    this.alreadyUpdatedToBank = false;
-                    this.alreadyUpdatedToBuy = false;
-                    this.alreadyUpdatedToSell = false;
-                    const msg = 'I am now low on both keys and refs.';
-                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
-                        if (
-                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
-                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
-                        ) {
-                            this.discord.sendLowPureAlert(msg);
-                        } else {
-                            this.bot.messageAdmins(msg, []);
-                        }
-                    }
-                }
-            } else if (!isKeysAlreadyExist) {
+            if (isKeysAlreadyExist === null) {
                 // if Mann Co. Supply Crate Key entry does not exist in the pricelist.json
                 if (isBankingKeys && isEnableKeyBanking) {
                     //create new Key entry and enable keys banking - if banking conditions to enable banking matched and banking is enabled
@@ -1409,6 +1356,59 @@ Autokeys status:-
                     this.alreadyUpdatedToBuy = false;
                     this.alreadyUpdatedToSell = false;
                     this.createAutokeysSell(userMinKeys, userMaxKeys);
+                } else if (isAlertAdmins && isAlreadyAlert !== true) {
+                    // alert admins when low pure
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = false;
+                    this.checkAlertOnLowPure = true;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    const msg = 'I am now low on both keys and refs.';
+                    if (process.env.DISABLE_SOMETHING_WRONG_ALERT === 'false') {
+                        if (
+                            process.env.DISABLE_DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT === 'false' &&
+                            process.env.DISCORD_WEBHOOK_SOMETHING_WRONG_ALERT_URL
+                        ) {
+                            this.discord.sendLowPureAlert(msg);
+                        } else {
+                            this.bot.messageAdmins(msg, []);
+                        }
+                    }
+                }
+            } else {
+                // if Mann Co. Supply Crate Key entry already in the pricelist.json
+                if (isBankingKeys && isEnableKeyBanking && isAlreadyUpdatedToBank !== true) {
+                    // enable keys banking - if banking conditions to enable banking matched and banking is enabled
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = true;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = true;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = false;
+                    this.updateAutokeysBanking(userMinKeys, userMaxKeys);
+                } else if (isBuyingKeys && isAlreadyUpdatedToBuy !== true) {
+                    // enable Autokeys - Buying - if buying keys conditions matched
+                    this.isBuyingKeys = true;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = true;
+                    this.alreadyUpdatedToSell = false;
+                    this.updateAutokeysBuy(userMinKeys, userMaxKeys);
+                } else if (isSellingKeys && isAlreadyUpdatedToSell !== true) {
+                    // enable Autokeys - Selling - if selling keys conditions matched
+                    this.isBuyingKeys = false;
+                    this.isBankingKeys = false;
+                    this.checkAutokeysStatus = true;
+                    this.checkAlertOnLowPure = false;
+                    this.alreadyUpdatedToBank = false;
+                    this.alreadyUpdatedToBuy = false;
+                    this.alreadyUpdatedToSell = true;
+                    this.updateAutokeysSell(userMinKeys, userMaxKeys);
                 } else if (isAlertAdmins && isAlreadyAlert !== true) {
                     // alert admins when low pure
                     this.isBuyingKeys = false;
